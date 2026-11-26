@@ -14,12 +14,12 @@
 
 ## 직무 KPI DB
 
-그로스·퍼포먼스 마케터, PM/PO, 백엔드·데이터, B2B 세일즈·BD, 화학·배터리 공정 R&D, 재무·전략, HR·조직의 핵심 KPI와 단골 압박 질문을 내장했습니다. JD에서 직무를 자동 감지하거나 직접 고를 수 있고, 선택한 직무의 KPI·압박 패턴이 적합도 분석, 5분 통화 질문, OpenAI/Gemini 프롬프트에 함께 반영됩니다.
+그로스·퍼포먼스 마케터, PM/PO, 백엔드·데이터, B2B 세일즈·BD, 화학·배터리 공정 R&D, 재무·전략, HR·조직의 핵심 KPI와 단골 압박 질문을 내장했습니다. JD에서 직무를 자동 감지하거나 직접 고를 수 있고, 선택한 직무의 KPI·압박 패턴이 적합도 분석, 5분 통화 질문, OpenAI/Gemini/Claude 프롬프트에 함께 반영됩니다.
 
 ## 엔진
 
 - **내장 엔진(기본)** — API 키 없이 동작합니다. 입력에서 수치·도메인 키워드·요구 역량을 실제로 추출해 질문을 만들기 때문에 고정 데모가 아닙니다.
-- **OpenAI / Gemini** — 설정에서 키를 넣으면 `gpt-4o-mini`·`gpt-4o` 또는 `gemini-2.5-flash`·`gemini-2.5-pro`로 실시간 면접 질문을 생성합니다. 키는 브라우저 `localStorage`에만 저장되며 서버로 전송되지 않습니다.
+- **OpenAI / Gemini / Claude** — 설정에서 키를 넣으면 `gpt-4o-mini`·`gpt-4o`, `gemini-2.5-flash`·`gemini-2.5-pro`, 또는 Claude(`claude-sonnet-4-6`·`claude-sonnet-5-5`·`claude-haiku-5-5`·`claude-opus-5-5`)로 실시간 면접 질문을 생성합니다. Claude는 Anthropic Messages API를 브라우저에서 직접 호출합니다(`anthropic-dangerous-direct-browser-access` 헤더 사용). 키는 브라우저 `localStorage`에만 저장되며 서버로 전송되지 않습니다.
 
 ## 실행
 
