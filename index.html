@@ -1008,7 +1008,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
             <svg><use href="#i-mic"/></svg>5분 퀵 모드
           </button>
         </div>
-        <p class="hint" style="margin-top:10px" id="engineHint">API 키 없이 내장 엔진으로 바로 동작합니다. 설정에서 OpenAI · Gemini 키를 넣으면 실시간 LLM 면접으로 전환됩니다.</p>
+        <p class="hint" style="margin-top:10px" id="engineHint">API 키 없이 내장 엔진으로 바로 동작합니다. 설정에서 OpenAI · Gemini · Claude 키를 넣으면 실시간 LLM 면접으로 전환됩니다.</p>
 
         <div class="section-title">도구</div>
         <div class="feature-grid">
@@ -1244,6 +1244,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
           <button data-provider="demo" class="is-on">내장 엔진</button>
           <button data-provider="openai">OpenAI</button>
           <button data-provider="gemini">Gemini</button>
+          <button data-provider="claude">Claude</button>
         </div>
         <div class="note-box" id="providerNote">키 없이 동작하는 규칙 기반 엔진입니다. 입력한 수치·키워드를 실제로 추출해 질문을 만들기 때문에, 데모라도 고정 문구가 아닙니다.</div>
       </div>
@@ -1256,7 +1257,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       <div class="field-group" id="keyGroup" hidden>
         <label for="apiKey">API 키 <span class="faint" style="font-weight:500">· 이 브라우저에만 저장</span></label>
         <div class="key-wrap">
-          <input class="field" id="apiKey" type="password" placeholder="sk-... 또는 AIza..." autocomplete="off" spellcheck="false">
+          <input class="field" id="apiKey" type="password" placeholder="sk-... · AIza... · sk-ant-..." autocomplete="off" spellcheck="false">
           <button class="toggle" id="keyToggle" type="button">표시</button>
         </div>
         <div class="engine-state" id="engineState"><span class="dot"></span><span id="engineStateText">키를 입력하면 연결을 확인할 수 있습니다.</span></div>
@@ -1272,7 +1273,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       </div>
 
       <div class="note-box">
-        <b>키 보관 방식</b> — 키는 이 브라우저의 localStorage에만 저장되고 외부 서버로 전송되지 않습니다. 브라우저에서 OpenAI·Google API로 직접 호출합니다. 공용 PC에서는 저장하지 마세요.
+        <b>키 보관 방식</b> — 키는 이 브라우저의 localStorage에만 저장되고 외부 서버로 전송되지 않습니다. 브라우저에서 OpenAI·Google·Anthropic API로 직접 호출합니다. 공용 PC에서는 저장하지 마세요.
       </div>
     </div>
     <div class="modal-foot">
@@ -1787,8 +1788,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     persona: 'lead',
     settings: {
       provider: 'demo',
-      models: { openai: 'gpt-4o-mini', gemini: 'gemini-2.5-flash' },
-      keys: { openai: '', gemini: '' },
+      models: { openai: 'gpt-4o-mini', gemini: 'gemini-2.5-flash', claude: 'claude-sonnet-4-6' },
+      keys: { openai: '', gemini: '', claude: '' },
       intensity: 'standard',
       voiceURI: '',
       voiceRate: 0.98
@@ -1818,17 +1819,34 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       if (typeof d.jd === 'string') state.jd = d.jd.slice(0, MAX_TEXT);
       if (d.settings && typeof d.settings === 'object') {
         var s = d.settings;
-        if (s.provider === 'openai' || s.provider === 'gemini' || s.provider === 'demo') state.settings.provider = s.provider;
-        if (s.models) { if (s.models.openai) state.settings.models.openai = s.models.openai; if (s.models.gemini) state.settings.models.gemini = s.models.gemini; }
-        if (s.keys) { state.settings.keys.openai = s.keys.openai || ''; state.settings.keys.gemini = s.keys.gemini || ''; }
+        if (s.provider === 'openai' || s.provider === 'gemini' || s.provider === 'claude' || s.provider === 'demo') state.settings.provider = s.provider;
+        if (s.models) { ['openai', 'gemini', 'claude'].forEach(function (p) { if (s.models[p]) state.settings.models[p] = String(s.models[p]); }); }
+        if (s.keys) { ['openai', 'gemini', 'claude'].forEach(function (p) { state.settings.keys[p] = typeof s.keys[p] === 'string' ? s.keys[p] : ''; }); }
         if (s.intensity === 'hard' || s.intensity === 'standard') state.settings.intensity = s.intensity;
         if (typeof s.voiceURI === 'string') state.settings.voiceURI = s.voiceURI;
         if (typeof s.voiceRate === 'number') state.settings.voiceRate = clamp(s.voiceRate, 0.7, 1.2);
       }
       if (d.usage && typeof d.usage === 'object') {
-        ['fit', 'drill', 'sens', 'quick'].forEach(function (k) { if (typeof d.usage[k] === 'number') state.usage[k] = d.usage[k]; });
+        ['fit', 'drill', 'sens', 'quick'].forEach(function (k) {
+          var v = d.usage[k];
+          if (typeof v === 'number' && isFinite(v)) state.usage[k] = Math.max(0, Math.min(99999, Math.round(v)));
+        });
       }
-      if (Array.isArray(d.sessions)) state.sessions = d.sessions.slice(0, 20);
+      /* A hand-edited or half-written store must never crash the first render. */
+      if (Array.isArray(d.sessions)) {
+        state.sessions = d.sessions.filter(function (s) {
+          return s && typeof s === 'object' && typeof s.id === 'string';
+        }).slice(0, 20).map(function (s) {
+          return {
+            id: s.id,
+            at: typeof s.at === 'number' && isFinite(s.at) ? s.at : Date.now(),
+            type: typeof s.type === 'string' ? s.type : 'fit',
+            title: typeof s.title === 'string' ? s.title.slice(0, 80) : '세션',
+            meta: typeof s.meta === 'string' ? s.meta : '',
+            score: typeof s.score === 'number' && isFinite(s.score) ? s.score : null
+          };
+        });
+      }
       if (typeof d.role === 'string' && (d.role === 'auto' || ROLE_BY_ID[d.role])) state.role = d.role;
       if (typeof d.company === 'string') state.company = d.company.slice(0, 60);
       if (Array.isArray(d.cards)) {
@@ -1877,7 +1895,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   }
 
   function countUsage(kind) {
-    if (typeof state.usage[kind] !== 'number') state.usage[kind] = 0;
+    if (typeof state.usage[kind] !== 'number' || !isFinite(state.usage[kind])) state.usage[kind] = 0;
     state.usage[kind] += 1;
     saveState();
   }
@@ -2704,7 +2722,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var s = state.settings;
     if (s.provider === 'demo') return '내장 엔진';
     if (!s.keys[s.provider]) return '내장 엔진';
-    return (s.provider === 'openai' ? 'OpenAI · ' : 'Gemini · ') + s.models[s.provider];
+    var names = { openai: 'OpenAI', gemini: 'Gemini', claude: 'Claude' };
+    return (names[s.provider] || s.provider) + ' · ' + s.models[s.provider];
   }
 
   function parseJSON(text) {
@@ -2785,6 +2804,40 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       var parts = cand && cand.content && cand.content.parts;
       if (!parts) throw ApiError('Gemini 응답이 비어 있습니다.', 0);
       return parts.map(function (p) { return p.text || ''; }).join('');
+    }
+    if (provider === 'claude') {
+      /* Anthropic Messages API: system prompt goes in its own top-level field.
+         The extra header is what lets a browser call the API directly (CORS). */
+      var res3 = await fetchWithTimeout('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: s.models.claude,
+          max_tokens: Math.min(8192, maxTokens || 2048),
+          system: system,
+          messages: [{ role: 'user', content: user }]
+        })
+      }, 45000);
+      if (!res3.ok) {
+        var m3 = 'Claude 오류 ' + res3.status;
+        if (res3.status === 401) m3 = 'Claude 키가 유효하지 않습니다.';
+        else if (res3.status === 403) m3 = 'Claude 키 권한이 없거나 브라우저 호출이 차단되었습니다.';
+        else if (res3.status === 429) m3 = 'Claude 호출 한도에 걸렸습니다. 잠시 후 다시 시도하세요.';
+        else if (res3.status === 404) m3 = '선택한 Claude 모델을 사용할 수 없습니다.';
+        else if (res3.status === 400) m3 = 'Claude 요청이 거부되었습니다. 모델과 키를 확인하세요.';
+        throw ApiError(m3, res3.status);
+      }
+      var d3 = await res3.json();
+      var blocks = (d3 && d3.content) || [];
+      var text3 = blocks.filter(function (b) { return b && b.type === 'text' && typeof b.text === 'string'; })
+        .map(function (b) { return b.text; }).join('');
+      if (!text3) throw ApiError('Claude 응답이 비어 있습니다.', 0);
+      return text3;
     }
     throw ApiError('지원하지 않는 엔진', 0);
   }
@@ -3407,8 +3460,9 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   }
 
   function renderTrial() {
-    var used = Math.min(state.usage.fit, 3);
-    var left = Math.max(0, 3 - state.usage.fit);
+    var fitUsed = typeof state.usage.fit === 'number' && isFinite(state.usage.fit) ? Math.max(0, state.usage.fit) : 0;
+    var used = Math.min(fitUsed, 3);
+    var left = Math.max(0, 3 - fitUsed);
     $('#trialText').textContent = left > 0
       ? '무료 체험 ' + used + '/3 · 남은 분석 ' + left + '회 (내장 엔진 무제한)'
       : '무료 체험 3회 사용 · 내장 엔진은 계속 사용할 수 있습니다';
@@ -3418,13 +3472,15 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 
   function renderSessions() {
     var wrap = $('#sessionList');
+    if (!wrap) return;
+    state.sessions = state.sessions.filter(function (s) { return s && typeof s === 'object'; });
     if (!state.sessions.length) {
       wrap.innerHTML = '<div class="empty"><b>아직 세션이 없습니다</b>첫 분석을 마치면 여기에 기록이 남습니다. 기록은 이 브라우저에만 저장됩니다.</div>';
       return;
     }
     wrap.innerHTML = '<div class="session-list">' + state.sessions.map(function (s) {
       var icon = SESSION_ICON[s.type] || 'i-clock';
-      return '<button class="session" data-session="' + s.id + '">' +
+      return '<button class="session" data-session="' + esc(s.id) + '">' +
         '<span class="s-ico"><svg><use href="#' + icon + '"/></svg></span>' +
         '<span class="grow" style="min-width:0"><span class="s-title" style="display:block">' + esc(s.title) + '</span>' +
         '<span class="s-meta" style="display:block">' + esc(s.meta || '') + ' · ' + fmtDate(s.at) + '</span></span>' +
@@ -3575,61 +3631,228 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   /* ---------------------------------------------------------
      PDF / file upload
      --------------------------------------------------------- */
+  /* ---------------------------------------------------------
+     PDF text extraction (Korean-safe)
+     한글/HWP·워드 PDF는 글리프 ID → 유니코드 매핑을 pdf.js CMap 파일로 풀기 때문에
+     cMapUrl 을 넘기지 않으면 빈 텍스트가 나온다. cdnjs 의 pdf.js 패키지에는 cmaps 가
+     없어(403) npm 배포본(pdfjs-dist)을 쓰고, 실패하면 다른 미러로 한 번 더 시도한다.
+     --------------------------------------------------------- */
+  var PDFJS_VER = '3.11.174';
+  var PDFJS_LIBS = [
+    { js: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/' + PDFJS_VER + '/pdf.min.js',
+      worker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/' + PDFJS_VER + '/pdf.worker.min.js' },
+    { js: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@' + PDFJS_VER + '/build/pdf.min.js',
+      worker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@' + PDFJS_VER + '/build/pdf.worker.min.js' },
+    { js: 'https://unpkg.com/pdfjs-dist@' + PDFJS_VER + '/build/pdf.min.js',
+      worker: 'https://unpkg.com/pdfjs-dist@' + PDFJS_VER + '/build/pdf.worker.min.js' }
+  ];
+  var PDFJS_ASSET_BASES = [
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@' + PDFJS_VER + '/',
+    'https://unpkg.com/pdfjs-dist@' + PDFJS_VER + '/'
+  ];
+
   var pdfLibPromise = null;
+  function pdfLoadScript(url) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = url;
+      s.async = true;
+      s.onload = function () { resolve(); };
+      s.onerror = function () { reject(new Error('PDF_LIB_LOAD')); };
+      document.head.appendChild(s);
+    });
+  }
+
   function loadPdfJs() {
     if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
     if (pdfLibPromise) return pdfLibPromise;
-    pdfLibPromise = new Promise(function (resolve, reject) {
-      var s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-      s.async = true;
-      var timer = setTimeout(function () {
-        reject(new Error('PDF 라이브러리 로딩이 지연되고 있습니다. 텍스트를 붙여넣어 주세요.'));
-      }, 12000);
-      s.onload = function () {
-        clearTimeout(timer);
-        if (!window.pdfjsLib) { reject(new Error('PDF 라이브러리를 초기화하지 못했습니다.')); return; }
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        resolve(window.pdfjsLib);
-      };
-      s.onerror = function () {
-        clearTimeout(timer);
-        reject(new Error('PDF 라이브러리를 불러오지 못했습니다. 네트워크를 확인하거나 텍스트를 붙여넣어 주세요.'));
-      };
-      document.head.appendChild(s);
-    });
+    pdfLibPromise = (async function () {
+      for (var i = 0; i < PDFJS_LIBS.length; i++) {
+        var timer = null;
+        try {
+          await Promise.race([
+            pdfLoadScript(PDFJS_LIBS[i].js),
+            new Promise(function (_, reject) {
+              timer = setTimeout(function () { reject(new Error('PDF_LIB_TIMEOUT')); }, 10000);
+            })
+          ]);
+        } catch (e) {
+          /* try the next mirror */
+        } finally {
+          if (timer) clearTimeout(timer);
+        }
+        if (window.pdfjsLib) {
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_LIBS[i].worker;
+          return window.pdfjsLib;
+        }
+      }
+      throw new Error('PDF 라이브러리를 불러오지 못했습니다. 네트워크를 확인하거나 텍스트를 붙여넣어 주세요.');
+    })();
+    pdfLibPromise.catch(function () { pdfLibPromise = null; });
     return pdfLibPromise;
+  }
+
+  function pdfItemBox(it) {
+    var tr = (it && it.transform) || [1, 0, 0, 1, 0, 0];
+    var x = typeof tr[4] === 'number' ? tr[4] : 0;
+    var h = (typeof it.height === 'number' && it.height > 0) ? it.height : (Math.abs(tr[3]) || Math.abs(tr[0]) || 10);
+    var w = (typeof it.width === 'number' && it.width > 0) ? it.width : 0;
+    return { str: it.str || '', x: x, y: (typeof tr[5] === 'number' ? tr[5] : 0), h: h, endX: x + w };
+  }
+
+  function pdfAsciiWord(ch) { return /[0-9A-Za-z]/.test(ch); }
+
+  /* Join one visual line. Korean glyphs are often emitted as separate items with no
+     gap, so a space is added only when the horizontal gap exceeds a word space; Latin
+     runs that merely sit tight against each other still get a separator. */
+  function pdfLineText(items) {
+    var text = '';
+    var prev = null;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      var str = it.str;
+      if (!str) continue;
+      if (!str.trim()) {
+        if (text && !/\s$/.test(text)) text += ' ';
+        continue;
+      }
+      if (prev && text) {
+        var fs = Math.max(prev.h, it.h, 4);
+        var gap = it.x - prev.endX;
+        var space = gap > fs * 0.22;
+        if (!space && gap > fs * 0.1) {
+          var tail = prev.str.charAt(prev.str.length - 1);
+          var head = str.charAt(0);
+          space = (pdfAsciiWord(tail) && pdfAsciiWord(head)) || (/[,.;:!?)\]]/.test(tail) && pdfAsciiWord(head));
+        }
+        if (space && !/\s$/.test(text)) text += ' ';
+      }
+      text += str;
+      prev = it;
+    }
+    return text.replace(/[ \t\u00A0]+/g, ' ').trim();
+  }
+
+  /* Raw stream order can interleave columns, so rebuild the page by position:
+     lines top-to-bottom (Y descending in PDF space), items left-to-right (X ascending). */
+  function pdfPageLines(tc) {
+    var boxes = [];
+    ((tc && tc.items) || []).forEach(function (it) {
+      if (!it || typeof it.str !== 'string' || !it.str.length) return;
+      boxes.push(pdfItemBox(it));
+    });
+    boxes.sort(function (a, b) {
+      if (Math.abs(b.y - a.y) > 0.8) return b.y - a.y;
+      return a.x - b.x;
+    });
+    var lines = [], cur = null;
+    boxes.forEach(function (box) {
+      var tol = Math.max(3, box.h * 0.45);
+      if (cur && Math.abs(box.y - cur.y) <= Math.max(tol, cur.tol)) {
+        cur.items.push(box);
+      } else {
+        cur = { y: box.y, tol: tol, items: [box] };
+        lines.push(cur);
+      }
+    });
+    return lines.map(function (line) {
+      line.items.sort(function (a, b) { return (a.x - b.x) || (a.y - b.y); });
+      return pdfLineText(line.items);
+    }).filter(function (s) { return /[^\s]/.test(s); });
+  }
+
+  function pdfCompact(s) { return (s || '').replace(/\s/g, ''); }
+
+  /* A page can hold text operators but yield no text items when the font's CMap is
+     missing. That is not a scan, so the UI must not send the user off to OCR. */
+  async function pdfPageHasHiddenText(lib, page) {
+    try {
+      var ops = await page.getOperatorList();
+      var OPS = (lib && lib.OPS) || {};
+      for (var j = 0; j < ops.fnArray.length; j++) {
+        if (ops.fnArray[j] === OPS.showText || ops.fnArray[j] === OPS.showSpacedText) return true;
+      }
+    } catch (e) { /* ignore */ }
+    return false;
+  }
+
+  async function pdfReadWith(lib, buf, assetBase) {
+    var out = { text: '', raw: 0, usable: 0, broken: 0, hidden: 0, fatal: null };
+    var pdf = null;
+    try {
+      pdf = await lib.getDocument({
+        data: buf,
+        cMapUrl: assetBase + 'cmaps/',
+        cMapPacked: true,
+        standardFontDataUrl: assetBase + 'standard_fonts/'
+      }).promise;
+    } catch (err) {
+      out.fatal = err;
+      return out;
+    }
+    try {
+      var pages = Math.min(pdf.numPages, 24);
+      var chunks = [];
+      for (var i = 1; i <= pages; i++) {
+        try {
+          var page = await pdf.getPage(i);
+          var tc = await page.getTextContent();
+          var items = (tc && tc.items) || [];
+          out.raw += items.length;
+          for (var k = 0; k < items.length; k++) {
+            if (items[k] && typeof items[k].str === 'string' && items[k].str.trim()) out.usable++;
+          }
+          if (!items.length && out.hidden < 3) {
+            if (await pdfPageHasHiddenText(lib, page)) out.hidden++;
+          }
+          var lines = pdfPageLines(tc);
+          if (lines.length) chunks.push(lines.join('\n'));
+        } catch (pageErr) {
+          /* skip one undecodable page instead of losing the whole file */
+        }
+      }
+      out.text = chunks.join('\n\n').replace(/[ \t\u00A0]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+      out.broken = (out.text.match(/[\uFFFD\uE000-\uF8FF]/g) || []).length;
+    } finally {
+      try { await pdf.destroy(); } catch (e2) { /* ignore */ }
+    }
+    return out;
   }
 
   async function extractPdf(file) {
     var lib = await loadPdfJs();
     var buf = await file.arrayBuffer();
-    var pdf = await lib.getDocument({ data: buf }).promise;
-    var pages = Math.min(pdf.numPages, 24);
-    var chunks = [];
-    for (var i = 1; i <= pages; i++) {
-      var page = await pdf.getPage(i);
-      var tc = await page.getTextContent();
-      var lines = [], cur = [], curY = null;
-      tc.items.forEach(function (it) {
-        if (!it.str || !it.str.trim()) return;
-        var y = it.transform && typeof it.transform[5] === 'number' ? Math.round(it.transform[5]) : curY;
-        if (curY === null) curY = y;
-        if (y !== null && Math.abs(y - curY) > 2) {
-          if (cur.length) lines.push(cur.join(' ').replace(/\s{2,}/g, ' '));
-          cur = [];
-          curY = y;
-        }
-        cur.push(it.str);
-      });
-      if (cur.length) lines.push(cur.join(' ').replace(/\s{2,}/g, ' '));
-      chunks.push(lines.join('\n'));
+    var best = '', sawRaw = 0, sawUsable = 0, sawHidden = 0, broken = 0, fatal = null;
+
+    for (var i = 0; i < PDFJS_ASSET_BASES.length; i++) {
+      /* getDocument transfers the buffer to the worker, so hand each attempt its own copy */
+      var res = await pdfReadWith(lib, buf.slice(0), PDFJS_ASSET_BASES[i]);
+      if (res.fatal) { if (!pdfCompact(best)) fatal = res.fatal; break; }
+      sawRaw = Math.max(sawRaw, res.raw);
+      sawUsable = Math.max(sawUsable, res.usable);
+      sawHidden = Math.max(sawHidden, res.hidden);
+      if (pdfCompact(res.text).length > pdfCompact(best).length) { best = res.text; broken = res.broken; }
+      if (pdfCompact(best).length >= 20) break;
+      if (!res.raw && !res.hidden) break;   /* no text layer at all: another mirror cannot help */
     }
-    var text = chunks.join('\n').replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
-    if (text.replace(/\s/g, '').length < 80) {
+
+    if (fatal) {
+      if (fatal.name === 'PasswordException') {
+        throw new Error('암호가 걸린 PDF입니다. 암호를 풀거나 텍스트를 붙여넣어 주세요.');
+      }
+      throw new Error('PDF를 열지 못했습니다. 파일이 손상되었는지 확인하거나 텍스트를 붙여넣어 주세요.');
+    }
+    var compact = pdfCompact(best);
+    if (compact.length < 20) {
+      if (sawHidden || (sawRaw && !sawUsable)) {
+        throw new Error('PDF 글꼴 정보(CMap)를 해석하지 못해 글자를 읽지 못했습니다. 다른 뷰어에서 PDF로 다시 저장하거나 텍스트를 붙여넣어 주세요.');
+      }
       throw new Error('텍스트가 거의 없는 PDF입니다(스캔 이미지). OCR 후 텍스트를 붙여넣어 주세요.');
     }
-    return text;
+    if (broken / Math.max(compact.length, 1) > 0.02) {
+      throw new Error('PDF 글꼴 정보를 해석하지 못해 글자가 깨집니다. 다른 이름으로 저장하거나 텍스트를 붙여넣어 주세요.');
+    }
+    return best;
   }
 
   function bindUpload() {
@@ -4352,28 +4575,33 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   var SILENCE_MS = 1800;
   var MAX_QUESTIONS = 3;
   var SPEECH_ON = true;
-  var quick = null;
   var briefCtl = { data: null, idx: 0, playing: false, paused: false, timer: null, token: 0, played: false };
 
   function srCtor() { return window.SpeechRecognition || window.webkitSpeechRecognition; }
   function hasTTS() { return typeof window.speechSynthesis !== 'undefined' && typeof window.SpeechSynthesisUtterance !== 'undefined'; }
 
+  function isKoreanVoice(v) { return !!v && /^ko/i.test(String(v.lang || '')); }
+
+  /* Only Korean voices belong in this list. When the device reports none, fall back to
+     the system default voice instead of listing every locale (en-IN, fr-FR, …), which
+     would read Korean text with a foreign accent. */
   function fillVoices() {
     var sel = $('#voiceSelect');
     if (!sel) return;
     var voices = hasTTS() ? window.speechSynthesis.getVoices() : [];
-    var ko = voices.filter(function (v) { return /^ko/i.test(v.lang); });
-    var list = ko.length ? ko : voices;
-    sel.innerHTML = list.length
-      ? list.map(function (v) { return '<option value="' + esc(v.voiceURI) + '">' + esc(v.name + ' · ' + v.lang) + '</option>'; }).join('')
-      : '<option value="">기본 음성</option>';
-    if (state.settings.voiceURI) {
-      var found = list.some(function (v) { return v.voiceURI === state.settings.voiceURI; });
-      if (found) sel.value = state.settings.voiceURI;
-    }
+    var ko = voices.filter(isKoreanVoice);
+    var html = '<option value="">기기 기본 한국어 음성</option>';
+    ko.forEach(function (v) {
+      html += '<option value="' + esc(v.voiceURI) + '">' + esc(v.name + ' · ' + v.lang) + '</option>';
+    });
+    sel.innerHTML = html;
+    var saved = state.settings.voiceURI;
+    sel.value = ko.some(function (v) { return v.voiceURI === saved; }) ? saved : '';
     var status = $('#voiceStatus');
     if (status) {
-      status.textContent = hasTTS() ? (ko.length ? '한국어 음성 ' + ko.length + '개' : '한국어 음성 없음 · 기본 사용') : '음성 재생 미지원';
+      if (!hasTTS()) status.textContent = '음성 재생 미지원';
+      else if (ko.length) status.textContent = '한국어 음성 ' + ko.length + '개';
+      else status.textContent = '한국어 음성 미감지 · 기본 음성 사용';
     }
   }
 
@@ -4406,11 +4634,11 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   function pickVoice() {
     if (!hasTTS()) return null;
     var voices = window.speechSynthesis.getVoices();
-    if (state.settings.voiceURI) {
-      var v = voices.filter(function (x) { return x.voiceURI === state.settings.voiceURI; })[0];
-      if (v) return v;
-    }
-    return voices.filter(function (x) { return /^ko/i.test(x.lang); })[0] || null;
+    var saved = state.settings.voiceURI;
+    var v = saved ? voices.filter(function (x) { return x.voiceURI === saved; })[0] : null;
+    /* a stored non-Korean voice (from older builds) must not be used for Korean speech */
+    if (isKoreanVoice(v)) return v;
+    return voices.filter(isKoreanVoice)[0] || null;
   }
 
   function ttsSay(text, opts, after) {
@@ -5011,7 +5239,6 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       } catch (e) { /* fall through to timer */ }
     }
     briefCtl.timer = setTimeout(fin, briefEstimate(part.text) + 400);
-    briefCtl.timer = briefCtl.timer;
   }
   function briefPause() {
     if (!briefCtl.playing) return;
@@ -5081,6 +5308,13 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
           : state.cards.filter(function (c) { return c.type === f.id; }).length;
       return '<button class="chip' + (sheetFilter === f.id ? ' is-on' : '') + '" data-sheet-filter="' + f.id + '">' + esc(f.label) + (n ? ' ' + n : '') + '</button>';
     }).join('');
+    $$('[data-sheet-filter]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        sheetFilter = b.getAttribute('data-sheet-filter');
+        sheetIndex = 0;
+        renderSheet();
+      });
+    });
   }
 
   function sheetCardHtml(c) {
@@ -5171,9 +5405,6 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     if (copy) copy.addEventListener('click', function () { copyWithToast(sheetCopyText(current), '치트시트 카드를 복사했습니다.'); });
     $$('[data-sheet-dot]').forEach(function (b) {
       b.addEventListener('click', function () { sheetIndex = parseInt(b.getAttribute('data-sheet-dot'), 10) || 0; renderSheet(); });
-    });
-    $$('[data-sheet-filter]').forEach(function (b) {
-      b.addEventListener('click', function () { sheetFilter = b.getAttribute('data-sheet-filter'); sheetIndex = 0; renderSheet(); });
     });
     bindRenderedActions();
     attachSheetSwipe();
@@ -5319,6 +5550,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     gemini: [
       { id: 'gemini-2.5-flash', label: 'gemini-2.5-flash · 빠른 응답' },
       { id: 'gemini-2.5-pro', label: 'gemini-2.5-pro · 깊은 추론' }
+    ],
+    claude: [
+      { id: 'claude-sonnet-4-6', label: 'claude-sonnet-4-6 · 균형(권장)' },
+      { id: 'claude-sonnet-5-5', label: 'claude-sonnet-5-5 · 최신 Sonnet' },
+      { id: 'claude-haiku-5-5', label: 'claude-haiku-5-5 · 빠르고 저렴' },
+      { id: 'claude-opus-5-5', label: 'claude-opus-5-5 · 깊은 추론' }
     ]
   };
 
@@ -5337,13 +5574,15 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       $('#apiKey').value = s.keys[s.provider] || '';
       $('#apiKey').type = 'password';
       $('#keyToggle').textContent = '표시';
-      $('#apiKey').placeholder = s.provider === 'openai' ? 'sk-...' : 'AIza...';
+      $('#apiKey').placeholder = s.provider === 'openai' ? 'sk-...' : (s.provider === 'claude' ? 'sk-ant-...' : 'AIza...');
     }
     $('#providerNote').textContent = s.provider === 'demo'
       ? '키 없이 동작하는 규칙 기반 엔진입니다. 입력한 수치·키워드를 실제로 추출해 질문을 만들기 때문에, 데모라도 고정 문구가 아닙니다.'
       : (s.provider === 'openai'
         ? 'OpenAI API 키로 gpt-4o-mini 또는 gpt-4o를 호출합니다. 브라우저에서 직접 요청하므로 네트워크에 따라 CORS 차단이 있을 수 있습니다.'
-        : 'Google AI Studio 키로 Gemini를 호출합니다. 브라우저에서 직접 요청합니다.');
+        : (s.provider === 'claude'
+          ? 'Anthropic API 키로 Claude Messages API를 호출합니다. 브라우저 직접 호출용 헤더(anthropic-dangerous-direct-browser-access)를 함께 보냅니다.'
+          : 'Google AI Studio 키로 Gemini를 호출합니다. 브라우저에서 직접 요청합니다.'));
     setEngineState('', '키를 입력하면 연결을 확인할 수 있습니다.');
   }
 
@@ -5399,7 +5638,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       state.jd = '';
       state.sessions = [];
       state.usage = { fit: 0, drill: 0, sens: 0, quick: 0 };
-      state.settings = { provider: 'demo', models: { openai: 'gpt-4o-mini', gemini: 'gemini-2.5-flash' }, keys: { openai: '', gemini: '' }, intensity: 'standard', voiceURI: '', voiceRate: 0.98 };
+      state.settings = { provider: 'demo', models: { openai: 'gpt-4o-mini', gemini: 'gemini-2.5-flash', claude: 'claude-sonnet-4-6' }, keys: { openai: '', gemini: '', claude: '' }, intensity: 'standard', voiceURI: '', voiceRate: 0.98 };
       state.fit = null; state.drill = null; state.sens = null;
       state.persona = 'lead';
       state.cards = [];
@@ -5433,7 +5672,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     try {
       var raw = await AI.callLLM('JSON으로만 답하세요. 설명 없이 {"ok":true}만 출력합니다.', '연결 테스트', 60);
       var parsed = AI.parseJSON(raw);
-      if (parsed && parsed.ok) setEngineState('ok', '연결되었습니다. ' + (p === 'openai' ? 'OpenAI' : 'Gemini') + ' 키가 유효합니다.');
+      if (parsed && parsed.ok) setEngineState('ok', '연결되었습니다. ' + ({ openai: 'OpenAI', gemini: 'Gemini', claude: 'Claude' }[p] || p) + ' 키가 유효합니다.');
       else setEngineState('ok', '응답을 받았습니다. 저장하면 이 엔진으로 동작합니다.');
     } catch (err) {
       setEngineState('err', err.message || '연결에 실패했습니다.');
@@ -5583,7 +5822,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       tr.id = 'quickTranscript';
       tr.hidden = true;
       tr.innerHTML = '<div class="tt">답변 기록</div><div id="quickLines"></div>';
-      stage.insertBefore(tr, $('#quickFoot'));
+      stage.insertBefore(tr, stage.querySelector('.call-note') || null);
     }
     bindRenderedActions();
   }
