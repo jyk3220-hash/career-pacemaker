@@ -497,6 +497,165 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 .voice-note{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--warn);background:var(--warn-soft);border:1px solid rgba(228,180,94,.24);border-radius:9px;padding:9px 11px;line-height:1.55;margin-bottom:12px}
 .voice-note svg{width:14px;height:14px;flex:0 0 14px;margin-top:1px}
 
+/* ---------- role picker ---------- */
+.role-card{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--surface),#10161e);padding:14px}
+.role-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.role-current{font-size:13.5px;font-weight:700;color:var(--text)}
+.role-chips{display:flex;gap:7px;overflow-x:auto;padding:12px 0 2px;scrollbar-width:none}
+.role-chips::-webkit-scrollbar{display:none}
+.role-chips .chip{flex:0 0 auto;height:32px;font-size:12px}
+.role-foot{display:flex;gap:12px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.role-foot input{flex:0 1 240px;height:36px}
+.role-foot p{flex:1 1 260px;margin:0}
+.kpi-row{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line-soft);align-items:flex-start}
+.kpi-row .k{font-size:12.5px;font-weight:700;flex:0 0 138px}
+.kpi-row .p{font-size:12px;color:var(--muted);flex:1;line-height:1.6}
+.kpi-dot{width:7px;height:7px;border-radius:50%;margin-top:6px;flex:0 0 7px;background:var(--danger)}
+.kpi-dot.ok{background:var(--ok)}
+
+/* ---------- phone call UI ---------- */
+.call-shell{
+  border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px;
+  background:radial-gradient(640px 320px at 50% 0%,rgba(91,140,255,.10),transparent 65%),linear-gradient(180deg,#111821,#0B1116);
+  display:flex;flex-direction:column;gap:13px;position:relative;overflow:hidden;min-height:430px;width:100%;max-width:640px;margin:0 auto;
+}
+.call-top{display:flex;align-items:center;gap:10px}
+.call-live{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:750;letter-spacing:.12em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 9px;text-transform:uppercase}
+.call-live i{width:6px;height:6px;border-radius:50%;background:var(--faint)}
+.call-live.is-live{color:#9FE8C8;border-color:rgba(62,207,142,.32);background:var(--ok-soft)}
+.call-live.is-live i{background:var(--ok);box-shadow:0 0 0 3px rgba(62,207,142,.16);animation:liveBlink 1.6s ease-in-out infinite}
+@keyframes liveBlink{0%,100%{opacity:1}50%{opacity:.35}}
+.call-top .q-timer{margin-left:auto;font-size:32px}
+.call-count{font-family:var(--mono);font-size:11px;color:var(--faint);border:1px solid var(--line);border-radius:6px;padding:3px 7px;white-space:nowrap}
+.call-people{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:2px}
+.call-person{display:flex;flex-direction:column;align-items:center;gap:4px;flex:0 0 74px;opacity:.45;transition:opacity .2s}
+.call-person.is-active{opacity:1}
+.cp-avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;letter-spacing:.02em;background:linear-gradient(145deg,#24344b,#16202d);border:1px solid #2b3d54;color:#DCE7FF}
+.cp-avatar.coach{background:linear-gradient(145deg,#173a31,#12251f);border-color:#2b554e;color:#9FE8C8}
+.call-person.is-active .cp-avatar{box-shadow:0 0 0 4px rgba(91,140,255,.16);border-color:var(--accent-line)}
+.call-person.is-active[data-who="coach"] .cp-avatar{box-shadow:0 0 0 4px rgba(62,207,142,.16);border-color:rgba(62,207,142,.4)}
+.cp-name{font-size:10.5px;font-weight:700;color:var(--text-2)}
+.cp-state{font-size:9.5px;color:var(--faint);letter-spacing:.02em}
+.call-person.is-active .cp-state{color:var(--accent-2,#8AB4FF)}
+.call-person.is-active[data-who="coach"] .cp-state{color:#9FE8C8}
+.call-wave{display:flex;align-items:center;justify-content:center;gap:3px;height:32px;flex:0 0 92px}
+.call-wave i{display:block;width:3px;height:6px;border-radius:2px;background:#2b3d54;transition:background .2s}
+.call-wave.is-listening i{background:linear-gradient(180deg,#3ECF8E,#2AAE76);animation:wave 1.1s ease-in-out infinite}
+.call-wave.is-speaking i{background:linear-gradient(180deg,#5B8CFF,#4474E4);animation:wave 1.2s ease-in-out infinite}
+.call-wave i:nth-child(2){animation-delay:.08s}
+.call-wave i:nth-child(3){animation-delay:.16s}
+.call-wave i:nth-child(4){animation-delay:.24s}
+.call-wave i:nth-child(5){animation-delay:.32s}
+.call-wave i:nth-child(6){animation-delay:.4s}
+.call-wave i:nth-child(7){animation-delay:.48s}
+@keyframes wave{0%,100%{height:6px;opacity:.55}50%{height:26px;opacity:1}}
+.q-phase{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:700;text-align:center}
+.call-q{text-align:center;padding:2px 4px}
+.call-tag{display:inline-flex;margin-bottom:7px;font-size:10.5px;font-weight:700;color:#B9CDFF;background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:5px;padding:2px 7px}
+.call-shell .quick-hint{margin-top:8px}
+.call-controls{display:flex;align-items:flex-start;justify-content:center;gap:30px;padding:2px 0}
+.cc-btn{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);font-size:10px;font-weight:650;min-width:54px}
+.cc-btn svg{width:19px;height:19px;box-sizing:content-box;padding:11px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);color:var(--text-2);transition:all .15s}
+.cc-btn:hover svg{background:var(--surface-3);color:var(--text)}
+.cc-btn.is-on svg{background:var(--warn-soft);border-color:rgba(228,180,94,.35);color:var(--warn)}
+.cc-btn.danger svg{background:var(--danger-soft);border-color:rgba(240,113,120,.42);color:#FF8E94}
+.cc-btn.danger:hover svg{background:rgba(240,113,120,.2)}
+.cc-btn .ic-mic-off{display:none}
+.cc-btn.is-on .ic-mic-on{display:none}
+.cc-btn.is-on .ic-mic-off{display:block}
+.cc-main-wrap{position:relative;width:76px;height:76px;display:grid;place-items:center}
+.cc-main{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#5B8CFF,#4474E4);color:#fff;box-shadow:0 10px 26px rgba(70,110,220,.35)}
+.cc-main svg{width:26px;height:26px}
+.cc-main-wrap::before{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid var(--accent-line);opacity:0}
+.cc-main-wrap.is-listening::before{animation:pulse 1.9s ease-out infinite}
+.cc-main-wrap.is-listening .cc-main{background:linear-gradient(180deg,#3ECF8E,#2AAE76)}
+.cc-main-wrap.is-muted .cc-main{background:linear-gradient(180deg,#5a6472,#3f4854);box-shadow:none}
+.call-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.call-note{font-size:11px;color:var(--faint);text-align:center;margin:0;line-height:1.6}
+
+/* ---------- audio briefing ---------- */
+.brief{margin-top:14px;border:1px solid rgba(62,207,142,.26);border-radius:var(--radius);background:linear-gradient(180deg,rgba(23,58,49,.32),#0F161C);padding:16px}
+.brief-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brief-head h3{font-size:14px}
+.brief-status{font-size:10.5px;color:#9FE8C8;border:1px solid rgba(62,207,142,.3);border-radius:999px;padding:3px 8px;font-weight:700}
+.brief-controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.brief-parts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.brief-part{border:1px solid var(--line-soft);border-radius:10px;padding:10px 12px;background:rgba(255,255,255,.02);transition:border-color .2s,background .2s}
+.brief-part.is-playing{border-color:rgba(62,207,142,.42);background:rgba(62,207,142,.07)}
+.brief-part .bp-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.brief-part .bp-title{font-size:12px;font-weight:750;color:var(--text);flex:1;min-width:0}
+.brief-part .bp-play{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);color:var(--text-2);flex:0 0 28px}
+.brief-part .bp-play:hover{color:var(--text);border-color:rgba(62,207,142,.4)}
+.brief-part .bp-play svg{width:13px;height:13px}
+.brief-part .bp-text{font-size:12.5px;color:var(--text-2);line-height:1.72}
+
+/* ---------- cheat sheet ---------- */
+.sheet-toolbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}
+.sheet-company{display:flex;flex-direction:column;gap:4px;flex:0 1 210px}
+.sheet-company input{height:36px}
+.sheet-filters{display:flex;gap:6px;flex-wrap:wrap;flex:1 1 auto}
+.sheet-filters .chip{height:32px;font-size:12px}
+.sheet-stage{position:relative;overflow:hidden;padding:2px}
+@media(min-width:900px){.sheet-stage{max-width:760px;margin:0 auto}.sheet-nav{max-width:760px;margin-left:auto;margin-right:auto}}
+.sheet-stack{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.sheet-card{border:1px solid var(--line);border-radius:var(--radius-lg);background:linear-gradient(180deg,#121A24,#0D131A);padding:18px;box-shadow:var(--shadow);transition:transform .18s ease,opacity .18s ease}
+.sheet-card.is-dragging{transition:none}
+.sheet-card.swipe-left{transform:translateX(-58px) rotate(-1.4deg);opacity:.25}
+.sheet-card.swipe-right{transform:translateX(58px) rotate(1.4deg);opacity:.25}
+.sc-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.sc-type{font-size:10.5px;font-weight:750;letter-spacing:.05em;color:#B9CDFF;background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:5px;padding:2px 7px}
+.sc-company{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:2px 7px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc-score{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.sc-pin{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:4px 9px}
+.sc-pin svg{width:12px;height:12px}
+.sc-pin.is-on{color:var(--warn);border-color:rgba(228,180,94,.4);background:var(--warn-soft)}
+.sc-title{font-size:18px;font-weight:750;line-height:1.42;letter-spacing:-.02em}
+.sc-metrics{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.sc-metric{font-family:var(--mono);font-size:11.5px;color:#DCE7FF;background:rgba(91,140,255,.1);border:1px solid var(--accent-line);border-radius:6px;padding:3px 8px}
+.sc-sec{margin-top:14px}
+.sc-sec h5{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:750;margin-bottom:5px}
+.sc-script .line{padding:7px 0;border-top:1px solid var(--line-soft);font-size:13px;color:var(--text-2);line-height:1.65}
+.sc-script .line b{display:block;font-size:10.5px;color:#8AB4FF;font-weight:700;margin-bottom:2px}
+.sc-defense{padding:8px 10px;border-left:2px solid rgba(240,113,120,.7);background:var(--danger-soft);border-radius:0 8px 8px 0;margin-bottom:7px}
+.sc-defense .q{font-size:12px;font-weight:700;color:#F5A3A7;display:block;margin-bottom:2px}
+.sc-defense .a{font-size:12.5px;color:var(--text-2);line-height:1.6}
+.sc-note{font-size:12.5px;color:var(--text-2);line-height:1.68}
+.sc-avoid{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.sc-foot{display:flex;align-items:center;gap:8px;margin-top:15px;flex-wrap:wrap}
+.sc-updated{font-size:10.5px;color:var(--faint);margin-left:auto}
+.sheet-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px}
+.sheet-arrow{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--text-2);flex:0 0 42px}
+.sheet-arrow:hover{border-color:var(--accent-line);color:var(--text)}
+.sheet-arrow[disabled]{opacity:.3;pointer-events:none}
+.sheet-arrow svg{width:18px;height:18px}
+.sheet-dots{display:flex;gap:5px;align-items:center;max-width:220px;flex-wrap:wrap;justify-content:center}
+.sheet-dot{width:6px;height:6px;border-radius:50%;background:#2b3d54;border:0;padding:0}
+.sheet-dot.is-on{background:var(--accent);width:16px;border-radius:3px}
+.sheet-tip{font-size:11.5px;color:var(--faint);text-align:center;margin-top:10px;line-height:1.6}
+.sheet-empty{border:1px dashed var(--line);border-radius:var(--radius-lg);padding:34px 20px;text-align:center;color:var(--muted);background:rgba(255,255,255,.015)}
+.sheet-empty b{display:block;color:var(--text);font-size:15px;margin-bottom:6px}
+.sheet-empty .btn{margin-top:14px}
+@media(max-width:720px){
+  .call-shell{padding:14px 12px;min-height:0;gap:11px}
+  .call-top .q-timer{font-size:28px}
+  .call-people{gap:8px}
+  .call-wave{flex-basis:64px}
+  .quick-q{font-size:16.5px}
+  .call-controls{gap:20px}
+  .sheet-card{padding:15px}
+  .sc-title{font-size:16.5px}
+  .tabbar .tab{font-size:9px;gap:2px;padding:6px 0}
+  .tabbar .tab svg{width:18px;height:18px}
+  .sheet-company{flex:1 1 100%}
+  .sheet-filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .sheet-filters::-webkit-scrollbar{display:none}
+  .sheet-filters .chip{flex:0 0 auto}
+}
+@media(max-width:400px){
+  .call-wave{display:none}
+  .tab{font-size:8.5px}
+}
+
 /* ---------- modals ---------- */
 .modal-backdrop{
   position:fixed;inset:0;z-index:100;background:rgba(4,7,10,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
@@ -694,6 +853,15 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   <symbol id="i-quote" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13c0-4.4 2.2-7 6-8v3c-1.9.6-2.8 1.9-2.9 3.5H10V19H4v-6ZM14 13c0-4.4 2.2-7 6-8v3c-1.9.6-2.8 1.9-2.9 3.5H20V19h-6v-6Z"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-13.7-5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 13.7 5l2.3-2"/><path d="M20 20v-4h-4"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5H6.5A2.5 2.5 0 0 0 4 21V5.5Z"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/><path d="M8.5 7.5h7M8.5 11h5"/></symbol>
+  <symbol id="i-mic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5.5A3 3 0 0 1 15 6v4"/><path d="M9 9v2.5a3 3 0 0 0 4.6 2.5"/><path d="M5.5 11.5a6.5 6.5 0 0 0 10.2 5.3"/><path d="M12 18v3M8.5 21h7"/><path d="M4 4l16 16"/></symbol>
+  <symbol id="i-phone-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5c4.5-3 11.5-3 16 0v3.2l-3.6.6-1.2-2.4c-2-.4-4.4-.4-6.4 0l-1.2 2.4-3.6-.6V9.5Z"/><path d="M12 16v5"/><path d="M9.5 18.5 12 21l2.5-2.5"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5c4.5-3 11.5-3 16 0v3.2l-3.6.6-1.2-2.4c-2-.4-4.4-.4-6.4 0l-1.2 2.4-3.6-.6V9.5Z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1.4"/><rect x="13.5" y="5" width="4" height="14" rx="1.4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-.8 5.2 3.3 3.3H5.5l3.3-3.3L9 4Z"/><path d="M12 12.5V21"/></symbol>
+  <symbol id="i-chev-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 6-6 6 6 6"/></symbol>
+  <symbol id="i-chev-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="3" y="13" width="4" height="6" rx="1.6"/><rect x="17" y="13" width="4" height="6" rx="1.6"/><path d="M19 19v.5a2.5 2.5 0 0 1-2.5 2.5H13"/></symbol>
 </svg>
 
 <div class="app" id="app">
@@ -711,7 +879,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     <button class="nav-item" data-go="fit"><svg class="ico"><use href="#i-target"/></svg>적합도 · 교차검증<span class="kbd">2</span></button>
     <button class="nav-item" data-go="drill"><svg class="ico"><use href="#i-layers"/></svg>3단 꼬리질문<span class="kbd">3</span></button>
     <button class="nav-item" data-go="sensitive"><svg class="ico"><use href="#i-shield"/></svg>민감 질문 방어<span class="kbd">4</span></button>
-    <button class="nav-item" data-go="quick"><svg class="ico"><use href="#i-mic"/></svg>5분 퀵 모드<span class="kbd">5</span></button>
+    <button class="nav-item" data-go="quick"><svg class="ico"><use href="#i-mic"/></svg>5분 통화 면접<span class="kbd">5</span></button>
+    <button class="nav-item" data-go="sheet"><svg class="ico"><use href="#i-book"/></svg>치트시트<span class="kbd">6</span></button>
     <div class="nav-label">Account</div>
     <button class="nav-item" data-open="settings"><svg class="ico"><use href="#i-settings"/></svg>AI 엔진 설정</button>
     <button class="nav-item" data-open="pricing"><svg class="ico"><use href="#i-card"/></svg>요금제 안내</button>
@@ -810,6 +979,21 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
           </div>
         </div>
 
+        <div class="section-title">지원 직무 · KPI</div>
+        <div class="role-card" id="roleCard">
+          <div class="role-head">
+            <span class="badge badge-accent" id="roleModeBadge">자동 감지</span>
+            <b class="role-current" id="roleCurrent">JD를 입력하면 직무를 자동으로 감지합니다</b>
+            <span class="spacer"></span>
+            <button class="btn btn-sm btn-ghost" id="roleAuto" hidden>자동 감지로</button>
+          </div>
+          <div class="role-chips" id="roleChips"></div>
+          <div class="role-foot">
+            <input class="field" id="companyInput" placeholder="지원 회사 (선택) · 치트시트 카드 태그" maxlength="30" autocomplete="off">
+            <p class="tiny faint" id="roleNote">직무를 고르면 KPI와 단골 압박 질문이 적합도 분석 · 5분 통화 · LLM 프롬프트에 함께 반영됩니다.</p>
+          </div>
+        </div>
+
         <div class="section-title">면접관 페르소나</div>
         <div class="persona-grid" id="personaGrid"></div>
 
@@ -830,7 +1014,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         <div class="feature-grid">
           <button class="feature" data-go="fit">
             <span class="f-ico"><svg><use href="#i-target"/></svg></span>
-            <span><h4>JD × 경력기술서 교차 검증</h4><p>요구 역량별 근거 확인, Gap과 보완 전략, 예상 반박 포인트까지.</p></span>
+            <span><h4>JD × 경력기술서 교차 검증</h4><p>요구 역량별 근거 확인, 직무 KPI 커버리지, Gap과 보완 전략까지.</p></span>
             <svg class="f-arrow" style="width:15px;height:15px"><use href="#i-arrow"/></svg>
           </button>
           <button class="feature" data-go="drill">
@@ -845,7 +1029,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
           </button>
           <button class="feature" data-go="quick">
             <span class="f-ico"><svg><use href="#i-mic"/></svg></span>
-            <span><h4>출퇴근길 5분 퀵 모드</h4><p>음성으로 1–2개 질문. 걷거나 운전하면서 압박 질문에 답합니다.</p></span>
+            <span><h4>출퇴근길 5분 통화 면접</h4><p>전화처럼 질문을 듣고 답하면, 침묵을 감지해 다음 질문으로 넘어갑니다. 끝나면 3단 오디오 브리핑.</p></span>
+            <svg class="f-arrow" style="width:15px;height:15px"><use href="#i-arrow"/></svg>
+          </button>
+          <button class="feature" data-go="sheet">
+            <span class="f-ico"><svg><use href="#i-book"/></svg></span>
+            <span><h4>면접장 직전 치트시트</h4><p>세션에서 만든 합격 스크립트를 스와이프 카드로. 회사·직무 태그와 핵심 수치까지.</p></span>
             <svg class="f-arrow" style="width:15px;height:15px"><use href="#i-arrow"/></svg>
           </button>
         </div>
@@ -921,14 +1110,14 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         </div>
       </section>
 
-      <!-- ===================== QUICK ===================== -->
+      <!-- ===================== QUICK CALL ===================== -->
       <section class="view" id="view-quick" data-view="quick">
         <div class="view-head">
           <button class="icon-btn" data-back aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
           <div class="head-text">
-            <div class="eyebrow">04 · Five Minute Drill</div>
-            <h2 class="view-title">출퇴근길 5분 퀵 모드</h2>
-            <p class="view-sub">이어폰만 있으면 됩니다. 질문을 듣고 말로 답하면, 면접관 시선으로 한 줄 피드백을 돌려줍니다.</p>
+            <div class="eyebrow">04 · Five Minute Call</div>
+            <h2 class="view-title">출퇴근길 5분 통화 면접</h2>
+            <p class="view-sub">전화를 받듯 질문을 듣고 말로 답하세요. 말이 끝나면 약 1.8초 뒤 자동으로 넘어가고, 통화가 끝나면 3단 오디오 브리핑이 이어집니다.</p>
           </div>
           <div class="head-actions"><span class="badge badge-neutral" id="quickEngine">내장 엔진</span></div>
         </div>
@@ -936,23 +1125,52 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
           <svg><use href="#i-alert"/></svg>
           <span>이 브라우저에서는 음성 인식(Web Speech)을 사용할 수 없습니다. 질문은 음성으로 재생되고, 답변은 텍스트로 입력할 수 있습니다.</span>
         </div>
-        <div class="quick-stage" id="quickStage">
-          <div class="q-timer" id="quickTimer">05:00</div>
+        <div class="call-shell" id="quickStage">
+          <div class="call-top">
+            <span class="call-live" id="callLive"><i></i><span>READY</span></span>
+            <div class="q-timer" id="quickTimer">05:00</div>
+            <span class="call-count" id="quickCount">0 / 3</span>
+          </div>
+          <div class="call-people">
+            <div class="call-person" id="speakerInterviewer" data-who="interviewer">
+              <span class="cp-avatar" id="spkIvAvatar">TL</span>
+              <span class="cp-name">면접관</span>
+              <span class="cp-state" id="spkIvState">대기</span>
+            </div>
+            <div class="call-wave" id="callWave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="call-person" id="speakerCoach" data-who="coach">
+              <span class="cp-avatar coach">C</span>
+              <span class="cp-name">코치</span>
+              <span class="cp-state" id="spkCoachState">대기</span>
+            </div>
+          </div>
           <div class="q-phase" id="quickPhase">READY</div>
-          <div class="orb" id="quickOrb">
-            <button id="quickMicBtn" aria-label="세션 시작"><svg id="quickMicIcon"><use href="#i-mic"/></svg></button>
+          <div class="call-q">
+            <div class="call-tag" id="quickTag">직무 KPI 압박</div>
+            <div class="quick-q" id="quickQ">아직 질문이 없습니다.<br>통화를 시작하면 공고와 경력기술서에서 뽑은 압박 질문이 나옵니다.</div>
+            <div class="quick-hint" id="quickHint">5분 · 3개 질문 · 답변 후 자동으로 다음 질문</div>
           </div>
-          <div class="quick-q" id="quickQ">아직 질문이 없습니다.<br>세션을 시작하면 공고와 경력기술서에서 뽑은 압박 질문이 나옵니다.</div>
-          <div class="quick-hint" id="quickHint">5분 · 2개 질문 · 답변 후 자동으로 다음 질문</div>
+          <div class="transcript" id="quickTranscript" hidden>
+            <div class="tt">통화 기록</div>
+            <div id="quickLines"></div>
+          </div>
           <div class="quick-input" id="quickInputWrap" hidden>
-            <input class="field" id="quickInput" placeholder="답변 입력 · 음성 대체 가능" autocomplete="off">
-            <button class="btn btn-sm btn-primary" id="quickSend"><svg><use href="#i-send"/></svg></button>
+            <input class="field" id="quickInput" placeholder="답변 입력 · 음성 대신 텍스트로" autocomplete="off">
+            <button class="btn btn-sm btn-primary" id="quickSend" aria-label="답변 전송"><svg><use href="#i-send"/></svg></button>
           </div>
-          <div class="quick-foot">
-            <button class="btn btn-ghost" id="quickStartBtn">세션 시작</button>
+          <div class="call-controls">
+            <button class="cc-btn" id="quickMuteBtn" aria-label="음소거" title="음소거" hidden><svg class="ic-mic-on"><use href="#i-mic"/></svg><svg class="ic-mic-off"><use href="#i-mic-off"/></svg><span id="quickMuteLabel">음소거</span></button>
+            <div class="cc-main-wrap" id="quickOrb">
+              <button class="cc-main" id="quickMicBtn" aria-label="통화 시작"><svg id="quickMicIcon"><use href="#i-mic"/></svg></button>
+            </div>
+            <button class="cc-btn danger" id="quickEndBtn" aria-label="통화 종료" title="통화 종료" hidden disabled><svg><use href="#i-phone-down"/></svg><span>종료</span></button>
+          </div>
+          <div class="call-actions">
+            <button class="btn btn-primary btn-lg" id="quickStartBtn"><svg><use href="#i-phone"/></svg>통화 시작</button>
             <button class="btn btn-ghost" id="quickNextBtn" hidden>다음 질문</button>
-            <button class="btn btn-ghost" id="quickEndBtn" disabled hidden>종료</button>
+            <button class="btn btn-ghost btn-sm" id="quickReplayQ" hidden><svg><use href="#i-refresh"/></svg>질문 다시 듣기</button>
           </div>
+          <p class="call-note">말을 마치면 약 1.8초 뒤 자동 전송됩니다. <button class="link-btn" id="quickFallbackBtn" type="button">텍스트로 답변</button> · 마이크 권한이 없어도 진행할 수 있습니다.</p>
         </div>
         <div id="quickSummary"></div>
         <div class="card" style="margin-top:14px">
@@ -966,8 +1184,37 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
             <input type="range" id="voiceRate" min="0.7" max="1.2" step="0.05" value="0.98">
             <span class="tiny faint" id="voiceRateVal">0.98×</span>
           </div>
-          <p class="tiny faint" style="margin-top:8px;line-height:1.65">Chrome · Edge · Samsung Internet에서 동작합니다. iOS Safari는 음성 재생은 되지만 음성 인식이 제한될 수 있습니다.</p>
+          <p class="tiny faint" style="margin-top:8px;line-height:1.65">면접관은 또렷한 목소리, 코치 브리핑은 조금 느리고 낮은 목소리로 재생됩니다. Chrome · Edge · Samsung Internet에서 동작하며, iOS Safari는 음성 인식이 제한될 수 있습니다.</p>
         </div>
+      </section>
+
+      <!-- ===================== CHEAT SHEET ===================== -->
+      <section class="view" id="view-sheet" data-view="sheet">
+        <div class="view-head">
+          <button class="icon-btn" data-back aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
+          <div class="head-text">
+            <div class="eyebrow">05 · Cheat Sheet</div>
+            <h2 class="view-title">면접장 직전 치트시트</h2>
+            <p class="view-sub">완료한 세션이 합격 스크립트 카드로 자동 정리됩니다. 회사·직무 태그, 핵심 수치, 방어 논리까지 한 장에.</p>
+          </div>
+          <div class="head-actions"><span class="badge badge-neutral" id="sheetCount">0장</span></div>
+        </div>
+        <div class="sheet-toolbar">
+          <div class="sheet-company">
+            <label class="tiny faint" for="sheetCompany">지원 회사</label>
+            <input class="field" id="sheetCompany" placeholder="예) OO테크" maxlength="30" autocomplete="off">
+          </div>
+          <div class="sheet-filters" id="sheetFilters"></div>
+        </div>
+        <div class="sheet-stage" id="sheetStage">
+          <div class="sheet-stack" id="sheetStack"></div>
+        </div>
+        <div class="sheet-nav" id="sheetNav" hidden>
+          <button class="sheet-arrow" id="sheetPrev" aria-label="이전 카드"><svg><use href="#i-chev-left"/></svg></button>
+          <div class="sheet-dots" id="sheetDots"></div>
+          <button class="sheet-arrow" id="sheetNext" aria-label="다음 카드"><svg><use href="#i-chev-right"/></svg></button>
+        </div>
+        <p class="sheet-tip">좌우로 밀거나 화살표로 넘깁니다. 핀한 카드는 맨 앞에 고정되고, 같은 세션을 다시 하면 카드가 최신 내용으로 업데이트됩니다.</p>
       </section>
     </main>
 
@@ -977,7 +1224,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       <button class="tab" data-go="fit"><svg><use href="#i-target"/></svg>적합도</button>
       <button class="tab" data-go="drill"><svg><use href="#i-layers"/></svg>꼬리질문</button>
       <button class="tab" data-go="sensitive"><svg><use href="#i-shield"/></svg>민감질문</button>
-      <button class="tab" data-go="quick"><svg><use href="#i-mic"/></svg>5분 퀵</button>
+      <button class="tab" data-go="quick"><svg><use href="#i-mic"/></svg>5분 통화</button>
+      <button class="tab" data-go="sheet"><svg><use href="#i-book"/></svg>치트시트</button>
     </nav>
   </div>
 </div>
@@ -1194,6 +1442,208 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     { id: 'sales', label: '영업·BD', terms: ['BD', '제휴', '고객사', '파트너십', '견적', '입찰', '매출', '클레임', '영업'] }
   ];
 
+  /* ---------------------------------------------------------
+     role KPI · 압박 질문 DB
+     직무별로 면접관이 반드시 확인하는 KPI와 단골 압박 패턴.
+     --------------------------------------------------------- */
+  var ROLES = [
+    {
+      id: 'growth', label: '그로스·퍼포먼스 마케터', short: '그로스',
+      tagline: '예산 대비 효율과 리텐션으로 증명합니다.',
+      terms: ['그로스', '퍼포먼스', 'CAC', 'ROAS', 'CPA', 'LTV', '퍼널', '전환율', '리텐션', '광고', '캠페인', 'A/B', 'AB테스트', '코호트', 'DAU', 'MAU', '앱 설치', '유입', 'CRM', 'ASO', 'SEO', '리워드', '마케팅'],
+      kpis: [
+        { k: 'CAC · 채널 효율', terms: ['CAC', 'CPA', 'ROAS', '퍼포먼스', '광고'], probe: '채널별 CAC와 ROAS를 기준선 대비 얼마나 개선했고, 예산 재배분은 어떤 지표로 결정했습니까?', why: '예산 배분의 근거' },
+        { k: 'LTV / CAC', terms: ['LTV', 'CAC', 'ARPU', '결제'], probe: 'LTV와 CAC의 비율은 얼마이며, 어떤 코호트와 기간으로 계산했습니까?', why: '성장의 지속 가능성' },
+        { k: 'D30 리텐션', terms: ['리텐션', '재방문', '유지율', '코호트'], probe: 'D30 리텐션을 올렸다면 온보딩 개선과 코호트 구성 변화 중 무엇이 원인이었는지 어떻게 분리했습니까?', why: '제품 사용의 질' },
+        { k: '퍼널 전환율', terms: ['퍼널', '전환율', '가입', '설치', '구매'], probe: '설치→가입→첫 구매 퍼널에서 가장 크게 개선한 구간과 그 근거 수치를 말씀해 주세요.', why: '성장 병목의 위치' },
+        { k: '오가닉 비중', terms: ['오가닉', 'SEO', 'ASO', '콘텐츠', '바이럴'], probe: '유료 의존도를 낮췄다면 오가닉 유입의 질과 전환율을 어떻게 검증했습니까?', why: '비용 구조의 개선' }
+      ],
+      pressures: [
+        { q: 'CAC가 개선됐다면 채널 믹스 변화 때문인지, 소재·입찰 최적화 때문인지 분리해서 설명해 주세요.', intent: '성과의 원인을 본인 통제 범위로 좁혀 설명하는지 봅니다.' },
+        { q: 'ROAS는 좋아졌는데 LTV/CAC는 나빠진 분기가 있었습니까? 그때 예산을 어떻게 재배분했습니까?', intent: '단기 효율과 장기 가치의 트레이드오프를 이해하는지 봅니다.' },
+        { q: '분기 예산이 30% 줄면 어떤 채널부터 자르고, 그 근거로 어떤 지표를 보시겠습니까?', intent: '우선순위 판단과 손실 회피 기준을 확인합니다.' },
+        { q: '리텐션 상승이 프로모션 효과였을 가능성은 없었습니까? 어떻게 통제했습니까?', intent: '인과와 상관을 구분하는지 봅니다.' }
+      ]
+    },
+    {
+      id: 'product', label: '프로덕트 기획·PM/PO', short: 'PM/PO',
+      tagline: '무엇을 만들지보다 무엇을 버렸는지로 증명합니다.',
+      terms: ['프로덕트', 'PM', 'PO', '요구사항', '스프린트', '백로그', '릴리스', '로드맵', '기능', 'UX', 'UI', '프로토타입', 'QA', '서비스 기획'],
+      kpis: [
+        { k: '활성 사용자 (DAU/MAU)', terms: ['DAU', 'MAU', '활성', '사용자'], probe: 'DAU/MAU를 올린 기능과 그 기능이 실제로 남긴 행동 변화를 숫자로 설명해 주세요.', why: '제품 사용의 깊이' },
+        { k: '기능 채택률', terms: ['채택', '사용률', '도입', '온보딩'], probe: '출시한 기능의 채택률은 얼마였고, 낮았던 기능은 왜 낮았습니까?', why: '기획 가설의 적중률' },
+        { k: 'D7 · D30 리텐션', terms: ['리텐션', '재방문', '유지율'], probe: '리텐션 개선이 특정 코호트에만 나타난 것은 아닌지 어떻게 확인했습니까?', why: '지속 가능한 성장' },
+        { k: '퍼널 전환율', terms: ['퍼널', '전환율', '가입', '결제'], probe: '퍼널 개선 실험의 성공 기준과 표본 크기를 미리 정했습니까? 결과는 어땠습니까?', why: '실험 설계의 엄밀성' },
+        { k: '리드타임 · 릴리스 주기', terms: ['리드타임', '릴리스', '스프린트', '배포', '개발'], probe: '기획에서 릴리스까지 걸린 시간을 줄였다면, 무엇을 줄였고 품질은 어떻게 지켰습니까?', why: '실행 속도와 품질의 균형' }
+      ],
+      pressures: [
+        { q: '그 기능이 성과를 냈다고 하셨는데, 출시 시점의 계절성과 프로모션 효과를 어떻게 통제했습니까?', intent: '인과 추론의 엄밀성을 확인합니다.' },
+        { q: '우선순위를 정할 때 어떤 요구사항을 버렸는지 말씀해 주세요. 버린 이유가 더 중요합니다.', intent: '의사결정 기준과 이해관계 조정 능력을 봅니다.' },
+        { q: '개발팀이 일정을 거부했을 때 범위를 줄였습니까, 기준을 바꿨습니까? 실제 사례를 말씀해 주세요.', intent: '협상과 트레이드오프 방식을 확인합니다.' },
+        { q: '채택률이 낮았던 기능을 살린 경험이 있습니까? 어떤 가설이 틀렸고 무엇을 바꿨습니까?', intent: '실패에서 학습하는 방식을 봅니다.' }
+      ]
+    },
+    {
+      id: 'tech', label: '백엔드·데이터 엔지니어', short: '백엔드/데이터',
+      tagline: '수치로 말하는 안정성과 처리량이 기준입니다.',
+      terms: ['백엔드', '서버', 'API', 'MSA', '쿠버네티스', 'Kubernetes', '도커', 'DB', '데이터베이스', 'SQL', 'Python', '파이썬', 'ETL', '파이프라인', '가용성', '트래픽', 'TPS', '지연', '장애', '데이터 분석', '모델링', 'Spark', 'Airflow'],
+      kpis: [
+        { k: 'p95 응답시간', terms: ['응답시간', '지연', 'latency', 'p95', '성능'], probe: '응답시간을 줄였다면 병목이 DB였는지 애플리케이션이었는지 어떻게 특정했습니까?', why: '성능 개선의 원인 규명' },
+        { k: '가용성 · MTTR', terms: ['가용성', 'SLA', '장애', 'MTTR', '모니터링'], probe: '장애 후 재발 방지가 실제로 동작했는지 어떻게 확인했습니까? 문서만으로는 부족합니다.', why: '운영 성숙도' },
+        { k: '배포 빈도 · 리드타임', terms: ['배포', 'CI', 'CD', '리드타임', '자동화'], probe: '배포 빈도를 높이면서 실패율을 낮춘 근거를 수치로 말씀해 주세요.', why: '개발 생산성' },
+        { k: '처리량 · TPS', terms: ['TPS', '처리량', '트래픽', '동시접속', '배치'], probe: '처리량이 몇 배 늘었고, 그때 어떤 자원이 먼저 한계에 닿았습니까?', why: '확장 설계의 이해' },
+        { k: '데이터 정합성 · 파이프라인 지연', terms: ['정합성', '데이터 품질', 'ETL', '파이프라인', '스키마'], probe: '파이프라인 지연과 정합성이 충돌했을 때 무엇을 먼저 포기했고, 그 판단 근거는 무엇입니까?', why: '데이터 신뢰성 판단' }
+      ],
+      pressures: [
+        { q: '본인이 만든 구조를 다른 팀이 그대로 쓸 수 있습니까? 문서화와 표준화의 실제 결과를 말씀해 주세요.', intent: '재현 가능성과 조직 확산을 확인합니다.' },
+        { q: '성능 개선 수치가 트래픽 감소나 인프라 증설 때문은 아니었습니까? 어떻게 분리했습니까?', intent: '개선의 실제 기여도를 검증합니다.' },
+        { q: '장애를 겪고 나서 같은 장애가 다시 나지 않았다는 근거는 무엇입니까?', intent: '사후 분석과 재발 방지의 실행력을 봅니다.' },
+        { q: '데이터 파이프라인의 지연을 줄였다면, 그 대신 정합성이나 비용에서 무엇을 잃었습니까?', intent: '트레이드오프를 인식하는지 봅니다.' }
+      ]
+    },
+    {
+      id: 'b2b', label: 'B2B 세일즈·BD', short: 'B2B 세일즈/BD',
+      tagline: '파이프라인과 수주율, 계약의 질로 증명합니다.',
+      terms: ['B2B', '세일즈', '영업', 'BD', '파이프라인', '수주', 'ARR', 'MRR', 'ACV', '계약', '제안', 'RFP', '입찰', '파트너', '고객사', '제휴', '영업이익'],
+      kpis: [
+        { k: '신규 ARR · MRR', terms: ['ARR', 'MRR', '매출', '수주'], probe: '이번 목표 달성이 신규 고객인지 기존 고객 확장인지 나눠서 말씀해 주세요.', why: '성장의 질' },
+        { k: '파이프라인 커버리지', terms: ['파이프라인', '리드', '기회', '영업'], probe: '파이프라인 커버리지를 어떻게 계산했고, 실제 매출로 이어지지 않은 사례는 무엇입니까?', why: '예측 가능성' },
+        { k: '수주율 (Win rate)', terms: ['수주율', '전환', '클로징', '계약'], probe: '수주율이 낮은 세그먼트를 포기한 적이 있습니까? 포기 기준을 숫자로 말씀해 주세요.', why: '타깃 선택의 판단' },
+        { k: '세일즈 사이클', terms: ['사이클', '영업기간', '클로징', '딜'], probe: '세일즈 사이클을 줄였다면 어떤 단계를 줄였고, 그 대신 무엇을 포기했습니까?', why: '프로세스 효율' },
+        { k: '갱신율 · 이탈률', terms: ['갱신', '이탈', '리텐션', '유지'], probe: '갱신율을 지킨 고객과 이탈한 고객의 차이를 지표로 설명해 주세요.', why: '고객 가치의 지속성' }
+      ],
+      pressures: [
+        { q: '가격 협상에서 마지막에 양보한 항목은 무엇이고, 그 대신 얻은 것은 무엇입니까?', intent: '협상의 우선순위와 가치 판단을 봅니다.' },
+        { q: '파이프라인에 있던 딜이 마지막에 무산된 이유를 한 건만 구체적으로 말씀해 주세요.', intent: '실패 원인을 구조적으로 설명하는지 봅니다.' },
+        { q: '본인이 없는 동안에도 계정이 관리되도록 무엇을 남겼습니까?', intent: '재현 가능한 영업 프로세스를 확인합니다.' },
+        { q: '목표를 넘긴 분기의 매출 중 반복 매출과 일회성 매출 비중은 얼마입니까?', intent: '매출의 질을 확인합니다.' }
+      ]
+    },
+    {
+      id: 'rd', label: '화학·배터리 공정 R&D', short: '공정·소재 R&D',
+      tagline: '수율과 재현성, 스케일업으로 증명합니다.',
+      terms: ['공정', '수율', '불량', 'DOE', '스케일업', '파일럿', '양극재', '전해액', '분리막', '전지', '배터리', '소재', '합성', '코팅', '소결', '품질', 'Cpk', 'FMEA', '레시피', '슬러리', 'NCM', 'LFP', '셀', '열처리', '압연', '분석', '화학', '화공'],
+      kpis: [
+        { k: '수율 (Yield)', terms: ['수율', 'yield', '생산'], probe: '수율이 올랐다면 공정 조건 변경과 원자재 로트 차이 중 무엇이 원인인지 어떻게 분리했습니까?', why: '공정 개선의 인과' },
+        { k: '불량률 · Cpk', terms: ['불량', 'Cpk', '품질', 'SPC'], probe: '불량률을 낮춘 뒤 공정능력지수는 어떻게 변했고, 관리도로 확인한 근거는 무엇입니까?', why: '품질 안정성' },
+        { k: '에너지밀도 · 저항', terms: ['에너지밀도', '저항', '용량', '출력'], probe: '에너지밀도와 저항을 동시에 개선했다면, 어느 쪽을 희생하지 않았다는 근거는 무엇입니까?', why: '성능 트레이드오프' },
+        { k: '사이클 수명', terms: ['수명', '사이클', '열화', '용량유지'], probe: '수명 시험 결과를 몇 개 셀, 어떤 조건으로 확인했고 편차는 어느 정도였습니까?', why: '신뢰성 데이터의 신뢰도' },
+        { k: '파일럿→양산 리드타임', terms: ['파일럿', '양산', '스케일업', '리드타임'], probe: '랩 결과가 파일럿에서 재현되지 않은 경험이 있습니까? 어떤 조건이 달라졌고 어떻게 보정했습니까?', why: '양산 이관 능력' }
+      ],
+      pressures: [
+        { q: '실험실 결과가 파일럿에서 재현되지 않은 경험이 있습니까? 어떤 조건이 달라졌고 어떻게 보정했습니까?', intent: '스케일업 리스크를 이해하는지 봅니다.' },
+        { q: 'DOE를 설계할 때 어떤 인자를 버렸고, 그 판단이 틀렸던 사례가 있습니까?', intent: '실험 설계의 우선순위 판단을 확인합니다.' },
+        { q: '불량률 개선이 원가에 얼마를 남겼는지 계산해 보셨습니까? 수율과 원가가 반대로 움직인 경우는요?', intent: '성과를 사업 언어로 환산하는지 봅니다.' },
+        { q: '그 공정 개선이 다른 라인이나 다른 제품에도 적용될 수 있습니까? 적용 조건을 말씀해 주세요.', intent: '재현성과 확산 가능성을 확인합니다.' }
+      ]
+    },
+    {
+      id: 'finance', label: '재무·전략', short: '재무/전략',
+      tagline: '이익과 현금흐름, 회수 기간으로 증명합니다.',
+      terms: ['재무', '회계', '예산', '원가', '마진', '투자', 'IR', '밸류에이션', '손익', '현금흐름', '전략', 'M&A', 'ROI', 'IRR', 'NPV', '결산', '관리회계'],
+      kpis: [
+        { k: '영업이익률', terms: ['영업이익', '이익률', '마진', '손익'], probe: '이익률을 개선했다면 매출 증가와 비용 절감 중 어느 쪽 기여가 컸는지 숫자로 나눠 주세요.', why: '이익 개선의 원천' },
+        { k: '현금흐름 (FCF)', terms: ['현금흐름', 'FCF', '운전자본', '회수'], probe: '이익은 늘었는데 현금흐름이 나빠진 적이 있습니까? 원인과 대응을 말씀해 주세요.', why: '이익의 질' },
+        { k: '투자회수기간 · ROI', terms: ['ROI', '회수', 'IRR', 'NPV', '투자'], probe: '투자안의 회수기간과 IRR은 어떻게 산출했고, 가정이 틀렸을 때 손익은 얼마나 달라집니까?', why: '투자 판단의 근거' },
+        { k: '예산 준수율', terms: ['예산', '준수', '집행', '계획'], probe: '예산을 재배분할 때 어떤 사업을 중단했고, 그 판단을 어떤 지표로 방어했습니까?', why: '자원 배분의 우선순위' },
+        { k: '원가율', terms: ['원가', '매출원가', '단가', '절감'], probe: '원가 절감이 일회성인지 구조적인지 어떻게 구분했습니까?', why: '지속 가능한 개선' }
+      ],
+      pressures: [
+        { q: '비용을 5% 줄였다면 일회성 절감인지 구조적 개선인지 어떻게 구분하십니까?', intent: '개선의 지속성을 확인합니다.' },
+        { q: '매출 성장과 마진 중 어느 쪽을 우선했는지, 그 선택이 현금흐름에 어떤 영향을 주었습니까?', intent: '전략적 트레이드오프를 이해하는지 봅니다.' },
+        { q: '예산을 재배분할 때 반대한 이해관계자를 어떻게 설득했습니까?', intent: '조직 내 설득과 근거의 질을 봅니다.' },
+        { q: '본인이 만든 관리 지표가 실제 의사결정을 바꾼 사례를 하나만 말씀해 주세요.', intent: '분석이 실행으로 이어졌는지 확인합니다.' }
+      ]
+    },
+    {
+      id: 'hr', label: 'HR·조직', short: 'HR',
+      tagline: '채용과 유지, 조직 지표로 증명합니다.',
+      terms: ['HR', '인사', '채용', '조직', '평가', '보상', '온보딩', '노무', '교육', 'eNPS', '인력', 'HRD', 'HRM', '컬처'],
+      kpis: [
+        { k: '채용 리드타임', terms: ['채용', '리드타임', '채용기간', '인터뷰'], probe: '채용 리드타임을 줄이면서 품질을 유지했다는 근거를 숫자로 말씀해 주세요.', why: '채용 효율과 품질의 균형' },
+        { k: '조기 이탈률', terms: ['이탈', '퇴사', '유지', '온보딩'], probe: '조기 이탈률을 낮췄다면 채용 기준 변화와 온보딩 변화 중 무엇이 효과였는지 어떻게 확인했습니까?', why: '채용의 실제 성과' },
+        { k: 'eNPS · 몰입도', terms: ['eNPS', '몰입', '만족도', '서베이'], probe: 'eNPS 상승이 특정 조직에만 나타난 것은 아닌지 어떻게 확인했습니까?', why: '조직 건강도' },
+        { k: '핵심인재 유지율', terms: ['핵심인재', '유지율', '리텐션', '보상'], probe: '핵심인재 유지율을 지킨 개입과 그렇지 않은 개입을 구분해서 말씀해 주세요.', why: '인재 리스크 관리' },
+        { k: '교육 · 역량 향상', terms: ['교육', '역량', 'HRD', '평가'], probe: '교육 프로그램의 효과를 업무 성과 지표로 확인한 사례가 있습니까?', why: '개발의 실질 효과' }
+      ],
+      pressures: [
+        { q: '평가 제도를 바꿨을 때 조직 저항은 어떻게 다뤘고, 결과는 어떤 지표로 확인했습니까?', intent: '변화관리와 측정 능력을 봅니다.' },
+        { q: '채용에서 놓친 인재가 있었습니까? 그 판단이 틀렸다는 것을 나중에 어떻게 알았습니까?', intent: '채용 판단의 회고 능력을 확인합니다.' },
+        { q: '인사 제도가 사업 성과에 기여했다는 것을 어떤 숫자로 설명하시겠습니까?', intent: 'HR을 사업 언어로 설명하는지 봅니다.' },
+        { q: '어려운 구조조정이나 평가 커뮤니케이션을 직접 맡은 경험이 있습니까?', intent: '민감한 상황의 실행 경험을 확인합니다.' }
+      ]
+    }
+  ];
+
+  var GENERIC_ROLE = {
+    id: 'generic', label: '직무 공통', short: '공통',
+    tagline: 'JD에서 직무를 감지하면 KPI 질문이 정확해집니다.',
+    terms: [],
+    kpis: [
+      { k: '핵심 성과 수치', terms: ['%', '증가', '절감', '단축', '개선'], probe: '가장 자신 있는 성과의 기준선과 결과 수치를 나란히 말씀해 주세요.', why: '성과의 크기' },
+      { k: '본인 기여 범위', terms: ['제가', '직접', '주도', '담당'], probe: '그 성과에서 본인이 직접 결정한 것과 팀이 한 일을 나눠서 말씀해 주세요.', why: '기여의 경계' },
+      { k: '재현 가능성', terms: ['재현', '표준', '문서', '적용'], probe: '같은 방식을 다른 조직이나 제품에 적용할 수 있습니까? 조건도 함께 말씀해 주세요.', why: '확장 가능성' }
+    ],
+    pressures: [
+      { q: '가장 최근에 끝낸 일에서 본인이 직접 결정한 것과 팀이 한 일을 나눠서 말씀해 주세요.', intent: '기여 범위와 실행 구조를 확인합니다.' },
+      { q: '그 성과의 기준선은 무엇이었고, 결과 수치는 어떻게 측정했습니까?', intent: '수치의 근거와 측정 방식을 봅니다.' },
+      { q: '같은 문제를 다른 상황에서 다시 만난다면 무엇을 그대로 가져가시겠습니까?', intent: '재현 가능성과 학습을 확인합니다.' }
+    ]
+  };
+
+  var ROLE_BY_ID = {};
+  ROLES.forEach(function (r) { ROLE_BY_ID[r.id] = r; });
+
+  function roleById(id) { return ROLE_BY_ID[id] || null; }
+
+  function roleHits(role, text, weight) {
+    var t = String(text || '').toLowerCase();
+    if (!t || !role || !role.terms) return 0;
+    var hits = 0;
+    role.terms.forEach(function (term) {
+      var s = String(term).toLowerCase();
+      if (!s) return;
+      var idx = t.indexOf(s), n = 0;
+      while (idx !== -1 && n < 3) { hits += 1; n += 1; idx = t.indexOf(s, idx + s.length); }
+    });
+    return hits * (weight || 1);
+  }
+
+  function detectRole(jd, resume) {
+    var best = null;
+    ROLES.forEach(function (r) {
+      var s = roleHits(r, jd, 3) + roleHits(r, resume, 1);
+      if (!best || s > best.score) best = { id: r.id, role: r, score: s };
+    });
+    if (!best || best.score < 3) return { id: best ? best.id : null, role: null, score: best ? best.score : 0 };
+    return { id: best.id, role: best.role, score: best.score };
+  }
+
+  function resolveRole(jd, resume, setting) {
+    if (setting && setting !== 'auto' && ROLE_BY_ID[setting]) {
+      return { role: ROLE_BY_ID[setting], mode: 'manual', detected: detectRole(jd, resume) };
+    }
+    var d = detectRole(jd, resume);
+    if (d.role) return { role: d.role, mode: 'auto', detected: d };
+    return { role: GENERIC_ROLE, mode: 'generic', detected: d };
+  }
+
+  function roleBlock(role) {
+    if (!role || role.id === 'generic') return '';
+    var k = role.kpis.slice(0, 4).map(function (x) { return x.k; }).join(', ');
+    var p = role.pressures.slice(0, 2).map(function (x) { return '“' + x.q + '”'; }).join(' ');
+    return '지원 직무: ' + role.label + '. 이 직무의 핵심 KPI: ' + k + '. 면접 질문에는 최소 1개 이상 이 직무 KPI의 기준선·결과 수치·본인 기여 범위를 검증하는 질문을 포함하세요.' +
+      (p ? ' 단골 압박 패턴: ' + p : '');
+  }
+
+  function roleKpiCheck(role, resume) {
+    var text = String(resume || '').toLowerCase();
+    return (role ? role.kpis : []).map(function (x) {
+      var hits = x.terms.filter(function (t) { return text.indexOf(String(t).toLowerCase()) !== -1; });
+      return { k: x.k, probe: x.probe, why: x.why, covered: hits.length > 0, hits: hits };
+    });
+  }
+
   var STOP = new Set(('그리고 그래서 그러나 하지만 또한 및 등 것 수 때 위해 통해 대한 관한 대하여 그 이 저 우리 저희 회사 업무 경험 진행 담당 기획 운영 관리 관련 내용 부분 경우 정도 이상 이하 다음 현재 기존 신규 주요 자격 요건 우대 사항 필수 수행 가능 보유 역량 능력 이해 지식 활용 기반 중심 통한 위한 있는 없는 있습니다 합니다 드립니다 바랍니다 것입니다 수 있는 함께 기여 제공 지원 개선 구축 설계 분석 실행 참여 소통 협업 성과 목표 전략 프로세스 서비스 제품 고객 시장 팀 조직 개월 년간 기간 동안 이후 이전 최근 약 총 각 월 일 것 같습니다 합니다').split(/\s+/).filter(Boolean));
 
   var METRIC_RE = /(\d+(?:[.,]\d+)?)\s*(퍼센트포인트|%p|퍼센트|개월|시간|USD|ppm|%|억|만|천|배|명|개|건|pt|원|달러|MT|톤|℃|일|주|년|분|곳|번)/gi;
@@ -1347,6 +1797,9 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     jd: '',
     usage: { fit: 0, drill: 0, sens: 0, quick: 0 },
     sessions: [],
+    role: 'auto',
+    company: '',
+    cards: [],
     fit: null,
     drill: null,
     sens: null,
@@ -1376,6 +1829,21 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         ['fit', 'drill', 'sens', 'quick'].forEach(function (k) { if (typeof d.usage[k] === 'number') state.usage[k] = d.usage[k]; });
       }
       if (Array.isArray(d.sessions)) state.sessions = d.sessions.slice(0, 20);
+      if (typeof d.role === 'string' && (d.role === 'auto' || ROLE_BY_ID[d.role])) state.role = d.role;
+      if (typeof d.company === 'string') state.company = d.company.slice(0, 60);
+      if (Array.isArray(d.cards)) {
+        state.cards = d.cards.filter(function (c) {
+          return c && typeof c === 'object' && typeof c.key === 'string' && typeof c.title === 'string';
+        }).slice(0, 40).map(function (c) {
+          var card = c;
+          card.pinned = !!card.pinned;
+          if (!Array.isArray(card.script)) card.script = [];
+          if (!Array.isArray(card.defenses)) card.defenses = [];
+          if (!Array.isArray(card.metrics)) card.metrics = [];
+          if (!Array.isArray(card.lines)) card.lines = [];
+          return card;
+        });
+      }
     } catch (e) { /* corrupted store: start clean */ }
   }
 
@@ -1387,7 +1855,10 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         resume: state.resume,
         jd: state.jd,
         usage: state.usage,
-        sessions: state.sessions
+        sessions: state.sessions,
+        role: state.role,
+        company: state.company,
+        cards: state.cards.slice(0, 40)
       }));
     } catch (e) { /* quota or private mode — keep running */ }
   }
@@ -1504,8 +1975,10 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     return best;
   }
 
-  function analyzeFit(resume, jd, personaId, intensity) {
+  function analyzeFit(resume, jd, personaId, intensity, roleSetting) {
     var persona = PERSONAS[personaId] || PERSONAS.lead;
+    var roleRes = resolveRole(jd, resume, roleSetting);
+    var roleKpis = roleKpiCheck(roleRes.role, resume);
     var reqs = extractRequirements(jd);
     if (!reqs.length) {
       reqs = [{ text: jd.trim().split(/\n/)[0] || '직무 수행 역량', order: 0, score: 1 }];
@@ -1647,6 +2120,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       mode: 'demo',
       at: Date.now(),
       score: score,
+      role: { id: roleRes.role.id, label: roleRes.role.label, short: roleRes.role.short, mode: roleRes.mode },
+      roleKpis: roleKpis,
       verdict: verdict,
       coverage: { matched: matches.length, total: analyzed.length, pct: round(coverage * 100) },
       metrics: {
@@ -2167,33 +2642,45 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   /* ---------------------------------------------------------
      quick questions (demo)
      --------------------------------------------------------- */
-  function quickQuestions(resume, jd, personaId, fit) {
+  function quickQuestions(resume, jd, personaId, fit, roleOrSetting, count) {
     var persona = PERSONAS[personaId] || PERSONAS.lead;
+    var role = roleOrSetting && roleOrSetting.id && roleOrSetting.pressures
+      ? roleOrSetting
+      : resolveRole(jd, resume, roleOrSetting).role;
+    role = role || GENERIC_ROLE;
     var out = [];
+    function push(q, tag) {
+      if (!q) return;
+      if (out.some(function (x) { return x.q === q; })) return;
+      out.push({ q: q, tag: tag });
+    }
+    var p = role.pressures || [];
+    if (p[0]) push(p[0].q, role.short + ' KPI 압박');
     if (fit && fit.gaps && fit.gaps.length) {
-      out.push({ q: gapQuestion(fit.gaps[0].key, personaId, 'hard'), tag: 'Gap 검증' });
+      push(gapQuestion(fit.gaps[0].key, personaId, 'hard'), 'Gap 검증');
     }
     if (fit && fit.strengths && fit.strengths.length) {
-      out.push({
-        q: evidenceQuestion(truncate(fit.strengths[0].evidence || fit.strengths[0].req, 80), fit.strengths[0].key, personaId),
-        tag: '성과 검증'
-      });
+      push(evidenceQuestion(truncate(fit.strengths[0].evidence || fit.strengths[0].req, 80), fit.strengths[0].key, personaId), '성과 검증');
     }
-    if (!out.length) {
+    if (out.length < 3 && p[1]) push(p[1].q, role.short + ' 단골 질문');
+    if (out.length < 3) {
       var claims = claimOptions(resume);
-      if (claims.length) out.push({ q: demoDrillQuestion(1, claims[0].text, '', []), tag: '성과 검증' });
-      out.push({ q: gapQuestion(fit && fit.gaps[0] ? fit.gaps[0].key : '직무 핵심 역량', personaId, 'hard'), tag: '직무 적합성' });
+      if (claims.length) push(demoDrillQuestion(1, claims[0].text, '', []), '성과 검증');
+      push(gapQuestion(fit && fit.gaps[0] ? fit.gaps[0].key : '직무 핵심 역량', personaId, 'hard'), '직무 적합성');
     }
-    while (out.length < 2) {
+    while (out.length < 3) {
       var extra = persona.id === 'hr'
         ? '이직을 결심한 계기와, 이 회사가 아니면 안 되는 이유를 구분해서 말씀해 주세요.'
         : persona.id === 'cfo'
           ? '이 직무에서 첫해에 만들 자신 있는 금액 성과는 얼마이며, 그 근거는 무엇입니까?'
           : '가장 최근에 끝낸 프로젝트에서 본인이 직접 결정한 것과 팀이 한 일을 나눠서 말씀해 주세요.';
       if (out.some(function (x) { return x.q === extra; })) extra = '그 프로젝트에서 가장 크게 틀렸던 가설과, 어떤 데이터로 수정했는지 말씀해 주세요.';
-      out.push({ q: extra, tag: '기여도 검증' });
+      push(extra, '기여도 검증');
     }
-    return out.slice(0, 2);
+    while (out.length < 2) {
+      push(persona.id === 'cfo' ? '이 직무에서 첫해에 만들 자신 있는 금액 성과는 얼마이며, 그 근거는 무엇입니까?' : '가장 최근에 끝낸 프로젝트에서 본인이 직접 결정한 것과 팀이 한 일을 나눠서 말씀해 주세요.', '기여도 검증');
+    }
+    return out.slice(0, count || 3);
   }
 
   /* ---------------------------------------------------------
@@ -2302,7 +2789,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     throw ApiError('지원하지 않는 엔진', 0);
   }
 
-  function personaPrompt(id, intensity) {
+  function personaPrompt(id, intensity, role) {
     var p = PERSONAS[id] || PERSONAS.lead;
     var base = '당신은 한국 기업의 경력직 채용 실무 면접관입니다. 지원자의 경력기술서와 JD만 근거로, 실제 면접에서 탈락을 만드는 지점을 검증합니다.\n' +
       '원칙: 칭찬·격려·감정 평가를 하지 않습니다. "자신감", "좋아요", "훌륭합니다" 같은 표현 금지. 모든 질문은 지원자가 쓴 문장이나 JD 요구를 직접 인용합니다. 답변은 한국어 비즈니스 문체, 짧은 문장. 출력은 지정된 JSON만.\n';
@@ -2310,13 +2797,15 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     else if (id === 'hr') base += '당신은 컬처핏을 보는 HR입니다. 지원 동기, 지속성, 협업과 갈등 처리 방식을 묻습니다.';
     else base += '당신은 깐깐한 현업 팀장입니다. 실행 단위, 본인 기여의 경계, 재현 가능성을 집요하게 묻습니다.';
     if (intensity === 'hard') base += ' 압박 강도는 강함입니다. 답변의 모호한 부분을 즉시 지적하는 후속 질문을 만듭니다.';
+    var rb = roleBlock(role);
+    if (rb) base += ' ' + rb;
     return base;
   }
 
   function safeSlice(t, n) { return String(t || '').slice(0, n || 6000); }
 
-  async function aiFit(resume, jd, personaId, intensity) {
-    var system = personaPrompt(personaId, intensity);
+  async function aiFit(resume, jd, personaId, intensity, role) {
+    var system = personaPrompt(personaId, intensity, role);
     var user = '다음 경력기술서와 JD를 교차 검증하세요.\n\n[경력기술서]\n' + safeSlice(resume) + '\n\n[JD]\n' + safeSlice(jd) +
       '\n\nJSON 스키마:\n{"fitScore":0-100,"verdict":"2문장","coverage":{"matched":0,"total":0},' +
       '"strengths":[{"requirement":"JD 요구","evidence":"경력기술서 인용","note":"1문장"}],' +
@@ -2327,7 +2816,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       '"keywords":{"jd":["..."],"resume":["..."]}}\n' +
       'strengths 3-4개, gaps 2-4개, questions 5-6개, rebuttals 3-4개, script 4개. 수치는 인용한 것만 사용하고 새로 만들지 마세요.';
     var out = parseJSON(await callLLM(system, user, 2200));
-    var demo = analyzeFit(resume, jd, personaId, intensity);
+    var demo = analyzeFit(resume, jd, personaId, intensity, role && role.id && role.id !== 'generic' ? role.id : 'auto');
     var useStrengths = out.strengths && out.strengths.length ? out.strengths : demo.strengths;
     var useGaps = out.gaps && out.gaps.length ? out.gaps : demo.gaps;
     var useQuestions = out.questions && out.questions.length ? out.questions : demo.questions;
@@ -2348,6 +2837,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       metrics: demo.metrics,
       domain: demo.domain,
       years: demo.years,
+      role: demo.role,
+      roleKpis: demo.roleKpis,
       strengths: useStrengths.map(function (s) {
         var req = s.requirement || s.req || '';
         return { key: reqKey(req), req: req, evidence: s.evidence || '', note: s.note || '', tags: s.tags || [] };
@@ -2389,8 +2880,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     };
   }
 
-  async function aiDrillQuestion(stage, claim, answers, personaId, intensity) {
-    var system = personaPrompt(personaId, intensity);
+  async function aiDrillQuestion(stage, claim, answers, personaId, intensity, role) {
+    var system = personaPrompt(personaId, intensity, role);
     var user = '성과 진위 검증 3단 꼬리질문 중 ' + stage + '차 질문 하나를 만드세요.\n[검증할 성과] ' + safeSlice(claim, 600) +
       '\n[이전 답변]\n' + (answers.length ? answers.map(function (a, i) { return (i + 1) + '차: ' + safeSlice(a, 1200); }).join('\n') : '(없음)') +
       '\n1차는 본인 기여 vs 팀·에이전시 분리, 2차는 실패한 가설과 수정 데이터 근거, 3차는 비즈니스 임팩트와 재현 가능성입니다.' +
@@ -2401,8 +2892,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     return { q: out.question, intent: out.intent || '' };
   }
 
-  async function aiDrillReport(claim, answers, evals, personaId) {
-    var system = personaPrompt(personaId, 'hard');
+  async function aiDrillReport(claim, answers, evals, personaId, role) {
+    var system = personaPrompt(personaId, 'hard', role);
     var avg = evals.length ? round(evals.reduce(function (a, e) { return a + e.total; }, 0) / evals.length) : 0;
     var user = '아래 3단 답변을 평가해 최종 리포트를 만드세요.\n[성과] ' + safeSlice(claim, 500) +
       '\n[답변]\n' + answers.map(function (a, i) { return (i + 1) + '차: ' + safeSlice(a, 1500); }).join('\n') +
@@ -2421,13 +2912,228 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     };
   }
 
-  async function aiQuickQuestions(resume, jd, personaId, fit) {
-    var system = personaPrompt(personaId, 'hard');
-    var user = '출퇴근길 5분 음성 면접용 압박 질문 2개를 만드세요. 한 문장씩, 말로 듣기 쉽게.\n[경력기술서]\n' + safeSlice(resume, 3000) + '\n[JD]\n' + safeSlice(jd, 2500) +
+  async function aiQuickQuestions(resume, jd, personaId, fit, role) {
+    var system = personaPrompt(personaId, 'hard', role);
+    var user = '전화 통화 형식의 5분 음성 면접용 압박 질문 3개를 만드세요. 한 문장씩, 말로 듣기 쉽게. 첫 질문은 이 직무의 핵심 KPI 수치와 기여 범위를 검증해야 합니다.\n[경력기술서]\n' + safeSlice(resume, 3000) + '\n[JD]\n' + safeSlice(jd, 2500) +
       '\nJSON: {"questions":[{"q":"","tag":""}]}';
-    var out = parseJSON(await callLLM(system, user, 500));
+    var out = parseJSON(await callLLM(system, user, 650));
     if (!out.questions || !out.questions.length) throw new Error('질문 없음');
-    return out.questions.slice(0, 2);
+    return out.questions.slice(0, 3);
+  }
+
+  /* ---------------------------------------------------------
+     call briefing (3 parts) + cheat sheet cards
+     --------------------------------------------------------- */
+  var AXIS_NAME = { logic: '문제 해결 논리', numbers: '수치 근거', ownership: '주도적 기여도', impact: '비즈니스 임팩트' };
+
+  function axisStats(evals) {
+    var keys = ['logic', 'numbers', 'ownership', 'impact'];
+    var avg = {};
+    keys.forEach(function (k) {
+      var vals = (evals || []).map(function (e) { return e && e.scores ? e.scores[k] : null; })
+        .filter(function (v) { return typeof v === 'number'; });
+      avg[k] = vals.length ? round(sum(vals) / vals.length) : 0;
+    });
+    var sorted = keys.slice().sort(function (a, b) { return avg[b] - avg[a]; });
+    return { avg: avg, best: sorted[0], worst: sorted[sorted.length - 1] };
+  }
+
+  function refineAnswer(answer, role) {
+    var text = clean(answer).replace(/\s+/g, ' ').trim();
+    var sents = splitSentences(text);
+    var ms = metricsOf(text);
+    var lead = sents[0] || text;
+    var metric = ms[0] ? ms[0].raw : '';
+    var kpi = role && role.kpis && role.kpis[0] ? role.kpis[0].k : '핵심 성과 수치';
+    var lines = [
+      { label: '결론', text: '“먼저 결론부터 말씀드리면, ' + truncate(lead, 72) + '”' },
+      { label: '근거 수치', text: metric
+        ? '“기준선은 ' + metric + '이었고, 제가 바꾼 것은 [액션]입니다. 결과는 [결과 수치]로 확인했고, 측정 기준은 [지표 정의]였습니다.”'
+        : '“기준선은 [이전 수치]였고, 제가 바꾼 것은 [액션]입니다. 결과는 [결과 수치]로 확인했습니다. 수치는 면접 전에 한 번 더 정리해 두겠습니다.”' },
+      { label: '기여 경계', text: '“이 중 제가 직접 결정한 것은 [타깃·예산·우선순위]이고, 팀과 외주가 맡은 것은 [실행 범위]입니다.”' },
+      { label: '재현·마무리', text: '“같은 방식은 [다른 제품·조직]에도 적용할 수 있고, ' + josa(kpi, '은', '는') + ' 첫 90일에 [목표 수치]로 확인받고 싶습니다.”' }
+    ];
+    return { lines: lines, spoken: lines.map(function (l) { return l.text.replace(/[“”]/g, ''); }).join(' ') };
+  }
+
+  function buildQuickBriefing(input) {
+    input = input || {};
+    var questions = (input.questions || []).map(function (q) { return typeof q === 'string' ? { q: q } : q; });
+    var answers = (input.answers || []).filter(Boolean);
+    var evals = (input.evals || []).filter(Boolean);
+    var persona = PERSONAS[input.persona] || PERSONAS.lead;
+    var role = input.role || GENERIC_ROLE;
+    var n = questions.length;
+    var answered = answers.length;
+    var avg = answered ? round(sum(answers.map(function (a) { return a.score || 0; })) / answered) : 0;
+    var ax = axisStats(evals);
+    var hasAxes = evals.length > 0;
+    var tone = !answered ? '답변이 기록되지 않아 평가할 수 없습니다. 텍스트 답변이나 마이크 권한을 확인한 뒤 한 번 더 시도해 보세요.'
+      : avg >= 78 ? '실전에서 바로 쓸 수 있는 수준에 가깝습니다.'
+        : avg >= 64 ? '구조는 잡혔지만 수치와 기여 범위를 더 다듬어야 합니다.'
+          : '말의 흐름은 있지만 면접관이 확인할 근거가 아직 부족합니다.';
+
+    var weakestIdx = -1, weakestScore = null;
+    answers.forEach(function (a, i) {
+      if (weakestScore === null || (a.score || 0) < weakestScore) { weakestScore = a.score || 0; weakestIdx = i; }
+    });
+    var weakest = null;
+    if (weakestIdx >= 0) {
+      var ev = evals[weakestIdx];
+      var note = ev && ev.notes && hasAxes ? ev.notes[ax.worst] : '근거 수치와 본인 기여 범위를 한 문장씩 보강하세요.';
+      weakest = {
+        index: weakestIdx,
+        question: (questions[weakestIdx] && questions[weakestIdx].q) || '',
+        answer: answers[weakestIdx].text,
+        score: weakestScore,
+        axis: ax.worst,
+        axisNote: note,
+        script: refineAnswer(answers[weakestIdx].text, role)
+      };
+    }
+
+    var part1 = !answered
+      ? '통화를 마치겠습니다. 오늘은 ' + n + '개 질문이 있었지만 기록된 답변이 없습니다. ' + tone
+      : '통화를 마치겠습니다. 오늘은 ' + n + '개 질문 중 ' + answered + '개에 답하셨고, 평균 ' + avg + '점입니다. ' +
+        persona.short + ' 관점에서는 ' + AXIS_NAME[ax.best] + '이 가장 안정적이었고, ' + AXIS_NAME[ax.worst] + '이 가장 약했습니다. ' + tone;
+
+    var part2 = weakest
+      ? '가장 아쉬웠던 답변은 ' + (weakest.index + 1) + '번 질문이었습니다. 질문은 “' + truncate(weakest.question, 90) + '”였습니다. ' + weakest.axisNote + ' 이렇게 다시 말해 보세요. ' + weakest.script.spoken
+      : '이번 통화에서는 평가할 답변이 없었습니다. 다음에는 한 문장이라도 좋으니 소리 내어 답해 보세요.';
+
+    var practice1 = hasAxes ? AXIS_NAME[ax.worst] + '을 보강하세요.' : '결론, 근거 수치, 기여 범위를 한 문장씩 나눠 말하는 연습을 하세요.';
+    var kpi = role.kpis && role.kpis[0];
+    var practice2 = kpi ? '이 직무에서 반드시 나오는 KPI는 ' + kpi.k + '입니다. 기준선, 결과, 기여 범위를 준비하세요.' : '';
+    var pressure = role.pressures && role.pressures[0];
+    var practice3 = pressure ? '다음 통화에서는 “' + truncate(pressure.q, 110) + '”를 예상하세요.' : '';
+    var part3 = '다음 연습 포인트입니다. 첫째, ' + practice1 + ' 둘째, 답변은 결론, 근거 수치, 재현 방식 순서로 세 문장 안에 정리하세요. ' +
+      (practice2 ? '셋째, ' + practice2 + ' ' : '') + practice3;
+
+    var parts = [
+      { id: 'impression', title: '① 전반적 인상', text: part1 },
+      { id: 'rewrite', title: '② 가장 아쉬웠던 답변과 수정안', text: part2 },
+      { id: 'next', title: '③ 다음 연습 포인트', text: part3 }
+    ];
+
+    var transcript = questions.map(function (q, i) {
+      var a = answers[i];
+      return { i: i, question: q.q, tag: q.tag || '', answer: a ? a.text : '', score: a ? a.score : null };
+    });
+
+    return {
+      at: Date.now(),
+      duration: input.duration || 0,
+      score: avg,
+      answered: answered,
+      total: n,
+      persona: persona.id,
+      role: { id: role.id, label: role.label, short: role.short },
+      company: input.company || '',
+      axis: ax.avg,
+      bestAxis: ax.best,
+      worstAxis: ax.worst,
+      weakest: weakest,
+      parts: parts,
+      script: weakest ? weakest.script.lines : [],
+      transcript: transcript,
+      mode: input.mode || 'demo'
+    };
+  }
+
+  function topMetricLabels(texts, n) {
+    var out = [];
+    (texts || []).forEach(function (t) {
+      metricsOf(t || '').forEach(function (m) {
+        if (out.indexOf(m.raw) === -1) out.push(m.raw);
+      });
+    });
+    return out.slice(0, n || 3);
+  }
+
+  function cardBase(type, typeLabel, meta) {
+    meta = meta || {};
+    return {
+      id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      key: '', type: type, typeLabel: typeLabel,
+      company: meta.company || '',
+      roleId: meta.role ? meta.role.id : '',
+      roleLabel: meta.role ? meta.role.label : '',
+      persona: meta.persona || '',
+      at: Date.now(), pinned: false, updates: 1, score: null,
+      title: '', metrics: [], script: [], defenses: [], lines: []
+    };
+  }
+
+  function cardFromFit(f, meta) {
+    if (!f) return null;
+    var c = cardBase('fit', '적합도', meta);
+    c.key = 'fit:' + c.company + ':' + (c.roleId || (f.domain ? f.domain.name : ''));
+    c.title = (f.domain && f.domain.name ? f.domain.name : '지원 직무') + ' 지원 스크립트';
+    c.score = f.score;
+    c.metrics = topMetricLabels((f.strengths || []).map(function (s) { return s.evidence; }), 3);
+    c.script = (f.script || []).map(function (s) { return { label: s.label, text: s.text }; });
+    c.defenses = (f.rebuttals || []).map(function (r) { return { q: r.point || '', a: r.counter || r.why || '' }; });
+    c.lines = [f.verdict].filter(Boolean);
+    return c;
+  }
+
+  function cardFromDrill(d, meta) {
+    if (!d || !d.report) return null;
+    var r = d.report;
+    var c = cardBase('drill', '3단 꼬리질문', meta);
+    c.key = 'drill:' + c.company + ':' + truncate(clean(d.claim).replace(/\s+/g, ' '), 40);
+    c.title = truncate(d.claim, 52);
+    c.score = r.total;
+    c.metrics = topMetricLabels([d.claim].concat(d.answers || []), 3);
+    c.script = (r.script || []).map(function (s) { return { label: s.label, text: s.text }; });
+    c.defenses = (r.rebuttals || []).map(function (x) { return { q: x.point || '', a: x.counter || x.why || '' }; });
+    c.lines = [r.label, r.summary].filter(Boolean);
+    return c;
+  }
+
+  function cardFromSens(r, meta, catLabel) {
+    if (!r) return null;
+    var c = cardBase('sens', '민감질문 방어', meta);
+    c.key = 'sens:' + c.company + ':' + (r.category || '') + ':' + truncate(catLabel || '', 20);
+    c.title = (catLabel || '민감 질문') + ' 방어 스크립트';
+    c.script = (r.script || []).map(function (s) { return { label: s.label, text: s.text }; });
+    c.defenses = (r.followups || []).map(function (x) { return { q: x.q || '', a: x.a || '' }; });
+    c.lines = [r.oneLine].filter(Boolean);
+    c.avoid = (r.avoid || []).slice(0, 4);
+    return c;
+  }
+
+  function cardFromQuick(b, meta) {
+    if (!b) return null;
+    var c = cardBase('quick', '통화', meta);
+    var q = b.weakest ? b.weakest.question : '';
+    c.key = 'quick:' + c.company + ':' + (q ? truncate(clean(q).replace(/\s+/g, ' '), 40) : 'summary');
+    c.title = q ? '통화 · ' + truncate(q, 38) : '5분 통화 요약';
+    c.score = b.score;
+    c.metrics = b.weakest ? topMetricLabels([b.weakest.answer], 3) : [];
+    c.script = (b.script || []).map(function (s) { return { label: s.label, text: s.text }; });
+    c.lines = b.weakest ? [b.weakest.axisNote] : [b.parts && b.parts[0] ? b.parts[0].text : ''];
+    if (b.weakest) c.defenses = [{ q: b.weakest.question, a: (b.weakest.axisNote || '') + ' 결론 → 근거 수치 → 기여 범위 순서로 세 문장 안에 정리하세요.' }];
+    return c;
+  }
+
+  function upsertCard(cards, card) {
+    if (!card) return { cards: cards || [], action: 'skipped', id: null };
+    var out = (cards || []).slice();
+    var idx = -1;
+    for (var k = 0; k < out.length; k++) if (out[k].key === card.key) { idx = k; break; }
+    if (idx >= 0) {
+      var prev = out[idx];
+      card.id = prev.id || card.id;
+      card.pinned = !!prev.pinned;
+      card.updates = (prev.updates || 1) + 1;
+      card.at = Date.now();
+      out.splice(idx, 1);
+      out.unshift(card);
+      return { cards: out.slice(0, 40), action: 'updated', id: card.id };
+    }
+    out.unshift(card);
+    return { cards: out.slice(0, 40), action: 'added', id: card.id };
   }
 
   /* ---------------------------------------------------------
@@ -2438,9 +3144,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     josa: josa, hasJong: hasJong, truncate: truncate, splitLines: splitLines, splitSentences: splitSentences, fmtYears: fmtYears,
     metricsOf: metricsOf, tokenList: tokenList, topTerms: topTerms, tidyClaim: tidyClaim, escapeRe: escapeRe
   };
-  PACE.data = { PERSONAS: PERSONAS, SENSITIVE: SENSITIVE, DOMAINS: DOMAINS, INTENSITY: INTENSITY };
+  PACE.data = { PERSONAS: PERSONAS, SENSITIVE: SENSITIVE, DOMAINS: DOMAINS, INTENSITY: INTENSITY, ROLES: ROLES, GENERIC_ROLE: GENERIC_ROLE, AXIS_NAME: AXIS_NAME };
   PACE.state = state;
   PACE.store = { load: loadState, save: saveState, addSession: addSession, countUsage: countUsage };
+  PACE.roles = { list: ROLES, generic: GENERIC_ROLE, byId: roleById, detect: detectRole, resolve: resolveRole, block: roleBlock, kpiCheck: roleKpiCheck };
+  PACE.briefing = { build: buildQuickBriefing, refine: refineAnswer, axisStats: axisStats };
+  PACE.sheet = { fromFit: cardFromFit, fromDrill: cardFromDrill, fromSens: cardFromSens, fromQuick: cardFromQuick, upsert: upsertCard };
   PACE.engine = {
     analyzeFit: analyzeFit, extractRequirements: extractRequirements, reqKey: reqKey,
     evalAnswer: evalAnswer, demoDrillQuestion: demoDrillQuestion, demoDrillReport: demoDrillReport,
@@ -2463,7 +3172,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   var U = PACE.util, D = PACE.data, E = PACE.engine, AI = PACE.ai, state = PACE.state;
   var $ = U.$, $$ = U.$$, esc = U.esc;
 
-  var VIEWS = ['home', 'fit', 'drill', 'sensitive', 'quick'];
+  var VIEWS = ['home', 'fit', 'drill', 'sensitive', 'quick', 'sheet'];
   var MODALS = ['settings', 'persona', 'pricing'];
   var drillDraft = '';
   var fitToken = 0;
@@ -2548,13 +3257,17 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 
   function applyView(view, opts) {
     if (VIEWS.indexOf(view) === -1) view = 'home';
-    if (state.view === 'quick' && view !== 'quick' && quick && quick.active) quickFinish();
+    if (state.view === 'quick' && view !== 'quick') {
+      if (quick && quick.active) quickFinish({ silent: true });
+      if (briefCtl.playing) briefPause();
+    }
     state.view = view;
     $$('.view').forEach(function (v) { v.classList.toggle('is-active', v.getAttribute('data-view') === view); });
     $$('.nav-item[data-go], .tab[data-go]').forEach(function (b) {
       b.classList.toggle('is-active', b.getAttribute('data-go') === view);
     });
     if (view === 'drill' && !state.drill) renderDrillSetup();
+    if (view === 'sheet') renderSheet();
     if (!opts || opts.scroll !== false) window.scrollTo(0, 0);
   }
 
@@ -2674,7 +3387,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     updateEngineLabels();
     // refresh visible outputs that depend on persona
     if (state.fit && !$('#view-fit').hidden) {
-      if (state.fit.mode === 'demo') state.fit = E.analyzeFit(state.resume, state.jd, state.persona, state.settings.intensity);
+      if (state.fit.mode === 'demo') state.fit = E.analyzeFit(state.resume, state.jd, state.persona, state.settings.intensity, state.role);
       renderFit();
     }
     if (openedModal() === 'persona') closeModal();
@@ -2725,10 +3438,92 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     renderTrial();
     renderSessions();
     renderPersonas();
+    renderRoleCard();
     updateEngineLabels();
     var today = new Date();
     var todayCount = state.sessions.filter(function (s) { return new Date(s.at).toDateString() === today.toDateString(); }).length;
     $('#heroSessions').textContent = todayCount + '회';
+  }
+
+  /* ---------------------------------------------------------
+     role picker (직무 KPI DB)
+     --------------------------------------------------------- */
+  var roleTimer = null;
+
+  function roleState() { return PACE.roles.resolve(state.jd, state.resume, state.role); }
+
+  function roleChipHtml(id, label, on) {
+    return '<button class="chip' + (on ? ' is-on' : '') + '" data-role="' + esc(id) + '" aria-pressed="' + on + '">' + esc(label) + '</button>';
+  }
+
+  function renderRoleCard() {
+    var wrap = $('#roleChips');
+    if (!wrap) return;
+    var res = roleState();
+    var isAuto = state.role === 'auto';
+    var detected = res.detected || {};
+    var badge = $('#roleModeBadge'), cur = $('#roleCurrent');
+    if (badge) {
+      badge.textContent = isAuto ? (res.mode === 'auto' ? '자동 감지' : '직무 미지정') : '직접 선택';
+      badge.className = 'badge ' + (isAuto && res.mode === 'auto' ? 'badge-ok' : 'badge-accent');
+    }
+    if (cur) {
+      cur.textContent = res.role.label + (isAuto && res.mode === 'auto' && detected.role
+        ? ' · JD에서 감지됨'
+        : (isAuto ? '' : ' · 직접 선택'));
+    }
+    var html = roleChipHtml('auto', '자동 감지', isAuto);
+    D.ROLES.forEach(function (r) { html += roleChipHtml(r.id, r.short, state.role === r.id); });
+    wrap.innerHTML = html;
+    $$('#roleChips [data-role]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.getAttribute('data-role');
+        state.role = id;
+        PACE.store.save();
+        renderRoleCard();
+        if (state.fit && state.fit.mode === 'demo') {
+          state.fit = E.analyzeFit(state.resume, state.jd, state.persona, state.settings.intensity, state.role);
+          renderFit();
+        }
+        var picked = D.ROLES.filter(function (r) { return r.id === id; })[0];
+        toast(id === 'auto' ? '직무를 자동 감지로 설정했습니다.' : picked.label + ' 기준으로 설정했습니다.');
+      });
+    });
+    var autoBtn = $('#roleAuto');
+    if (autoBtn) autoBtn.hidden = isAuto;
+    var note = $('#roleNote');
+    if (note) {
+      note.textContent = res.mode === 'generic'
+        ? 'JD에서 직무를 감지하지 못했습니다. 직무를 직접 고르면 KPI와 압박 질문이 정확해집니다. 지금은 직무 공통 질문으로 진행합니다.'
+        : res.role.tagline + ' 핵심 KPI: ' + res.role.kpis.slice(0, 3).map(function (k) { return k.k; }).join(' · ');
+    }
+  }
+
+  function bindRoleCard() {
+    var autoBtn = $('#roleAuto');
+    if (autoBtn) autoBtn.addEventListener('click', function () {
+      state.role = 'auto';
+      PACE.store.save();
+      renderRoleCard();
+    });
+    ['#companyInput', '#sheetCompany'].forEach(function (sel) {
+      var el = $(sel);
+      if (!el) return;
+      el.addEventListener('input', function () {
+        state.company = el.value.slice(0, 30);
+        ['#companyInput', '#sheetCompany'].forEach(function (other) {
+          var o = $(other);
+          if (o && o !== el && o.value !== state.company) o.value = state.company;
+        });
+        saveSoon();
+        if (state.view === 'sheet' && sel === '#sheetCompany') renderSheet();
+      });
+    });
+    renderRoleCard();
+    var homeCompany = $('#companyInput');
+    var sheetCompany = $('#sheetCompany');
+    if (homeCompany) homeCompany.value = state.company;
+    if (sheetCompany) sheetCompany.value = state.company;
   }
 
   /* ---------------------------------------------------------
@@ -2753,6 +3548,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       state.jd = jt.value;
       updateCounts();
       saveSoon();
+      clearTimeout(roleTimer);
+      roleTimer = setTimeout(renderRoleCard, 250);
     });
 
     $('#clearInputs').addEventListener('click', function () {
@@ -2761,6 +3558,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       state.jd = '';
       updateCounts();
       PACE.store.save();
+      renderRoleCard();
       toast('입력을 비웠습니다.');
     });
 
@@ -2962,6 +3760,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     state.jd = p.jd;
     updateCounts();
     renderPersonas();
+    renderRoleCard();
     updateEngineLabels();
     PACE.store.save();
     toast('샘플을 불러왔습니다. 분석을 실행해 보세요.');
@@ -2984,6 +3783,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       meta: D.PERSONAS[f.persona].short + ' · ' + (f.mode === 'llm' ? 'AI' : '내장'),
       score: f.score
     });
+    addSheetCard(PACE.sheet.fromFit(f, { company: state.company, role: f.role, persona: state.persona }));
     renderSessions();
     renderTrial();
     var todayCount = state.sessions.filter(function (s) { return new Date(s.at).toDateString() === new Date().toDateString(); }).length;
@@ -3002,6 +3802,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     setBusy(btn, true, '분석 중');
     var persona = state.persona;
     var useLLM = AI.activeProvider() !== 'demo';
+    var roleRes = roleState();
     var token = ++fitToken;
     go('fit');
     $('#fitBody').innerHTML = '<div class="card"><div class="skeleton" style="height:120px;margin-bottom:10px"></div><div class="skeleton" style="height:16px;width:60%;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:80%"></div></div>';
@@ -3009,13 +3810,13 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     try {
       if (useLLM) {
         try {
-          result = await AI.aiFit(state.resume, state.jd, persona, state.settings.intensity);
+          result = await AI.aiFit(state.resume, state.jd, persona, state.settings.intensity, roleRes.role);
         } catch (err) {
           toast('AI 응답을 받지 못해 내장 엔진으로 전환했습니다. (' + (err.message || '오류') + ')', 'err');
-          result = E.analyzeFit(state.resume, state.jd, persona, state.settings.intensity);
+          result = E.analyzeFit(state.resume, state.jd, persona, state.settings.intensity, state.role);
         }
       } else {
-        result = E.analyzeFit(state.resume, state.jd, persona, state.settings.intensity);
+        result = E.analyzeFit(state.resume, state.jd, persona, state.settings.intensity, state.role);
       }
       if (token !== fitToken) return;
       state.fit = result;
@@ -3074,8 +3875,17 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       meter('도메인 일치', domPct, domPct >= 90 ? 'ok' : 'warn') +
       '</div></div></div>';
 
-    html += '<div class="fit-grid">';
+    if (f.roleKpis && f.roleKpis.length) {
+      html += '<div class="card" style="margin-bottom:14px"><div class="card-head"><h3>직무 KPI 커버리지</h3><span class="spacer"></span><span class="badge badge-accent">' + esc(f.role ? f.role.label : '직무') + '</span></div>' +
+        '<p class="small muted" style="margin-bottom:4px">이 직무 면접관이 반드시 확인하는 KPI입니다. 초록은 경력기술서에 근거가 있는 항목, 빨강은 면접 전에 한 문장씩 준비해야 하는 항목입니다.</p>';
+      f.roleKpis.forEach(function (k) {
+        html += '<div class="kpi-row"><span class="kpi-dot' + (k.covered ? ' ok' : '') + '"></span><span class="k">' + esc(k.k) + '</span><span class="p">' + esc(k.probe) +
+          (k.covered ? '' : ' <b style="color:var(--warn)">· 근거 없음</b>') + '</span></div>';
+      });
+      html += '</div>';
+    }
 
+    html += '<div class="fit-grid">';
     // strengths + gaps
     html += '<div class="card list-card"><div class="card-head"><h3>근거가 확인된 요구</h3><span class="spacer"></span><span class="badge badge-ok">' + f.strengths.length + '</span></div>';
     if (!f.strengths.length) html += '<div class="empty" style="padding:16px">JD 요구와 직접 연결되는 문장을 찾지 못했습니다. 근거 문장을 보강하세요.</div>';
@@ -3229,7 +4039,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var q;
     if (AI.activeProvider() !== 'demo') {
       try {
-        q = await AI.aiDrillQuestion(stage, d.claim, d.answers, state.persona, state.settings.intensity);
+        q = await AI.aiDrillQuestion(stage, d.claim, d.answers, state.persona, state.settings.intensity, roleState().role);
       } catch (err) {
         toast('AI 질문을 받지 못해 내장 엔진 질문으로 진행합니다. (' + (err.message || '오류') + ')', 'err');
         q = null;
@@ -3379,7 +4189,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     renderDrill();
     var report;
     if (AI.activeProvider() !== 'demo') {
-      try { report = await AI.aiDrillReport(d.claim, d.answers, d.evals, state.persona); }
+      try { report = await AI.aiDrillReport(d.claim, d.answers, d.evals, state.persona, roleState().role); }
       catch (err) { toast('AI 리포트를 받지 못해 내장 엔진으로 만들었습니다. (' + (err.message || '오류') + ')', 'err'); report = null; }
     }
     if (!state.drill || state.drill !== d) return;
@@ -3392,6 +4202,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       meta: '3단 꼬리질문 · ' + D.PERSONAS[state.persona].short,
       score: report.total
     });
+    addSheetCard(PACE.sheet.fromDrill(d, sheetMeta(d.role || roleState().role)));
     renderSessions();
     renderDrill();
   }
@@ -3505,6 +4316,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       state.sens = result;
       PACE.store.countUsage('sens');
       PACE.store.addSession({ type: 'sens', title: D.SENSITIVE[cat].label + ' 방어 스크립트', meta: D.PERSONAS[state.persona].short, score: null });
+      addSheetCard(PACE.sheet.fromSens(result, sheetMeta(), D.SENSITIVE[cat].label));
       renderSessions();
       renderSensitive(result);
     } finally {
@@ -3535,8 +4347,14 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   }
 
   /* ---------------------------------------------------------
-     QUICK (voice)
+     QUICK CALL (phone UI + silence VAD + audio briefing)
      --------------------------------------------------------- */
+  var SILENCE_MS = 1800;
+  var MAX_QUESTIONS = 3;
+  var SPEECH_ON = true;
+  var quick = null;
+  var briefCtl = { data: null, idx: 0, playing: false, paused: false, timer: null, token: 0, played: false };
+
   function srCtor() { return window.SpeechRecognition || window.webkitSpeechRecognition; }
   function hasTTS() { return typeof window.speechSynthesis !== 'undefined' && typeof window.SpeechSynthesisUtterance !== 'undefined'; }
 
@@ -3580,48 +4398,92 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         PACE.store.save();
       });
     }
-    if (!srCtor()) {
-      $('#quickUnsupported').hidden = false;
-    }
+    if (!srCtor() && $('#quickUnsupported')) $('#quickUnsupported').hidden = false;
   }
 
   function clampRate(v) { return Math.max(0.7, Math.min(1.2, isNaN(v) ? 0.98 : v)); }
 
-  function quickSay(text, after) {
-    if (!hasTTS()) { if (after) setTimeout(after, 400); return; }
+  function pickVoice() {
+    if (!hasTTS()) return null;
+    var voices = window.speechSynthesis.getVoices();
+    if (state.settings.voiceURI) {
+      var v = voices.filter(function (x) { return x.voiceURI === state.settings.voiceURI; })[0];
+      if (v) return v;
+    }
+    return voices.filter(function (x) { return /^ko/i.test(x.lang); })[0] || null;
+  }
+
+  function ttsSay(text, opts, after) {
+    opts = opts || {};
+    var done = false, timer = null;
+    function fin() {
+      if (done) return;
+      done = true;
+      if (timer) clearTimeout(timer);
+      if (after) after();
+    }
+    if (!SPEECH_ON || !hasTTS()) {
+      timer = setTimeout(fin, SPEECH_ON ? 450 : 25);
+      return;
+    }
     try {
       window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(text);
+      var u = new SpeechSynthesisUtterance(String(text || ''));
       u.lang = 'ko-KR';
-      u.rate = state.settings.voiceRate;
-      var voices = window.speechSynthesis.getVoices();
-      var v = null;
-      if (state.settings.voiceURI) v = voices.filter(function (x) { return x.voiceURI === state.settings.voiceURI; })[0];
-      if (!v) v = voices.filter(function (x) { return /^ko/i.test(x.lang); })[0];
+      u.rate = clampRate(opts.rate || state.settings.voiceRate);
+      u.pitch = typeof opts.pitch === 'number' ? opts.pitch : 1.02;
+      var v = pickVoice();
       if (v) u.voice = v;
-      var done = false;
-      function fin() { if (done) return; done = true; if (after) after(); }
       u.onend = fin;
       u.onerror = fin;
       window.speechSynthesis.speak(u);
-      setTimeout(fin, Math.min(22000, 2200 + text.length * 150));
-    } catch (e) { if (after) setTimeout(after, 300); }
+      var ms = Math.max(1200, Math.round(String(text || '').length * (opts.msPerChar || 100)));
+      timer = setTimeout(fin, ms + 900);
+    } catch (e) {
+      timer = setTimeout(fin, 300);
+    }
+  }
+
+  function callPhase(text) {
+    var el = $('#quickPhase');
+    if (el) el.textContent = text;
+  }
+  function quickSetPhase(text) { callPhase(text); }
+
+  function callSetLive(text, live) {
+    var el = $('#callLive');
+    if (!el) return;
+    el.classList.toggle('is-live', !!live);
+    var span = el.querySelector('span');
+    if (span) span.textContent = text;
+  }
+
+  function callSpeaker(who) {
+    var iv = $('#speakerInterviewer'), co = $('#speakerCoach');
+    if (iv) iv.classList.toggle('is-active', who === 'interviewer');
+    if (co) co.classList.toggle('is-active', who === 'coach');
+    var st = $('#spkIvState'), sc = $('#spkCoachState');
+    if (st) st.textContent = who === 'interviewer' ? '말하는 중' : '대기';
+    if (sc) sc.textContent = who === 'coach' ? '말하는 중' : '대기';
+  }
+
+  function callWave(mode) {
+    var el = $('#callWave');
+    if (!el) return;
+    el.classList.toggle('is-listening', mode === 'listening');
+    el.classList.toggle('is-speaking', mode === 'speaking');
   }
 
   function quickEnsureState() {
     if (!quick) {
       quick = {
-        active: false, paused: false, phase: 'idle', endAt: 0, timerId: null,
+        active: false, phase: 'idle', endAt: 0, timerId: null,
         questions: [], idx: 0, answers: [], evals: [], transcript: '', interim: '',
-        recognition: null, listening: false, silenceId: null, startedAt: 0, summary: null
+        recognition: null, listening: false, silenceId: null, startedAt: 0,
+        muted: false, summary: null, briefing: null, role: null, mode: 'demo', feedback: ''
       };
     }
     return quick;
-  }
-
-  function quickSetPhase(text) {
-    var el = $('#quickPhase');
-    if (el) el.textContent = text;
   }
 
   function quickSetTimer(sec) {
@@ -3634,8 +4496,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     el.classList.toggle('danger', sec <= 20);
   }
 
-  function quickSendAvailable() {
-    return !srCtor();
+  function quickSetCount() {
+    var el = $('#quickCount');
+    if (!el) return;
+    var q = quick;
+    if (!q || !q.questions.length) { el.textContent = '0 / ' + MAX_QUESTIONS; return; }
+    el.textContent = Math.min(q.answers.length + 1, q.questions.length) + ' / ' + q.questions.length;
   }
 
   function quickShowInput(show) {
@@ -3646,14 +4512,19 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   function quickRenderTranscript() {
     var box = $('#quickTranscript');
     var lines = $('#quickLines');
-    if (!box || !lines) return;
     var q = quick;
+    if (!box || !lines || !q) return;
     if (!q.answers.length && !q.interim) { box.hidden = true; return; }
     box.hidden = false;
     var html = '';
-    q.answers.forEach(function (a, i) {
-      html += '<div class="line"><b style="color:var(--accent);font-size:11px">' + (i + 1) + '차 답변</b><br>' + esc(a.text) +
-        (a.score ? '<br><span class="tiny faint">평가 ' + a.score + '점 · ' + esc(a.note) + '</span>' : '') + '</div>';
+    q.questions.forEach(function (question, i) {
+      var a = q.answers[i];
+      if (!a && i >= q.idx) return;
+      html += '<div class="line"><b style="color:#8AB4FF">Q' + (i + 1) + '</b> ' + esc(question.q) + '</div>';
+      if (a) {
+        html += '<div class="line"><b style="color:#9FE8C8">A' + (i + 1) + '</b> ' + esc(a.text) +
+          (a.score ? ' <span class="tiny faint">' + a.score + '점</span>' : '') + '</div>';
+      }
     });
     if (q.interim) html += '<div class="line interim">' + esc(q.interim) + '…</div>';
     lines.innerHTML = html;
@@ -3663,38 +4534,62 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var q = quickEnsureState();
     if (q.active) return;
     var resume = state.resume.trim();
-    if (!resume && !state.jd.trim()) { toast('경력기술서나 공고를 먼저 입력하면 질문이 더 정확해집니다.', 'err'); }
-    q.active = true; q.summary = null; q.answers = []; q.evals = []; q.transcript = ''; q.interim = ''; q.idx = 0;
-    q.questions = [];
+    var jd = state.jd.trim();
+    if (!resume && !jd) toast('경력기술서나 공고를 먼저 입력하면 질문이 더 정확해집니다.', 'err');
     var btn = $('#quickStartBtn');
     setBusy(btn, true, '질문 준비');
     $('#quickSummary').innerHTML = '';
+    briefClearTimer();
+    briefStopTts();
+    briefCtl = { data: null, idx: 0, playing: false, paused: false, timer: null, token: 0, played: false };
+    var roleRes = roleState();
     var questions = null;
-    if (AI.activeProvider() !== 'demo' && (resume || state.jd.trim())) {
-      try { questions = await AI.aiQuickQuestions(resume, state.jd, state.persona, state.fit); }
+    if (AI.activeProvider() !== 'demo' && (resume || jd)) {
+      try { questions = await AI.aiQuickQuestions(resume, jd, state.persona, state.fit, roleRes.role); }
       catch (err) { toast('AI 질문을 받지 못해 내장 질문으로 진행합니다. (' + (err.message || '오류') + ')', 'err'); }
     }
     if (!state.resume.trim() && !state.fit) {
-      try { state.fit = E.analyzeFit(state.resume, state.jd, state.persona, state.settings.intensity); } catch (e) { state.fit = null; }
+      try { state.fit = E.analyzeFit(state.resume, state.jd, state.persona, state.settings.intensity, state.role); } catch (e) { state.fit = null; }
     }
-    if (!questions) questions = E.quickQuestions(resume, state.jd, state.persona, state.fit);
+    if (!questions || !questions.length) questions = E.quickQuestions(resume, jd, state.persona, state.fit, roleRes.role, MAX_QUESTIONS);
     setBusy(btn, false);
-    q.questions = questions.map(function (x) { return { q: x.q, tag: x.tag || '' }; });
+    q = quickEnsureState();
+    q.questions = questions.slice(0, 4).map(function (x) { return { q: x.q, tag: x.tag || '' }; });
     q.active = true;
+    q.phase = 'asking';
+    q.answers = [];
+    q.evals = [];
+    q.idx = 0;
+    q.transcript = '';
+    q.interim = '';
+    q.summary = null;
+    q.briefing = null;
+    q.muted = false;
+    q.listenFail = false;
+    q.feedback = '';
     q.startedAt = Date.now();
     q.endAt = Date.now() + 5 * 60 * 1000;
+    q.role = roleRes.role;
+    q.mode = AI.activeProvider() !== 'demo' && questions && questions.length ? 'llm' : 'demo';
     PACE.store.countUsage('quick');
-    q.phase = 'question';
-    q.idx = 0;
+    var av = $('#spkIvAvatar');
+    if (av) av.textContent = D.PERSONAS[state.persona].avatar;
     $('#quickStartBtn').hidden = true;
     $('#quickEndBtn').hidden = false;
     $('#quickEndBtn').disabled = false;
     $('#quickNextBtn').hidden = true;
-    $('#quickOrb').classList.remove('is-listening');
-    quickShowInput(quickSendAvailable());
-    quickUpdateButtons();
-    quickSetPhase('QUESTION 1 / ' + q.questions.length);
+    $('#quickReplayQ').hidden = false;
+    $('#quickMuteBtn').hidden = false;
+    var startOrb = $('#quickOrb');
+    if (startOrb) startOrb.hidden = false;
+    $('#quickMuteBtn').classList.remove('is-on');
+    $('#quickMuteLabel').textContent = '음소거';
+    $('#quickOrb').classList.remove('is-muted');
+    quickShowInput(!srCtor());
+    quickSetCount();
     quickSetTimer(300);
+    callSetLive('통화 중', true);
+    if (q.timerId) clearInterval(q.timerId);
     q.timerId = setInterval(quickTick, 500);
     quickAsk(0);
   }
@@ -3705,27 +4600,45 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     q.idx = i;
     q.transcript = '';
     q.interim = '';
+    q.phase = 'asking';
     var question = q.questions[i];
+    if (!question) { quickFinish(); return; }
+    $('#quickNextBtn').hidden = true;
     $('#quickQ').textContent = question.q;
-    $('#quickHint').textContent = question.tag ? question.tag + ' · 답변 후 자동으로 다음 질문' : '5분 · 2개 질문 · 답변 후 자동으로 다음 질문';
+    var tag = $('#quickTag');
+    if (tag) tag.textContent = question.tag || (q.role ? q.role.short + ' KPI 압박' : '압박 질문');
+    $('#quickHint').textContent = '답변이 끝나면 약 1.8초 뒤 자동으로 다음 질문으로 넘어갑니다.';
     quickRenderTranscript();
-    quickSetPhase('QUESTION ' + (i + 1) + ' / ' + q.questions.length);
-    q.phase = 'question';
-    quickShowInput(true);
-    quickSay(question.q, function () {
+    quickSetCount();
+    callPhase('QUESTION ' + (i + 1) + ' / ' + q.questions.length);
+    callSetLive('면접관 질문', true);
+    callSpeaker('interviewer');
+    callWave('speaking');
+    ttsSay(question.q, { pitch: 1.03, rate: clampRate(state.settings.voiceRate), msPerChar: 105 }, function () {
       if (!q.active || q.idx !== i) return;
+      callWave('');
+      callSpeaker(null);
+      callSetLive('통화 중', true);
       quickListen(i);
     });
   }
 
   function quickListen(i) {
     var q = quick;
-    if (!q || !q.active) return;
+    if (!q || !q.active || q.idx !== i) return;
+    if (q.muted) {
+      q.phase = 'listening';
+      callPhase('음소거 · 해제하면 다시 듣습니다');
+      callWave('');
+      return;
+    }
     quickShowInput(true);
     if (!srCtor()) {
-      quickSetPhase('LISTENING · 텍스트 입력');
+      q.phase = 'listening';
+      callPhase('듣는 중 · 텍스트로 답변');
+      callWave('');
       var inp = $('#quickInput');
-      if (inp) setTimeout(function () { inp.focus(); }, 100);
+      if (inp) setTimeout(function () { inp.focus(); }, 80);
       return;
     }
     try {
@@ -3752,35 +4665,41 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       };
       rec2.onerror = function (e) {
         if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+          q.listenFail = true;
           quickShowInput(true);
           toast('마이크 권한이 없습니다. 텍스트로 답변할 수 있습니다.', 'err');
-          quickSetPhase('LISTENING · 텍스트 입력');
-        } else if (e.error === 'no-speech') {
-          /* keep listening */
+          callPhase('듣는 중 · 텍스트로 답변');
+          callWave('');
         } else if (e.error === 'network') {
+          q.listenFail = true;
           quickShowInput(true);
-          quickSetPhase('LISTENING · 텍스트 입력');
+          callPhase('듣는 중 · 텍스트로 답변');
+          callWave('');
         }
       };
       rec2.onend = function () {
         q.listening = false;
-        if (q.active && q.phase === 'listening' && !q.answers[q.idx]) {
+        if (q.active && q.phase === 'listening' && !q.muted && !q.answers[q.idx]) {
           setTimeout(function () {
-            if (q.active && q.phase === 'listening' && !q.listening) {
-              try { rec2.start(); q.listening = true; } catch (e) { /* already started */ }
+            if (quick && quick.active && quick.phase === 'listening' && !quick.listening && !quick.listenFail) {
+              try { rec2.start(); quick.listening = true; } catch (e) { /* already started */ }
             }
-          }, 350);
+          }, 320);
         }
       };
       rec2.start();
       q.listening = true;
       q.phase = 'listening';
-      quickSetPhase('LISTENING');
-      $('#quickOrb').classList.add('is-listening');
+      callPhase('듣는 중 · 말을 마치면 자동 전송');
+      callWave('listening');
+      callSpeaker(null);
+      callSetLive('통화 중', true);
       quickResetSilence(i);
     } catch (e) {
+      q.listenFail = true;
       quickShowInput(true);
-      quickSetPhase('LISTENING · 텍스트 입력');
+      callPhase('듣는 중 · 텍스트로 답변');
+      callWave('');
     }
   }
 
@@ -3789,58 +4708,61 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     if (!q) return;
     clearTimeout(q.silenceId);
     q.silenceId = setTimeout(function () {
-      if (!q.active) return;
+      if (!q.active || q.phase !== 'listening' || q.idx !== i) return;
       var text = (q.transcript + ' ' + (q.interim || '')).trim();
       if (text.length >= 8) quickFinalize(i, text);
-    }, 3800);
+      else if (text.length) callPhase('조금 더 말씀해 주세요');
+    }, SILENCE_MS);
   }
 
   function quickStopListen() {
     var q = quick;
-    if (!q || !q.recognition) return;
+    if (!q) return;
+    clearTimeout(q.silenceId);
+    q.silenceId = null;
+    if (!q.recognition) return;
     try { q.recognition.onend = null; q.recognition.stop(); } catch (e) { /* ignore */ }
     q.listening = false;
-    clearTimeout(q.silenceId);
   }
 
   function quickFinalize(i, textOverride) {
     var q = quick;
     if (!q || !q.active) return;
     if (q.phase === 'evaluating' || q.phase === 'between') return;
-    var text = (textOverride || q.transcript + ' ' + (q.interim || '')).trim();
-    if (!text) return;
+    var text = String(textOverride || (q.transcript + ' ' + (q.interim || ''))).trim();
+    if (text.length < 5) return;
     quickStopListen();
     q.phase = 'evaluating';
-    $('#quickOrb').classList.remove('is-listening');
-    quickSetPhase('EVALUATING');
+    callWave('');
+    callSpeaker('coach');
+    callSetLive('코치 피드백', true);
+    callPhase('답변 분석 중');
     var ev = E.evalAnswer(text, 1);
     q.answers.push({ text: text, score: ev.total, note: ev.notes[ev.total >= 70 ? 'numbers' : 'logic'] });
     q.evals.push(ev);
+    q.transcript = '';
     q.interim = '';
     quickRenderTranscript();
+    quickSetCount();
     var last = q.idx >= q.questions.length - 1;
     var timeLeft = Math.max(0, (q.endAt - Date.now()) / 1000);
     var feedback = ev.total >= 70
-      ? '핵심 근거가 들어갔습니다. 다음 질문으로 넘어갑니다.'
-      : '근거가 한 문장 부족합니다. 기준선과 수치를 붙여 다시 말해 보세요.';
-    quickSay(feedback, function () {
+      ? '핵심 근거가 들어갔습니다. 다음 질문으로 넘어가겠습니다.'
+      : '수치와 기여 범위가 조금 부족합니다. 다음 답변에서는 기준선을 먼저 말해 보세요.';
+    q.feedback = feedback;
+    q.phase = 'between';
+    $('#quickNextBtn').hidden = false;
+    ttsSay(feedback, { pitch: 0.92, rate: clampRate(state.settings.voiceRate * 0.9), msPerChar: 105 }, function () {
       if (!q.active) return;
       if (last || timeLeft < 25) quickFinish();
-      else {
-        q.phase = 'between';
-        $('#quickNextBtn').hidden = false;
-        quickSetPhase('NEXT');
-        setTimeout(function () {
-          if (q.active && q.phase === 'between') { $('#quickNextBtn').click(); }
-        }, 2200);
-      }
+      else quickNext();
     });
-    quickUpdateButtons();
   }
 
   function quickNext() {
     var q = quick;
     if (!q || !q.active) return;
+    if (q.phase !== 'between') return;
     $('#quickNextBtn').hidden = true;
     if (q.idx + 1 >= q.questions.length) { quickFinish(); return; }
     quickAsk(q.idx + 1);
@@ -3854,99 +4776,487 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     if (left <= 0) quickFinish();
   }
 
-  function quickUpdateButtons() {
-    var end = $('#quickEndBtn');
-    if (end) end.disabled = !(quick && quick.active);
-    var next = $('#quickNextBtn');
-    if (next && !(quick && quick.phase === 'between')) next.hidden = true;
+  function quickToggleMute() {
+    var q = quickEnsureState();
+    q.muted = !q.muted;
+    var btn = $('#quickMuteBtn');
+    if (btn) btn.classList.toggle('is-on', q.muted);
+    var lab = $('#quickMuteLabel');
+    if (lab) lab.textContent = q.muted ? '음소거됨' : '음소거';
+    var orb = $('#quickOrb');
+    if (orb) orb.classList.toggle('is-muted', q.muted);
+    if (q.muted) {
+      quickStopListen();
+      callWave('');
+      callPhase('음소거 · 해제하면 다시 듣습니다');
+    } else if (q.active && q.phase === 'listening') {
+      quickListen(q.idx);
+    }
   }
 
-  function quickFinish() {
+  function quickReplayQuestion() {
+    var q = quick;
+    if (!q || !q.active || !q.questions.length) return;
+    var i = q.idx;
+    var question = q.questions[i];
+    quickStopListen();
+    callPhase('질문 다시 듣기');
+    callSpeaker('interviewer');
+    callWave('speaking');
+    ttsSay(question.q, { pitch: 1.03, rate: clampRate(state.settings.voiceRate), msPerChar: 105 }, function () {
+      if (!q.active || q.idx !== i) return;
+      callWave('');
+      callSpeaker(null);
+      quickListen(i);
+    });
+  }
+
+  function quickFinish(opts) {
     var q = quick;
     if (!q || !q.active) return;
+    var silent = !!(opts && opts.silent);
     q.active = false;
     q.phase = 'done';
     quickStopListen();
     if (q.timerId) { clearInterval(q.timerId); q.timerId = null; }
-    if (hasTTS()) { try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ } }
+    try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
     $('#quickStartBtn').hidden = false;
-    $('#quickStartBtn').textContent = '다시 시작';
+    $('#quickStartBtn').textContent = '다시 통화';
     $('#quickEndBtn').hidden = true;
     $('#quickEndBtn').disabled = true;
     $('#quickNextBtn').hidden = true;
+    $('#quickReplayQ').hidden = true;
     quickShowInput(false);
-    $('#quickOrb').classList.remove('is-listening');
-    quickSetTimer(0);
+    var orb = $('#quickOrb');
+    if (orb) { orb.classList.remove('is-listening', 'is-muted'); orb.hidden = true; }
+    var muteBtn = $('#quickMuteBtn');
+    if (muteBtn) { muteBtn.hidden = true; muteBtn.classList.remove('is-on'); }
+    callWave('');
+    callSpeaker(null);
+    callSetLive('통화 종료', false);
+    if (q.endAt) quickSetTimer(Math.max(0, (q.endAt - Date.now()) / 1000));
     $('#quickTimer').classList.remove('warn', 'danger');
-    quickSetPhase('ENDED');
+    callPhase('통화 종료 · 브리핑 준비');
     var answered = q.answers.length;
-    var avg = answered ? U.round(q.answers.reduce(function (a, b) { return a + b.score; }, 0) / answered) : 0;
-    var lastEv = q.evals[q.evals.length - 1];
-    var weakest = answered ? '수치 근거' : '—';
-    if (lastEv) {
-      var names = { logic: '문제 해결 논리', numbers: '수치 근거', ownership: '주도적 기여도', impact: '비즈니스 임팩트' };
-      var key = Object.keys(lastEv.scores).sort(function (a, b) { return lastEv.scores[a] - lastEv.scores[b]; })[0];
-      weakest = names[key];
-    }
-    $('#quickHint').textContent = '세션이 끝났습니다. 요약을 확인하세요.';
-    var html = '<div class="card" style="margin-top:14px"><div class="card-head"><h3>세션 요약</h3><span class="spacer"></span><span class="badge badge-accent">' + fmtDate(Date.now()) + '</span></div>' +
-      '<div class="quick-stats"><div><div class="k">답변</div><div class="v">' + answered + ' / ' + q.questions.length + '</div></div>' +
-      '<div><div class="k">평균</div><div class="v">' + (answered ? avg + '점' : '—') + '</div></div>' +
-      '<div><div class="k">가장 약한 축</div><div class="v" style="font-size:13px">' + esc(weakest) + '</div></div></div>' +
-      '<div class="divider"></div>';
-    if (answered) {
-      q.answers.forEach(function (a, i) {
-        html += '<div style="padding:8px 0;border-top:1px solid var(--line-soft)"><div class="tiny faint">질문 ' + (i + 1) + ' · ' + a.score + '점</div>' +
-          '<div class="small" style="color:var(--text-2);margin-top:2px">' + esc(U.truncate(a.text, 220)) + '</div></div>';
-      });
-      html += '<div class="hint-box" style="margin-top:12px"><b>다음 액션</b><br>' + esc(lastEv && lastEv.notes[Object.keys(lastEv.scores).sort(function (a, b) { return lastEv.scores[a] - lastEv.scores[b]; })[0]]) + '</div>';
-    } else {
-      html += '<div class="empty" style="padding:16px">답변이 기록되지 않았습니다. 마이크 권한을 확인하거나 텍스트로 다시 시도하세요.</div>';
-    }
-    html += '<div class="copy-row"><button class="btn btn-sm btn-primary" id="quickAgain">한 번 더</button>' +
-      '<button class="btn btn-sm btn-ghost" data-go="fit">적합도 분석 보기</button>' +
-      '<button class="btn btn-sm btn-ghost" id="copyQuick">기록 복사</button></div></div>';
-    $('#quickSummary').innerHTML = html;
+    var duration = Math.max(0, Math.round((Date.now() - q.startedAt) / 1000));
+    var brief = PACE.briefing.build({
+      questions: q.questions,
+      answers: q.answers,
+      evals: q.evals,
+      persona: state.persona,
+      role: q.role || roleState().role,
+      company: state.company,
+      duration: duration,
+      mode: q.mode
+    });
+    q.summary = brief;
+    q.briefing = brief;
     if (answered > 0) {
       PACE.store.addSession({
         type: 'quick',
-        title: '5분 퀵 모드 · ' + answered + '문항',
-        meta: D.PERSONAS[state.persona].short + ' · 음성',
-        score: avg
+        title: '5분 통화 · ' + answered + '문항',
+        meta: D.PERSONAS[state.persona].short + (hasTTS() ? ' · 음성' : ' · 텍스트'),
+        score: brief.score
       });
       renderSessions();
+      addSheetCard(PACE.sheet.fromQuick(brief, sheetMeta(q.role)));
     }
-    $('#quickAgain').addEventListener('click', function () { quickStart(); });
-    var copyQ = $('#copyQuick');
-    if (copyQ) copyQ.addEventListener('click', function () {
-      var txt = '[PACE 5분 퀵]\n' + q.questions.map(function (x, i) {
-        var a = q.answers[i];
-        return (i + 1) + '. ' + x.q + '\n→ ' + (a ? a.text + ' (' + a.score + '점)' : '답변 없음');
-      }).join('\n\n');
-      copyWithToast(txt, '기록을 복사했습니다.');
-    });
-    bindRenderedActions();
+    renderQuickSummary(brief);
+    if (!silent && answered > 0) {
+      setTimeout(function () {
+        if (quick && quick.phase === 'done' && briefCtl.data === brief && !briefCtl.playing && !briefCtl.played) briefPlayFrom(0);
+      }, 900);
+    }
   }
 
+  function renderQuickSummary(b) {
+    var names = D.AXIS_NAME;
+    var strongest = names[b.bestAxis] || '—';
+    var weakest = names[b.worstAxis] || '—';
+    var html = '<div class="card" style="margin-top:14px"><div class="card-head"><h3>통화 요약</h3><span class="spacer"></span><span class="badge badge-accent">' + fmtDate(b.at) + '</span></div>' +
+      '<div class="quick-stats"><div><div class="k">답변</div><div class="v">' + b.answered + ' / ' + b.total + '</div></div>' +
+      '<div><div class="k">평균</div><div class="v">' + (b.answered ? b.score + '점' : '—') + '</div></div>' +
+      '<div><div class="k">가장 약한 축</div><div class="v" style="font-size:13px">' + esc(b.answered ? weakest : '—') + '</div></div></div>';
+    if (b.answered) {
+      html += '<div class="divider"></div><div class="tiny faint">가장 안정적: ' + esc(strongest) + ' · 보강: ' + esc(weakest) + ' · ' + b.answered + '개 답변</div>';
+      b.transcript.forEach(function (t) {
+        html += '<div style="padding:8px 0;border-top:1px solid var(--line-soft)"><div class="tiny faint">질문 ' + (t.i + 1) + ' · ' + (t.score !== null ? t.score + '점' : '답변 없음') + '</div>' +
+          '<div class="small" style="color:var(--text);margin-top:2px">' + esc(t.question) + '</div>' +
+          '<div class="small" style="color:var(--text-2);margin-top:4px">' + esc(U.truncate(t.answer || '답변 없음', 220)) + '</div></div>';
+      });
+      if (b.weakest) html += '<div class="hint-box" style="margin-top:12px"><b>한 줄 코칭</b><br>' + esc(b.weakest.axisNote) + '</div>';
+    } else {
+      html += '<div class="divider"></div><div class="empty" style="padding:16px">답변이 기록되지 않았습니다. 마이크 권한을 확인하거나 텍스트로 다시 시도하세요.</div>';
+    }
+    html += '<div class="copy-row"><button class="btn btn-sm btn-primary" id="quickAgain">한 번 더</button>' +
+      '<button class="btn btn-sm btn-ghost" data-go="sheet">치트시트에서 보기</button>' +
+      '<button class="btn btn-sm btn-ghost" id="copyQuick">기록 복사</button>' +
+      (b.answered ? '<span class="tiny faint" style="margin-left:auto;align-self:center">치트시트에 자동 저장됨</span>' : '') + '</div></div>';
+
+    html += '<div class="brief" id="briefingPlayer"><div class="brief-head"><h3>코치 오디오 브리핑</h3><span class="brief-status" id="briefStatus">준비됨</span><span class="spacer"></span><span class="tiny faint">코치 목소리 · 면접관보다 느리고 낮게</span></div>' +
+      '<div class="brief-controls"><button class="btn btn-sm btn-primary" id="briefPlay"><svg><use href="#i-play"/></svg><span>재생</span></button>' +
+      '<button class="btn btn-sm btn-ghost" id="briefReplay"><svg><use href="#i-refresh"/></svg>처음부터</button></div>' +
+      '<div class="brief-parts" id="briefParts">' +
+      b.parts.map(function (p, i) {
+        return '<div class="brief-part" data-brief="' + i + '"><div class="bp-head"><span class="bp-title">' + esc(p.title) + '</span>' +
+          '<button class="bp-play" data-brief-play="' + i + '" aria-label="' + esc(p.title) + ' 재생"><svg><use href="#i-play"/></svg></button></div>' +
+          '<div class="bp-text">' + esc(p.text) + '</div></div>';
+      }).join('') + '</div></div>';
+    $('#quickSummary').innerHTML = html;
+    $('#quickAgain').addEventListener('click', function () { quickStart(); });
+    $('#copyQuick').addEventListener('click', function () {
+      var txt = '[PACE 5분 통화] ' + new Date(b.at).toLocaleString('ko-KR') + '\n' +
+        '평균 ' + b.score + '점 · ' + b.answered + '/' + b.total + ' 답변\n\n' +
+        b.transcript.map(function (t) {
+          return (t.i + 1) + '. ' + t.question + '\n→ ' + (t.answer || '답변 없음') + (t.score !== null ? ' (' + t.score + '점)' : '');
+        }).join('\n\n') + '\n\n■ 코치 브리핑\n' +
+        b.parts.map(function (p) { return '[' + p.title + ']\n' + p.text; }).join('\n\n');
+      copyWithToast(txt, '통화 기록과 브리핑을 복사했습니다.');
+    });
+    $('#briefPlay').addEventListener('click', function () {
+      if (briefCtl.playing) briefPause();
+      else if (briefCtl.paused) briefPlayFrom(briefCtl.idx);
+      else briefPlayFrom(0);
+    });
+    $('#briefReplay').addEventListener('click', function () { briefPlayFrom(0); });
+    $$('[data-brief-play]').forEach(function (btn) {
+      btn.addEventListener('click', function () { briefPlayFrom(parseInt(btn.getAttribute('data-brief-play'), 10) || 0); });
+    });
+    bindRenderedActions();
+    briefLoad(b);
+  }
+
+  /* ---------------------------------------------------------
+     audio briefing player (coach voice)
+     --------------------------------------------------------- */
+  function briefClearTimer() {
+    if (briefCtl.timer) { clearTimeout(briefCtl.timer); briefCtl.timer = null; }
+  }
+  function briefStopTts() {
+    try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+  }
+  function briefEstimate(text) {
+    return SPEECH_ON ? Math.max(2200, Math.round(String(text || '').length * 105)) : 60;
+  }
+  function briefLoad(b) {
+    briefClearTimer();
+    briefStopTts();
+    briefCtl.data = b;
+    briefCtl.idx = 0;
+    briefCtl.playing = false;
+    briefCtl.paused = false;
+    briefCtl.played = false;
+    briefCtl.token += 1;
+    briefRender();
+  }
+  function briefStatusText() {
+    var n = briefCtl.data && briefCtl.data.parts ? briefCtl.data.parts.length : 3;
+    if (briefCtl.playing) return '재생 중 · ' + (briefCtl.idx + 1) + ' / ' + n;
+    if (briefCtl.paused) return '일시정지';
+    if (briefCtl.played) return '재생 완료';
+    return '준비됨';
+  }
+  function briefRender() {
+    var st = $('#briefStatus');
+    if (st) st.textContent = briefStatusText();
+    var play = $('#briefPlay');
+    if (play) {
+      play.innerHTML = '<svg><use href="#' + (briefCtl.playing ? 'i-pause' : 'i-play') + '"/></svg><span>' +
+        (briefCtl.playing ? '일시정지' : (briefCtl.paused ? '이어 듣기' : '재생')) + '</span>';
+    }
+    $$('#briefParts .brief-part').forEach(function (el) {
+      el.classList.toggle('is-playing', briefCtl.playing && Number(el.getAttribute('data-brief')) === briefCtl.idx);
+    });
+  }
+  function briefPlayFrom(i) {
+    var d = briefCtl.data;
+    if (!d || !d.parts || !d.parts.length) return;
+    briefClearTimer();
+    briefStopTts();
+    briefCtl.token += 1;
+    var token = briefCtl.token;
+    briefCtl.idx = Math.max(0, Math.min(i, d.parts.length - 1));
+    briefCtl.playing = true;
+    briefCtl.paused = false;
+    briefCtl.played = true;
+    var part = d.parts[briefCtl.idx];
+    callSetLive('코치 브리핑', true);
+    callSpeaker('coach');
+    callWave('speaking');
+    callPhase('COACH BRIEFING');
+    briefRender();
+    var fin = function () {
+      if (token !== briefCtl.token || !briefCtl.playing) return;
+      briefClearTimer();
+      if (briefCtl.idx + 1 < d.parts.length) { briefPlayFrom(briefCtl.idx + 1); return; }
+      briefCtl.playing = false;
+      briefCtl.paused = false;
+      callWave('');
+      callSpeaker(null);
+      callSetLive('통화 종료', false);
+      callPhase('통화 종료 · 브리핑 완료');
+      briefRender();
+    };
+    if (SPEECH_ON && hasTTS()) {
+      try {
+        var u = new SpeechSynthesisUtterance(String(part.text || ''));
+        u.lang = 'ko-KR';
+        u.rate = clampRate(state.settings.voiceRate * 0.9);
+        u.pitch = 0.92;
+        var v = pickVoice();
+        if (v) u.voice = v;
+        u.onend = fin;
+        u.onerror = fin;
+        window.speechSynthesis.speak(u);
+      } catch (e) { /* fall through to timer */ }
+    }
+    briefCtl.timer = setTimeout(fin, briefEstimate(part.text) + 400);
+    briefCtl.timer = briefCtl.timer;
+  }
+  function briefPause() {
+    if (!briefCtl.playing) return;
+    briefCtl.token += 1;
+    briefCtl.playing = false;
+    briefCtl.paused = true;
+    briefClearTimer();
+    briefStopTts();
+    callWave('');
+    callSpeaker(null);
+    callSetLive('통화 종료', false);
+    callPhase('브리핑 일시정지');
+    briefRender();
+  }
+  function briefToggle() {
+    if (briefCtl.playing) briefPause();
+    else if (briefCtl.paused) briefPlayFrom(briefCtl.idx);
+    else briefPlayFrom(0);
+  }
+
+  /* ---------------------------------------------------------
+     CHEAT SHEET
+     --------------------------------------------------------- */
+  var sheetFilter = 'all';
+  var sheetIndex = 0;
+  var SHEET_FILTERS = [
+    { id: 'all', label: '전체' },
+    { id: 'pinned', label: '고정' },
+    { id: 'quick', label: '통화' },
+    { id: 'drill', label: '꼬리질문' },
+    { id: 'sens', label: '민감질문' },
+    { id: 'fit', label: '적합도' }
+  ];
+
+  function sheetMeta(roleObj) {
+    return { company: state.company, role: roleObj || roleState().role, persona: state.persona };
+  }
+
+  function addSheetCard(card) {
+    if (!card) return null;
+    var up = PACE.sheet.upsert(state.cards, card);
+    state.cards = up.cards;
+    PACE.store.save();
+    if (state.view === 'sheet') renderSheet();
+    return up;
+  }
+
+  function sheetCards() {
+    var list = state.cards.slice();
+    if (sheetFilter === 'pinned') list = list.filter(function (c) { return c.pinned; });
+    else if (sheetFilter !== 'all') list = list.filter(function (c) { return c.type === sheetFilter; });
+    list.sort(function (a, b) {
+      if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;
+      return (b.at || 0) - (a.at || 0);
+    });
+    return list;
+  }
+
+  function sheetCompanyLabel(c) { return c.company || state.company || '지원 회사'; }
+
+  function renderSheetFilters() {
+    var wrap = $('#sheetFilters');
+    if (!wrap) return;
+    wrap.innerHTML = SHEET_FILTERS.map(function (f) {
+      var n = f.id === 'all' ? state.cards.length
+        : f.id === 'pinned' ? state.cards.filter(function (c) { return c.pinned; }).length
+          : state.cards.filter(function (c) { return c.type === f.id; }).length;
+      return '<button class="chip' + (sheetFilter === f.id ? ' is-on' : '') + '" data-sheet-filter="' + f.id + '">' + esc(f.label) + (n ? ' ' + n : '') + '</button>';
+    }).join('');
+  }
+
+  function sheetCardHtml(c) {
+    var html = '<article class="sheet-card" id="sheetCard" data-card-id="' + esc(c.id || '') + '">';
+    html += '<div class="sc-top"><span class="sc-type">' + esc(c.typeLabel || c.type) + '</span>' +
+      '<span class="sc-company">' + esc(sheetCompanyLabel(c)) + '</span>' +
+      (c.roleLabel ? '<span class="tiny faint">' + esc(c.roleLabel) + '</span>' : '') +
+      (typeof c.score === 'number' ? '<span class="sc-score">' + c.score + '점</span>' : '') +
+      '<button class="sc-pin' + (c.pinned ? ' is-on' : '') + '" id="sheetPin" aria-pressed="' + (!!c.pinned) + '"><svg><use href="#i-pin"/></svg>' + (c.pinned ? '고정됨' : '고정') + '</button></div>';
+    html += '<h3 class="sc-title">' + esc(c.title) + '</h3>';
+    if (c.metrics && c.metrics.length) {
+      html += '<div class="sc-metrics">' + c.metrics.map(function (m) { return '<span class="sc-metric">' + esc(m) + '</span>'; }).join('') + '</div>';
+    }
+    if (c.lines && c.lines.length) {
+      html += '<div class="sc-sec"><h5>한 줄 정리</h5>' + c.lines.slice(0, 2).map(function (l) { return '<div class="sc-note">' + esc(l) + '</div>'; }).join('') + '</div>';
+    }
+    if (c.script && c.script.length) {
+      html += '<div class="sc-sec"><h5>합격 스크립트</h5><div class="sc-script">' + c.script.map(function (s) {
+        return '<div class="line"><b>' + esc(s.label || '') + '</b>' + esc(s.text || '') + '</div>';
+      }).join('') + '</div></div>';
+    }
+    if (c.defenses && c.defenses.length) {
+      html += '<div class="sc-sec"><h5>방어 논리</h5>' + c.defenses.slice(0, 3).map(function (d) {
+        return '<div class="sc-defense"><span class="q">Q. ' + esc(d.q || '') + '</span><span class="a">' + esc(d.a || '') + '</span></div>';
+      }).join('') + '</div>';
+    }
+    if (c.avoid && c.avoid.length) {
+      html += '<div class="sc-sec"><h5>쓰지 말 표현</h5><div class="sc-avoid">' + c.avoid.map(function (a) { return '<span class="avoid">' + esc(a) + '</span>'; }).join('') + '</div></div>';
+    }
+    var go = c.type === 'quick' ? 'quick' : c.type === 'drill' ? 'drill' : c.type === 'sens' ? 'sensitive' : 'fit';
+    html += '<div class="sc-foot"><button class="btn btn-sm btn-ghost" id="sheetCopy"><svg><use href="#i-copy"/></svg>스크립트 복사</button>' +
+      '<button class="btn btn-sm btn-ghost" data-go="' + go + '">이어서 연습</button>' +
+      '<span class="sc-updated">' + fmtDate(c.at) + ((c.updates || 1) > 1 ? ' · ' + c.updates + '회 업데이트' : '') + '</span></div></article>';
+    return html;
+  }
+
+  function sheetCopyText(c) {
+    var lines = ['[PACE 치트시트] ' + sheetCompanyLabel(c) + (c.roleLabel ? ' · ' + c.roleLabel : ''), c.title];
+    if (c.metrics && c.metrics.length) lines.push('핵심 수치: ' + c.metrics.join(' / '));
+    if (c.script && c.script.length) {
+      lines.push('', '■ 스크립트');
+      c.script.forEach(function (s) { lines.push('[' + (s.label || '') + '] ' + (s.text || '')); });
+    }
+    if (c.defenses && c.defenses.length) {
+      lines.push('', '■ 방어 논리');
+      c.defenses.forEach(function (d) { lines.push('- ' + d.q + ' → ' + d.a); });
+    }
+    return lines.join('\n');
+  }
+
+  function renderSheet() {
+    var stage = $('#sheetStack');
+    if (!stage) return;
+    renderSheetFilters();
+    var cards = sheetCards();
+    var countEl = $('#sheetCount');
+    if (countEl) countEl.textContent = cards.length + '장';
+    var nav = $('#sheetNav');
+    if (!cards.length) {
+      stage.innerHTML = '<div class="sheet-empty"><b>아직 카드가 없습니다</b>3단 꼬리질문 · 민감질문 방어 · 5분 통화를 마치면 합격 스크립트 카드가 자동으로 쌓입니다.<div><button class="btn btn-primary btn-sm" data-go="quick" style="margin-top:14px">5분 통화 시작</button> <button class="btn btn-ghost btn-sm" data-go="drill" style="margin-top:14px">꼬리질문 시작</button></div></div>';
+      if (nav) nav.hidden = true;
+      bindRenderedActions();
+      return;
+    }
+    if (sheetIndex >= cards.length) sheetIndex = 0;
+    if (sheetIndex < 0) sheetIndex = cards.length - 1;
+    if (nav) nav.hidden = cards.length < 2;
+    var current = cards[sheetIndex];
+    stage.innerHTML = sheetCardHtml(current);
+    var dots = $('#sheetDots');
+    if (dots) {
+      dots.innerHTML = cards.map(function (c, i) {
+        return '<button class="sheet-dot' + (i === sheetIndex ? ' is-on' : '') + '" data-sheet-dot="' + i + '" aria-label="' + (i + 1) + '번째 카드"></button>';
+      }).join('');
+    }
+    var pin = $('#sheetPin');
+    if (pin) pin.addEventListener('click', function () {
+      var target = null;
+      state.cards.forEach(function (c) { if (c.id === current.id) target = c; });
+      if (!target) return;
+      target.pinned = !target.pinned;
+      PACE.store.save();
+      sheetIndex = 0;
+      renderSheet();
+      toast(target.pinned ? '카드를 맨 앞에 고정했습니다.' : '고정을 해제했습니다.');
+    });
+    var copy = $('#sheetCopy');
+    if (copy) copy.addEventListener('click', function () { copyWithToast(sheetCopyText(current), '치트시트 카드를 복사했습니다.'); });
+    $$('[data-sheet-dot]').forEach(function (b) {
+      b.addEventListener('click', function () { sheetIndex = parseInt(b.getAttribute('data-sheet-dot'), 10) || 0; renderSheet(); });
+    });
+    $$('[data-sheet-filter]').forEach(function (b) {
+      b.addEventListener('click', function () { sheetFilter = b.getAttribute('data-sheet-filter'); sheetIndex = 0; renderSheet(); });
+    });
+    bindRenderedActions();
+    attachSheetSwipe();
+  }
+
+  function sheetGo(delta) {
+    var cards = sheetCards();
+    if (cards.length < 2) return;
+    sheetIndex = (sheetIndex + delta + cards.length) % cards.length;
+    renderSheet();
+  }
+
+  function attachSheetSwipe() {
+    var el = $('#sheetCard');
+    if (!el) return;
+    var startX = 0, startY = 0, dx = 0, dragging = false;
+    el.addEventListener('touchstart', function (e) {
+      var t = e.touches[0];
+      if (!t) return;
+      startX = t.clientX;
+      startY = t.clientY;
+      dx = 0;
+      dragging = true;
+    }, { passive: true });
+    el.addEventListener('touchmove', function (e) {
+      if (!dragging) return;
+      var t = e.touches[0];
+      if (!t) return;
+      dx = t.clientX - startX;
+      var dy = t.clientY - startY;
+      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+        el.style.transform = 'translateX(' + (dx * 0.55) + 'px) rotate(' + (dx * 0.01) + 'deg)';
+        el.style.opacity = String(Math.max(0.55, 1 - Math.abs(dx) / 420));
+      }
+    }, { passive: true });
+    el.addEventListener('touchend', function () {
+      if (!dragging) return;
+      dragging = false;
+      el.style.transform = '';
+      el.style.opacity = '';
+      if (dx <= -48) sheetGo(1);
+      else if (dx >= 48) sheetGo(-1);
+      dx = 0;
+    }, { passive: true });
+  }
+
+  function bindSheet() {
+    var prev = $('#sheetPrev'), next = $('#sheetNext');
+    if (prev) prev.addEventListener('click', function () { sheetGo(-1); });
+    if (next) next.addEventListener('click', function () { sheetGo(1); });
+    document.addEventListener('keydown', function (e) {
+      if (state.view !== 'sheet' || openedModal()) return;
+      var tag = (e.target && e.target.tagName) || '';
+      if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
+      if (e.key === 'ArrowLeft') sheetGo(-1);
+      if (e.key === 'ArrowRight') sheetGo(1);
+    });
+  }
+
+  /* ---------------------------------------------------------
+     quick call bindings + debug/API hooks
+     --------------------------------------------------------- */
   function bindQuick() {
     var start = $('#quickStartBtn');
-    if (start) start.addEventListener('click', quickStart);
+    if (start) start.addEventListener('click', function () { quickStart(); });
     var mic = $('#quickMicBtn');
     if (mic) mic.addEventListener('click', function () {
-      if (!quick || !quick.active) quickStart();
-      else if (quick.phase === 'between') quickNext();
-      else if (quick.phase === 'listening') {
+      if (!quick || !quick.active) { quickStart(); return; }
+      if (quick.phase === 'between') { quickNext(); return; }
+      if (quick.phase === 'listening') {
         var text = (quick.transcript + ' ' + (quick.interim || '')).trim();
         if (text) quickFinalize(quick.idx, text);
         else toast('아직 인식된 답변이 없습니다. 조금 더 말씀해 주세요.');
       }
     });
+    var mute = $('#quickMuteBtn');
+    if (mute) mute.addEventListener('click', quickToggleMute);
     var end = $('#quickEndBtn');
     if (end) end.addEventListener('click', function () {
       if (!quick || !quick.active) return;
       if (quick.phase === 'listening') {
         var text = (quick.transcript + ' ' + (quick.interim || '')).trim();
-        if (text.length > 5) { quickFinalize(quick.idx, text); setTimeout(quickFinish, 300); return; }
+        if (text.length > 5) { quickFinalize(quick.idx, text); setTimeout(function () { quickFinish(); }, 220); return; }
       }
       quickFinish();
     });
@@ -3957,6 +5267,15 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var inp = $('#quickInput');
     if (inp) inp.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') { e.preventDefault(); quickSendText(); }
+    });
+    var replay = $('#quickReplayQ');
+    if (replay) replay.addEventListener('click', quickReplayQuestion);
+    var fb = $('#quickFallbackBtn');
+    if (fb) fb.addEventListener('click', function () {
+      quickShowInput(true);
+      var inp2 = $('#quickInput');
+      if (inp2) inp2.focus();
+      toast('텍스트로 답변할 수 있습니다. 입력 후 전송을 누르세요.');
     });
   }
 
@@ -3969,6 +5288,25 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     inp.value = '';
     quickFinalize(q.idx, text);
   }
+
+  PACE.quickApi = {
+    start: quickStart,
+    submit: function (text) { if (quick && quick.active) quickFinalize(quick.idx, text); },
+    next: quickNext,
+    hangup: function () { quickFinish(); },
+    mute: quickToggleMute,
+    replayQuestion: quickReplayQuestion,
+    state: function () { return quick; },
+    briefing: function () { return quick && quick.briefing; },
+    brief: function () { return briefCtl; },
+    briefPlay: briefPlayFrom,
+    briefPause: briefPause,
+    briefToggle: briefToggle,
+    setSilence: function (ms) { SILENCE_MS = Math.max(50, Math.round(ms) || 0); },
+    setSpeech: function (on) { SPEECH_ON = !!on; },
+    silence: function () { return SILENCE_MS; },
+    setMaxQuestions: function (n) { MAX_QUESTIONS = Math.max(1, Math.min(4, n)); }
+  };
 
   /* ---------------------------------------------------------
      SETTINGS
@@ -4064,6 +5402,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       state.settings = { provider: 'demo', models: { openai: 'gpt-4o-mini', gemini: 'gemini-2.5-flash' }, keys: { openai: '', gemini: '' }, intensity: 'standard', voiceURI: '', voiceRate: 0.98 };
       state.fit = null; state.drill = null; state.sens = null;
       state.persona = 'lead';
+      state.cards = [];
+      state.company = '';
+      state.role = 'auto';
+      var ci = $('#companyInput'), sc2 = $('#sheetCompany');
+      if (ci) ci.value = '';
+      if (sc2) sc2.value = '';
       PACE.store.save();
       renderHome();
       renderFit();
@@ -4197,7 +5541,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       var tag = (e.target && e.target.tagName) || '';
       if (/INPUT|TEXTAREA|SELECT/.test(tag) || (e.target && e.target.isContentEditable)) return;
       if (openedModal()) return;
-      var map = { '1': 'home', '2': 'fit', '3': 'drill', '4': 'sensitive', '5': 'quick' };
+      var map = { '1': 'home', '2': 'fit', '3': 'drill', '4': 'sensitive', '5': 'quick', '6': 'sheet' };
       if (map[e.key] && !e.metaKey && !e.ctrlKey && !e.altKey) go(map[e.key]);
     });
     window.addEventListener('popstate', onPop);
@@ -4219,6 +5563,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     bindQuick();
     bindVoiceControls();
     bindSettings();
+    bindRoleCard();
+    bindSheet();
     renderHome();
     renderSensCats();
     $('#sensBody').innerHTML = sensBodyEmpty();
