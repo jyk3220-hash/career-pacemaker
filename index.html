@@ -5784,6 +5784,17 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       if (map[e.key] && !e.metaKey && !e.ctrlKey && !e.altKey) go(map[e.key]);
     });
     window.addEventListener('popstate', onPop);
+    /* A hash typed into the address bar or followed from a link must also route.
+       Our own go()/openModal() keep state.view and the hash in sync, so this is a no-op
+       for in-app navigation and only fills the gap for outside hash changes. */
+    window.addEventListener('hashchange', function () {
+      var v = currentHashView();
+      if (MODALS.indexOf(v) !== -1) {
+        if (openedModal() !== v) openModal(v);
+        return;
+      }
+      if (VIEWS.indexOf(v) !== -1 && v !== state.view) applyView(v, { scroll: false });
+    });
   }
 
   function boot() {
