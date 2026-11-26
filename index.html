@@ -1326,7 +1326,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   }
 
   function tidyClaim(s) {
-    return String(s || '').replace(/^[\s•·▪◦\-\–\*\(\)\d.]+/, '').replace(/\s+/g, ' ').trim();
+    return String(s || '').replace(/^[\s•·▪◦\-\–\*\(\)\[\]\d.]+/, '').replace(/\s+/g, ' ').trim();
   }
 
   /* ---------------------------------------------------------
@@ -1421,10 +1421,10 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var cands = [];
     lines.forEach(function (line, i) {
       var s = tidyClaim(line);
-      if (s.length < 9 || s.length > 220) return;
+      if (s.length < 5 || s.length > 220) return;
       if (JD_NOISE.test(s)) return;
       if (!/[가-힣]/.test(s)) return;
-      if (/^(담당\s*업무|주요\s*업무|자격\s*요건|우대\s*사항|필요\s*역량|업무\s*내용|채용\s*포지션|모집\s*분야)/.test(s)) return;
+      if (/^(담당\s*업무|주요\s*업무|자격\s*요건|우대\s*사항|필요\s*역량|업무\s*내용|채용\s*포지션|모집\s*분야|지원\s*자격|기타\s*사항)/.test(s)) return;
       var score = 0;
       if (/(경험|역량|능력|이해|지식|숙련|요구|자격|우대|필수|담당|수행|운영|구축|개선|분석|설계|리드|관리|개발)/.test(s)) score += 3;
       if (/\d/.test(s)) score += 1;
@@ -1436,7 +1436,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     if (cands.length < 3) {
       splitSentences(jd).forEach(function (s, i) {
         var t = tidyClaim(s);
-        if (t.length >= 12 && t.length <= 200 && /[가-힣]/.test(t) && !JD_NOISE.test(t)) {
+        if (t.length >= 8 && t.length <= 200 && /[가-힣]/.test(t) && !JD_NOISE.test(t)) {
           cands.push({ text: t, score: 1, order: 100 + i });
         }
       });
@@ -1680,10 +1680,10 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   function gapStrategy(a, domJ) {
     var key = a.key;
     if (/SQL|데이터|분석|지표|BI|대시보드/i.test(key)) {
-      return key + '은(는) 도구 숙련보다 “지표를 정의하고 의사결정에 연결한 사례”로 증명해야 합니다. 기존 업무에서 만든 지표·대시보드·의사결정 사례를 1건 정리하고, 90일 안에 현재 공고의 핵심 지표 3개를 직접 정의해 보겠다는 계획으로 답하세요.';
+      return josa(key, '은', '는') + ' 도구 숙련보다 “지표를 정의하고 의사결정에 연결한 사례”로 증명해야 합니다. 기존 업무에서 만든 지표·대시보드·의사결정 사례를 1건 정리하고, 90일 안에 현재 공고의 핵심 지표 3개를 직접 정의해 보겠다는 계획으로 답하세요.';
     }
     if (/리텐션|A\/B|실험|코호트/i.test(key)) {
-      return key + '은(는) “돌려본 횟수”로 증명해야 합니다. 기존 업무에서 가설을 세우고 지표를 비교한 실험 1건을 정리하고, 첫 90일에는 리텐션 개선 가설 2개를 직접 검증하겠다고 답하세요.';
+      return josa(key, '은', '는') + ' “돌려본 횟수”로 증명해야 합니다. 기존 업무에서 가설을 세우고 지표를 비교한 실험 1건을 정리하고, 첫 90일에는 리텐션 개선 가설 2개를 직접 검증하겠다고 답하세요.';
     }
     if (/CRM|재구매|푸시|리워드/i.test(key)) {
       return 'CRM은 툴 경험보다 캠페인 성과로 증명합니다. 기존 고객 접점 캠페인의 대상·메시지·성과를 1건 정리하고, 첫 분기에 재구매 시나리오 1개를 직접 운영하겠다고 제시하세요.';
@@ -1816,7 +1816,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 
   function buildFitScript(resume, jd, persona, score, strengths, gaps, rMetrics, years, sameDomain, domR, domJ) {
     var lines = [];
-    var topStrength = strengths.filter(function (s) { return !s.yearsOk; })[0] || strengths[0];
+    var topStrength = strengths.filter(function (s) { return !s.yearsOk; })[0] || null;
     var rankMetric = function (m) {
       var u = String(m.unit || '');
       if (/%|%p|퍼센트/.test(u)) return 0;
@@ -1831,7 +1831,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       : '[핵심 성과 수치]';
     lines.push({
       label: '오프닝',
-      text: '“' + domR.top.label + '에서 ' + (years ? fmtYears(years, tenureMonths(resume)) : '[경력 연차]') + ' 일했습니다. 이번 직무와 겹치는 지점은 ' + (topStrength ? topStrength.key : '[핵심 역량]') + '이고, 가장 큰 성과는 ' + metricTxt + '입니다.”'
+      text: '“' + domR.top.label + '에서 ' + (years ? fmtYears(years, tenureMonths(resume)) : '[경력 연차]') + ' 일했습니다. 이번 직무와 겹치는 지점은 ' + (topStrength ? topStrength.key : '[핵심 역량]') + '이고, 핵심 수치는 ' + metricTxt + '입니다.”'
     });
     lines.push({
       label: '근거',
@@ -1879,7 +1879,9 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var t = clean(text).replace(/\s+/g, ' ').trim();
     var len = t.length;
     var ms = metricsOf(t);
-    var hasBaseline = /(기존|이전|대비|baseline|기준선|작년|전년|초기|도입 전|전월|직전|평균|처음)/.test(t);
+    var hasBaseline = /(기존|이전|대비|baseline|기준선|작년|전년|초기|도입 전|전월|직전|평균|처음)/.test(t)
+      || /\d+(?:\.\d+)?\s*(?:%p|%|건|개|배|ppm|℃|명)?\s*에서\s*\d/.test(t)
+      || /\d+(?:\.\d+)?\s*(?:%p|%|건|개|배|ppm|℃|명)?\s*(?:→|->)\s*\d/.test(t);
     var hasHyp = /(가설|검증|실험|A\/B|테스트|원인|반증|틀렸|실패|오판|예상과)/i.test(t);
     var own = /(제가|내가|직접|주도|설계|기획|실행|리드|제안|만들|정리)/.test(t);
     var dep = /(팀|에이전시|대행사|협업|도움|지원|함께|공동|위임)/.test(t);
@@ -2075,14 +2077,15 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       return rank(a) - rank(b);
     });
     var metricTxt = scored.length ? scored[0].raw : '[성과 수치]';
-    var jdKey = fit && fit.keywords && fit.keywords.jd.length ? fit.keywords.jd[0] : '[직무 키워드]';
+    var jdKey = fit && fit.keywords && fit.keywords.jd.length ? fit.keywords.jd[0] : '이 직무';
+    var focus = fit && fit.domain ? fit.domain.name : '이 직무';
 
     var script = [];
     if (cat.id === 'frequent') {
       script.push({ label: '사실', text: fact });
       script.push({ label: '기준', text: '옮길 때마다 기준이 달랐던 것은 맞습니다. 초반에는 처우와 타이틀이 기준이었습니다. ' + reason + ' 지금은 그 기준을 더 먼저 확인하고 지원합니다.' });
       script.push({ label: '증거', text: '가장 짧았던 재직에서도 ' + metricTxt + '라는 결과를 남겼습니다. 이직 횟수보다, 나갈 때 남긴 결과로 봐 주시면 좋겠습니다.' });
-      script.push({ label: '이번 선택', text: '이번에는 최소 3년을 기준으로 보고 있습니다. ' + jdKey + '를 맡을 수 있는 범위와 의사결정 권한이 이번 선택의 핵심입니다.' });
+      script.push({ label: '이번 선택', text: '이번에는 최소 3년을 기준으로 보고 있습니다. ' + focus + '에서 맡을 과제의 범위와 의사결정 권한이 이번 선택의 핵심입니다.' });
     } else if (cat.id === 'short') {
       script.push({ label: '사실', text: fact });
       script.push({ label: '기준', text: '기간이 짧았던 이유는 분명합니다. ' + reason + ' 다만 짧은 기간에 끝낸 일은 분명히 있습니다.' });
@@ -2092,13 +2095,13 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       script.push({ label: '사실', text: fact });
       script.push({ label: '기준', text: '퇴사는 사람 문제가 아니라 구조 문제였습니다. ' + reason });
       script.push({ label: '증거', text: '그 상황에서도 ' + metricTxt + '는 유지했고, 후임자가 바로 이어받을 수 있게 정리했습니다.' });
-      script.push({ label: '이번 선택', text: '이번에는 ' + jdKey + '처럼 제가 통제할 수 있는 범위가 명확한 직무를 보고 있습니다.' });
+      script.push({ label: '이번 선택', text: '이번에는 제가 통제할 수 있는 범위가 명확한 직무를 보고 있습니다. ' + focus + '에서 그 범위를 먼저 확인했습니다.' });
     } else if (cat.id === 'salary') {
       script.push({ label: '기준', text: '희망 수준은 감이 아니라 세 가지 기준으로 말씀드리겠습니다. 현재 총 보상, 이 직무의 시장 상위 구간, 그리고 제가 첫해에 만들 수 있는 성과입니다.' });
       var wonList = [];
       var wonRe = /(\d[\d,]*)\s*(만\s*원|원)/g, wm;
       while ((wm = wonRe.exec(raw)) !== null) wonList.push(wm[0].replace(/\s+/g, ''));
-      script.push({ label: '숫자', text: '현재 총 보상은 ' + (wonList[0] || '[기본급 + 변동급]') + ' 수준이고, 희망 수준은 ' + (wonList[1] || '[희망 금액]') + '입니다. 이 직무에서 ' + jdKey + '를 맡아 [첫해 목표]를 만들 수 있다면 협상 여지는 있습니다.' });
+      script.push({ label: '숫자', text: '현재 총 보상은 ' + (wonList[0] || '[기본급 + 변동급]') + ' 수준이고, 희망 수준은 ' + (wonList[1] || '[희망 금액]') + '입니다. 이 직무에서 ' + jdKey + ' 과제를 맡아 [첫해 목표]를 만들 수 있다면 협상 여지는 있습니다.' });
       script.push({ label: '태도', text: '숫자 자체보다 산정 기준을 먼저 봐 주시면 좋겠습니다. 제시해 주신 범위와 제 기준이 다르면, 그 차이를 성과 목표로 조정하겠습니다.' });
     } else {
       script.push({ label: '사실', text: fact });
@@ -2110,7 +2113,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
           ? '복귀 후 ' + metricTxt + '라는 결과를 만들었습니다. 공백 이후에도 같은 속도로 일할 수 있다는 근거는 이 수치입니다.'
           : '복귀 후에는 [첫 90일 목표]를 기준으로 성과를 확인받고 싶습니다. 공백 동안 [준비한 것]을 한 것이 그 근거입니다.'
       });
-      script.push({ label: '이번 선택', text: '이번 지원은 ' + jdKey + ' 경험이 공백 이전의 경력과 바로 이어지기 때문에 결정했습니다.' });
+      script.push({ label: '이번 선택', text: '이번 지원은 공백 이전의 경력과 이 직무의 과제가 바로 이어지기 때문에 결정했습니다.' });
     }
 
     var avoidMap = {
@@ -2124,7 +2127,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var followups = [];
     if (cat.id === 'frequent') {
       followups.push({ q: '또 짧게 나가면 어떻게 하실 건가요?', a: '“나가는 조건을 미리 말씀드리겠습니다. 맡은 범위와 의사결정 권한이 계속 바뀌는 경우입니다. 그 외에는 최소 3년을 기준으로 하고 있습니다.”' });
-      followups.push({ q: '이번 회사는 왜 오래 다니실 수 있나요?', a: '“' + jdKey + ' 조직이 이미 안정적인 매출 구조를 갖고 있고, 제가 맡을 문제가 3년 단위로 이어지는 일이기 때문입니다.”' });
+      followups.push({ q: '이번 회사는 왜 오래 다니실 수 있나요?', a: '“맡을 문제가 3년 단위로 이어지고, 역할과 의사결정 권한이 문서로 정리되어 있기 때문입니다.”' });
       followups.push({ q: '이직할 때마다 연봉만 올리신 건 아닌가요?', a: '“연봉은 결과였고 기준은 역할이었습니다. 실제로 ' + metricTxt + '처럼 맡은 범위가 넓어질 때 옮겼습니다.”' });
     } else if (cat.id === 'short') {
       followups.push({ q: '짧은 기간에 무엇을 끝냈나요?', a: '“' + metricTxt + '와 인수인계 문서입니다. 기간이 짧아도 후임자가 이어받을 수 있는 상태로 남겼습니다.”' });
@@ -2156,7 +2159,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       script: script,
       avoid: avoidMap[cat.id] || [],
       followups: followups,
-      oneLine: '“' + fact.replace(/\.$/, '') + '. ' + reason + ' 이번 선택은 ' + jdKey + '입니다.”',
+      oneLine: '“' + fact.replace(/\.$/, '') + '. ' + reason + ' 이번 선택의 기준은 ' + focus + '에서 맡을 문제입니다.”',
       factsUsed: ms.map(function (m) { return m.raw; })
     };
   }
@@ -2545,6 +2548,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 
   function applyView(view, opts) {
     if (VIEWS.indexOf(view) === -1) view = 'home';
+    if (state.view === 'quick' && view !== 'quick' && quick && quick.active) quickFinish();
     state.view = view;
     $$('.view').forEach(function (v) { v.classList.toggle('is-active', v.getAttribute('data-view') === view); });
     $$('.nav-item[data-go], .tab[data-go]').forEach(function (b) {
@@ -3423,12 +3427,21 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         return '<span class="tiny faint" style="display:block;margin-bottom:2px">' + esc(s.label) + '</span>' + esc(s.text);
       }).join('\n\n') + '</div>' +
       '<div class="copy-row"><button class="btn btn-sm btn-primary" id="copyDrillScript"><svg><use href="#i-copy"/></svg>스크립트 복사</button>' +
+      '<button class="btn btn-sm btn-ghost" id="copyDrillAll">리포트 전체 복사</button>' +
       '<button class="btn btn-sm btn-ghost" data-go="quick">5분 퀵으로 말해보기</button>' +
       '<button class="btn btn-sm btn-ghost" id="drillAgain">다른 성과로 다시</button></div></div>';
 
     body.innerHTML = html;
     var copyBtn = $('#copyDrillScript');
     if (copyBtn) copyBtn.addEventListener('click', function () { copyWithToast(scriptText, '스크립트를 복사했습니다.'); });
+    var copyAllBtn = $('#copyDrillAll');
+    if (copyAllBtn) copyAllBtn.addEventListener('click', function () {
+      var lines = ['[PACE 3단 꼬리질문 리포트]', '성과: ' + d.claim, '종합: ' + r.total + '점 · ' + r.label, r.summary, '', '■ 예상 반박'];
+      r.rebuttals.forEach(function (x) { lines.push('- ' + x.point + ' → ' + x.counter); });
+      lines.push('', '■ 수정 스크립트');
+      r.script.forEach(function (x) { lines.push('[' + x.label + '] ' + x.text); });
+      copyWithToast(lines.join('\n'), '리포트를 복사했습니다.');
+    });
     var again = $('#drillAgain');
     if (again) again.addEventListener('click', function () { state.drill = null; drillDraft = ''; renderDrillSetup(); });
     bindRenderedActions();
