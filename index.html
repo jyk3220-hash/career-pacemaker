@@ -5,12 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B0F14">
 <meta name="color-scheme" content="dark">
+<meta name="application-name" content="PACE">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PACE 면접">
+<meta name="format-detection" content="telephone=no">
 <meta name="description" content="퇴근 후 15분, 경력기술서와 채용공고(JD)만으로 실무 팀장급 압박 면접을 시뮬레이션하는 경력직 이직 페이스메이커. 적합도 교차검증, 성과 진위 3단 꼬리질문, 민감 질문 방어, 5분 음성 퀵 모드.">
 <meta property="og:title" content="PACE — 경력직 이직 페이스메이커">
 <meta property="og:description" content="경력기술서와 JD로 실무 팀장급 압박 면접을 미리 겪어보세요. 성과의 진위와 수치의 근거를 검증합니다.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121821'/%3E%3Crect x='1.5' y='1.5' width='61' height='61' rx='12.5' fill='none' stroke='%235B8CFF' stroke-opacity='.55' stroke-width='2'/%3E%3Cpath d='M24 47V17h11.5c7 0 11 3.6 11 9.6 0 6.1-4.1 9.8-11.2 9.8H30.5V47H24Zm6.5-15.6h4.6c3 0 4.7-1.6 4.7-4.6 0-2.9-1.7-4.5-4.7-4.5h-4.6v9.1Z' fill='%23DCE7FF'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>PACE — 경력직 이직 페이스메이커</title>
 <style>
 /* =========================================================
@@ -107,6 +115,25 @@ strong,b{font-weight:650;color:#fff}
 .rail-foot{margin-top:auto;padding:14px 12px 0;border-top:1px solid var(--line-soft);font-size:11.5px;color:var(--faint);line-height:1.6}
 .rail-foot .engine-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:1px}
 .rail-foot .engine-dot.is-live{background:var(--accent);box-shadow:0 0 0 3px rgba(91,140,255,.18)}
+.rail-foot .engine-dot.is-warn{background:var(--warn)}
+.rail-foot .engine-dot.is-err{background:var(--danger)}
+/* 상단 엔진 상태 알약 — 모바일에서도 지금 어느 엔진으로 도는지 바로 보입니다 */
+.engine-pill{display:inline-flex;align-items:center;gap:6px;max-width:200px;min-width:0;font-size:11px;font-weight:650;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:rgba(255,255,255,.02);white-space:nowrap;overflow:hidden}
+.engine-pill:hover{border-color:var(--accent-line);color:var(--text-2)}
+.engine-pill .engine-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:0 0 6px;display:inline-block}
+.engine-pill .engine-dot.is-live{background:var(--accent);box-shadow:0 0 0 3px rgba(91,140,255,.18)}
+.engine-pill .engine-dot.is-warn{background:var(--warn);box-shadow:0 0 0 3px rgba(228,180,94,.16)}
+.engine-pill .engine-dot.is-err{background:var(--danger);box-shadow:0 0 0 3px rgba(240,113,120,.16)}
+.engine-pill .ep-text{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.engine-pill .ep-short{display:none}
+@media(max-width:720px){
+  .engine-pill{max-width:none;padding:5px 9px}
+  .engine-pill .ep-text{display:none}
+  .engine-pill .ep-short{display:inline}
+}
+.engine-pill.is-ok{color:#9FE8C8;border-color:rgba(62,207,142,.32);background:var(--ok-soft)}
+.engine-pill.is-warn{color:var(--warn);border-color:rgba(228,180,94,.32);background:var(--warn-soft)}
+.engine-pill.is-err{color:#FF8E94;border-color:rgba(240,113,120,.34);background:var(--danger-soft)}
 
 .main{flex:1;min-width:0;display:flex;flex-direction:column;padding-bottom:calc(78px + var(--safe-b))}
 .topbar{
@@ -328,6 +355,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 .session .s-title{font-weight:600;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .session .s-meta{font-size:11px;color:var(--faint);margin-top:1px}
 .session .s-score{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.session .s-open{width:13px;height:13px;flex:0 0 13px;color:var(--faint)}
 
 /* ---------- fit ---------- */
 .score-card{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
@@ -593,6 +621,13 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 
 /* ---------- cheat sheet ---------- */
 .sheet-toolbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}
+.sheet-search{position:relative;flex:1 1 200px;min-width:150px}
+.sheet-search>svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--faint);pointer-events:none}
+.sheet-search input{height:36px;padding-left:31px;padding-right:34px;font-size:12.5px}
+.sheet-search .sc-clear{position:absolute;right:4px;top:4px;width:28px;height:28px;border-radius:7px;display:none;place-items:center;color:var(--muted)}
+.sheet-search .sc-clear:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.sheet-search .sc-clear svg{width:13px;height:13px}
+.sheet-search.has-value .sc-clear{display:grid}
 .sheet-company{display:flex;flex-direction:column;gap:4px;flex:0 1 210px}
 .sheet-company input{height:36px}
 .sheet-filters{display:flex;gap:6px;flex-wrap:wrap;flex:1 1 auto}
@@ -695,6 +730,11 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 .engine-state.ok .dot{background:var(--ok)}
 .engine-state.err .dot{background:var(--danger)}
 .engine-state.busy .dot{background:var(--warn);animation:blink 1s infinite}
+.key-saved{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}
+.key-saved svg{width:12px;height:12px;color:var(--muted)}
+.key-saved code{font-family:var(--mono);font-size:11px;color:#DCE7FF;background:rgba(91,140,255,.1);border:1px solid var(--accent-line);border-radius:5px;padding:1px 6px;letter-spacing:.02em}
+.key-saved .mode{color:var(--faint)}
+.key-saved b{color:var(--text-2);font-weight:650}
 @keyframes blink{50%{opacity:.3}}
 
 .price-list{display:flex;flex-direction:column;gap:10px}
@@ -734,6 +774,10 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 .tab svg{width:19px;height:19px}
 .tab.is-active{color:var(--accent-2,#9CBAFF)}
 .tab.is-active svg{color:var(--accent)}
+/* 통화 중에는 하단 탭바를 숨겨 텍스트 답변 입력창과 키보드가 가리지 않게 합니다 */
+body.is-calling .tabbar{display:none}
+body.is-calling .main{padding-bottom:0}
+body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
 @media(min-width:900px){
   .rail{display:flex}
   .topbar .brand{display:none}
@@ -816,6 +860,26 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   .voice-row .lab{flex-basis:100%}
 }
 
+/* ---------- past session bar ---------- */
+.past-bar{display:flex;align-items:center;gap:10px;margin:8px 13px 0;padding:9px 11px;border:1px solid rgba(228,180,94,.32);border-radius:10px;background:rgba(228,180,94,.09);font-size:11.5px;color:var(--text-2)}
+.past-bar>svg{width:15px;height:15px;color:var(--warn);flex:0 0 15px}
+.past-bar .pb-text{min-width:0;flex:1}
+.past-bar .pb-text b{display:block;color:#F2DCAE;font-weight:700;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.past-bar .pb-text span{display:block;color:var(--faint);font-size:10.5px;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.past-bar .btn{flex:0 0 auto;height:28px;padding:0 9px;font-size:11px}
+.past-bar .pb-x{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:var(--faint);flex:0 0 26px}
+.past-bar .pb-x:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.past-bar .pb-x svg{width:13px;height:13px}
+@media(min-width:900px){.past-bar{margin:6px 28px 0}}
+@media(max-width:720px){.sheet-search{flex:1 1 100%}}
+
+/* ---------- retry card (0 answers call) ---------- */
+.retry-card{border:1px solid rgba(228,180,94,.28);background:linear-gradient(180deg,rgba(228,180,94,.08),#0F161C)}
+.retry-card .rc-list{margin:10px 0 0;display:flex;flex-direction:column;gap:6px}
+.retry-card .rc-list li{font-size:12.5px;color:var(--text-2);line-height:1.6;display:flex;gap:7px}
+.retry-card .rc-list li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--warn);flex:0 0 4px;margin-top:7px}
+.retry-card .copy-row{margin-top:14px}
+
 </style>
 </head>
 
@@ -849,6 +913,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 16v-4M12 16V8M16 16v-6M20 16v-2"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M4.5 12h4M15.5 12h4"/><path d="M6.7 6.7 9 9M15 15l2.3 2.3M17.3 6.7 15 9M9 15l-2.3 2.3"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10" width="15" height="10.5" rx="2"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/></symbol>
   <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15.5" r="4.5"/><path d="m11.5 12.5 8-8"/><path d="m16.5 7.5 2.5 2.5M14.5 9.5 17 12"/></symbol>
   <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c.8-3.7 3.8-6 7.5-6s6.7 2.3 7.5 6"/></symbol>
@@ -903,6 +968,9 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         </div>
       </div>
       <div class="top-actions">
+        <button class="engine-pill" id="topEngine" data-open="settings" title="AI 엔진 상태 · 눌러서 변경">
+          <span class="engine-dot" id="topEngineDot"></span><span class="ep-text" id="topEngineText">내장 엔진</span><span class="ep-short" id="topEngineShort">내장</span>
+        </button>
         <button class="persona-chip" id="topPersona" data-open="persona" title="면접관 페르소나 변경">
           <span class="dot"></span><span id="topPersonaName">깐깐한 현업 팀장</span>
         </button>
@@ -910,6 +978,13 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         <button class="icon-btn" data-open="pricing" aria-label="요금제 안내"><svg><use href="#i-card"/></svg></button>
       </div>
     </header>
+
+    <div class="past-bar" id="pastBar" hidden>
+      <svg><use href="#i-clock"/></svg>
+      <div class="pb-text"><b id="pastBarTitle">지난 세션</b><span id="pastBarMeta">다시 보는 중</span></div>
+      <button class="btn btn-ghost" id="pastBarLive">최신 결과로</button>
+      <button class="pb-x" id="pastBarClose" aria-label="닫기"><svg><use href="#i-x"/></svg></button>
+    </div>
 
     <main id="views">
       <!-- ===================== HOME ===================== -->
@@ -1206,6 +1281,11 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
             <label class="tiny faint" for="sheetCompany">지원 회사</label>
             <input class="field" id="sheetCompany" placeholder="예) OO테크" maxlength="30" autocomplete="off">
           </div>
+          <div class="sheet-search" id="sheetSearchWrap">
+            <svg><use href="#i-search"/></svg>
+            <input class="field" id="sheetSearch" placeholder="회사 · 직무 · 키워드 검색" autocomplete="off" aria-label="치트시트 검색">
+            <button class="sc-clear" id="sheetSearchClear" aria-label="검색어 지우기"><svg><use href="#i-x"/></svg></button>
+          </div>
           <div class="sheet-filters" id="sheetFilters"></div>
         </div>
         <div class="sheet-stage" id="sheetStage">
@@ -1257,10 +1337,19 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       </div>
 
       <div class="field-group" id="keyGroup" hidden>
-        <label for="apiKey">API 키 <span class="faint" style="font-weight:500">· 이 브라우저에만 저장</span></label>
+        <label for="apiKey">API 키 <span class="faint" style="font-weight:500" id="keyStoreLabel">· 이 기기에 저장</span></label>
         <div class="key-wrap">
           <input class="field" id="apiKey" type="password" placeholder="sk-... · AIza... · sk-ant-..." autocomplete="off" spellcheck="false">
           <button class="toggle" id="keyToggle" type="button">표시</button>
+        </div>
+        <div class="key-saved" id="keySaved" hidden>
+          <svg><use href="#i-key"/></svg>
+          <span>저장된 키</span><code id="keySavedMask">sk-…</code><span class="mode" id="keySavedMode">이 기기에 저장됨</span>
+        </div>
+        <label style="display:block;font-size:11px;font-weight:650;color:var(--muted);margin:11px 0 6px">키 보관 방식</label>
+        <div class="seg" id="keyModeSeg">
+          <button type="button" data-keymode="device">이 기기에 저장</button>
+          <button type="button" data-keymode="session">이번 세션만</button>
         </div>
         <div class="engine-state" id="engineState"><span class="dot"></span><span id="engineStateText">키를 입력하면 연결을 확인할 수 있습니다.</span></div>
       </div>
@@ -1274,8 +1363,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         <div class="note-box">강함을 선택하면 질문이 더 구체적으로 파고들고, 답변 평가 기준도 엄격해집니다.</div>
       </div>
 
-      <div class="note-box">
-        <b>키 보관 방식</b> — 키는 이 브라우저의 localStorage에만 저장되고 외부 서버로 전송되지 않습니다. 브라우저에서 OpenAI·Google·Anthropic API로 직접 호출합니다. 공용 PC에서는 저장하지 마세요.
+      <div class="note-box" id="keyStoreNote">
+        <b>키 보관 방식</b> — <span id="keyStoreNoteText">키는 이 브라우저의 localStorage에만 저장되고 외부 서버로 전송되지 않습니다. 브라우저에서 OpenAI·Google·Anthropic API로 직접 호출합니다. 공용 PC에서는 저장하지 마세요.</span>
       </div>
     </div>
     <div class="modal-foot">
@@ -1356,6 +1445,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
      constants
      --------------------------------------------------------- */
   var STORE_KEY = 'pace.state.v1';
+  var SESSION_KEYS_KEY = 'pace.keys.session';
   var MAX_TEXT = 20000;
 
   var PERSONAS = {
@@ -1830,6 +1920,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       provider: 'demo',
       models: { openai: 'gpt-4o-mini', gemini: 'gemini-2.5-flash', claude: 'claude-sonnet-4-6' },
       keys: { openai: '', gemini: '', claude: '' },
+      keyMode: 'device',
       intensity: 'standard',
       voiceURI: '',
       voiceRate: 0.98
@@ -1847,6 +1938,24 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     quick: null
   };
 
+  /* ----- API key storage: device (localStorage) or this tab only (sessionStorage) ----- */
+  function readSessionKeys() {
+    try {
+      var raw = sessionStorage.getItem(SESSION_KEYS_KEY);
+      if (!raw) return null;
+      var d = JSON.parse(raw);
+      return d && typeof d === 'object' && !Array.isArray(d) ? d : null;
+    } catch (e) { return null; }
+  }
+
+  function writeSessionKeys(keys) {
+    try { sessionStorage.setItem(SESSION_KEYS_KEY, JSON.stringify(keys || {})); } catch (e) { /* private mode */ }
+  }
+
+  function clearSessionKeys() {
+    try { sessionStorage.removeItem(SESSION_KEYS_KEY); } catch (e) { /* ignore */ }
+  }
+
   function loadState() {
     var raw = null;
     try { raw = localStorage.getItem(STORE_KEY); } catch (e) { raw = null; }
@@ -1863,8 +1972,17 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         if (s.models) { ['openai', 'gemini', 'claude'].forEach(function (p) { if (s.models[p]) state.settings.models[p] = String(s.models[p]); }); }
         if (s.keys) { ['openai', 'gemini', 'claude'].forEach(function (p) { state.settings.keys[p] = typeof s.keys[p] === 'string' ? s.keys[p] : ''; }); }
         if (s.intensity === 'hard' || s.intensity === 'standard') state.settings.intensity = s.intensity;
+        if (s.keyMode === 'session' || s.keyMode === 'device') state.settings.keyMode = s.keyMode;
         if (typeof s.voiceURI === 'string') state.settings.voiceURI = s.voiceURI;
         if (typeof s.voiceRate === 'number') state.settings.voiceRate = clamp(s.voiceRate, 0.7, 1.2);
+      }
+      /* Keys kept for this tab only live in sessionStorage, never in localStorage. */
+      var sk = readSessionKeys();
+      if (sk) {
+        state.settings.keyMode = 'session';
+        ['openai', 'gemini', 'claude'].forEach(function (p) {
+          if (typeof sk[p] === 'string') state.settings.keys[p] = sk[p];
+        });
       }
       if (d.usage && typeof d.usage === 'object') {
         ['fit', 'drill', 'sens', 'quick'].forEach(function (k) {
@@ -1883,7 +2001,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
             type: typeof s.type === 'string' ? s.type : 'fit',
             title: typeof s.title === 'string' ? s.title.slice(0, 80) : '세션',
             meta: typeof s.meta === 'string' ? s.meta : '',
-            score: typeof s.score === 'number' && isFinite(s.score) ? s.score : null
+            score: typeof s.score === 'number' && isFinite(s.score) ? s.score : null,
+            snap: (s.snap && typeof s.snap === 'object' && !Array.isArray(s.snap)) ? s.snap : null
           };
         });
       }
@@ -1907,9 +2026,25 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 
   function saveState() {
     try {
+      var s = state.settings;
+      var keysOut = s.keys;
+      if (s.keyMode === 'session') {
+        writeSessionKeys(s.keys);
+        keysOut = { openai: '', gemini: '', claude: '' };
+      } else {
+        clearSessionKeys();
+      }
       localStorage.setItem(STORE_KEY, JSON.stringify({
         persona: state.persona,
-        settings: state.settings,
+        settings: {
+          provider: s.provider,
+          models: s.models,
+          keys: keysOut,
+          keyMode: s.keyMode,
+          intensity: s.intensity,
+          voiceURI: s.voiceURI,
+          voiceRate: s.voiceRate
+        },
         resume: state.resume,
         jd: state.jd,
         usage: state.usage,
@@ -1921,17 +2056,48 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     } catch (e) { /* quota or private mode — keep running */ }
   }
 
+  /* Deep copy a result for the session history. Returns null when it cannot be
+     serialised or would eat too much of the 5MB localStorage budget. */
+  function snapshotOf(obj, budget) {
+    if (!obj || typeof obj !== 'object') return null;
+    try {
+      var json = JSON.stringify(obj);
+      if (!json || json.length > (budget || 48000)) return null;
+      return JSON.parse(json);
+    } catch (e) { return null; }
+  }
+
+  /* Keep the history useful without letting snapshots fill the storage quota. */
+  function trimSnapshots() {
+    var total = 0;
+    state.sessions.forEach(function (s) {
+      if (s.snap) {
+        try { total += JSON.stringify(s.snap).length; } catch (e) { s.snap = null; }
+      }
+    });
+    for (var i = state.sessions.length - 1; i >= 0 && total > 360000; i--) {
+      var s2 = state.sessions[i];
+      if (!s2.snap) continue;
+      try { total -= JSON.stringify(s2.snap).length; } catch (e) { /* ignore */ }
+      s2.snap = null;
+    }
+  }
+
   function addSession(s) {
-    state.sessions.unshift({
-      id: 's' + Date.now().toString(36),
+    var rec = {
+      id: 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
       at: Date.now(),
       type: s.type,
       title: truncate(s.title || '세션', 60),
       meta: s.meta || '',
-      score: typeof s.score === 'number' ? s.score : null
-    });
+      score: typeof s.score === 'number' ? s.score : null,
+      snap: snapshotOf(s.snap)
+    };
+    state.sessions.unshift(rec);
     state.sessions = state.sessions.slice(0, 20);
+    trimSnapshots();
     saveState();
+    return rec;
   }
 
   function countUsage(kind) {
@@ -2811,6 +2977,11 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     return s.provider;
   }
 
+  /* A real answer means the saved key works: the UI marks the engine as connected. */
+  function noteEngineOk() {
+    try { if (global.PACE && typeof global.PACE.noteEngine === 'function') global.PACE.noteEngine(true); } catch (e) { /* ignore */ }
+  }
+
   function engineLabel() {
     var s = state.settings;
     if (s.provider === 'demo') return '내장 엔진';
@@ -2881,6 +3052,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       }
       var data = await readJson(res, 'OpenAI');
       var content = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      noteEngineOk();
       return content || '';
     }
     if (provider === 'gemini') {
@@ -2905,6 +3077,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       var cand = d2 && d2.candidates && d2.candidates[0];
       var parts = cand && cand.content && cand.content.parts;
       if (!parts) throw ApiError('Gemini 응답이 비어 있습니다.', 0);
+      noteEngineOk();
       return parts.map(function (p) { return p.text || ''; }).join('');
     }
     if (provider === 'claude') {
@@ -2939,6 +3112,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       var text3 = blocks.filter(function (b) { return b && b.type === 'text' && typeof b.text === 'string'; })
         .map(function (b) { return b.text; }).join('');
       if (!text3) throw ApiError('Claude 응답이 비어 있습니다.', 0);
+      noteEngineOk();
       return text3;
     }
     throw ApiError('지원하지 않는 엔진', 0);
@@ -3214,6 +3388,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       roleId: meta.role ? meta.role.id : '',
       roleLabel: meta.role ? meta.role.label : '',
       persona: meta.persona || '',
+      sessionId: meta.sessionId || '',
+      cat: meta.cat || '',
       at: Date.now(), pinned: false, updates: 1, score: null,
       title: '', metrics: [], script: [], defenses: [], lines: []
     };
@@ -3238,6 +3414,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var c = cardBase('drill', '3단 꼬리질문', meta);
     c.key = 'drill:' + c.company + ':' + truncate(clean(d.claim).replace(/\s+/g, ' '), 40);
     c.title = truncate(d.claim, 52);
+    c.claim = d.claim;
     c.score = r.total;
     c.metrics = topMetricLabels([d.claim].concat(d.answers || []), 3);
     c.script = (r.script || []).map(function (s) { return { label: s.label, text: s.text }; });
@@ -3251,6 +3428,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var c = cardBase('sens', '민감질문 방어', meta);
     c.key = 'sens:' + c.company + ':' + (r.category || '') + ':' + truncate(catLabel || '', 20);
     c.title = (catLabel || '민감 질문') + ' 방어 스크립트';
+    c.cat = r.category || '';
     c.script = (r.script || []).map(function (s) { return { label: s.label, text: s.text }; });
     c.defenses = (r.followups || []).map(function (x) { return { q: x.q || '', a: x.a || '' }; });
     c.lines = [r.oneLine].filter(Boolean);
@@ -3264,6 +3442,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var q = b.weakest ? b.weakest.question : '';
     c.key = 'quick:' + c.company + ':' + (q ? truncate(clean(q).replace(/\s+/g, ' '), 40) : 'summary');
     c.title = q ? '통화 · ' + truncate(q, 38) : '5분 통화 요약';
+    c.claim = q || '';
     c.score = b.score;
     c.metrics = b.weakest ? topMetricLabels([b.weakest.answer], 3) : [];
     c.script = (b.script || []).map(function (s) { return { label: s.label, text: s.text }; });
@@ -3403,6 +3582,150 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   var SESSION_ICON = { fit: 'i-target', drill: 'i-layers', sens: 'i-shield', quick: 'i-mic' };
 
   /* ---------------------------------------------------------
+     engine status (top pill) — demo / connected / needs a check
+     --------------------------------------------------------- */
+  var ENGINE_CHECK_KEY = 'pace.engine.check';
+  var engineCheck = { provider: '', ok: null, at: 0, sig: '' };
+  var PROVIDER_NAME = { openai: 'OpenAI', gemini: 'Gemini', claude: 'Claude' };
+
+  function keySig(k) { k = String(k || ''); return k.length + ':' + k.slice(-4); }
+
+  function loadEngineCheck() {
+    try {
+      var d = JSON.parse(sessionStorage.getItem(ENGINE_CHECK_KEY) || 'null');
+      if (d && typeof d === 'object') {
+        engineCheck = {
+          provider: typeof d.provider === 'string' ? d.provider : '',
+          ok: d.ok === true ? true : (d.ok === false ? false : null),
+          at: typeof d.at === 'number' ? d.at : 0,
+          sig: typeof d.sig === 'string' ? d.sig : ''
+        };
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  function noteEngine(provider, ok, key) {
+    if (!provider || provider === 'demo') return;
+    engineCheck = { provider: provider, ok: !!ok, at: Date.now(), sig: key ? keySig(key) : '' };
+    try { sessionStorage.setItem(ENGINE_CHECK_KEY, JSON.stringify(engineCheck)); } catch (e) { /* ignore */ }
+    updateEngineLabels();
+  }
+
+  function resetEngineCheck(provider) {
+    if (!provider || engineCheck.provider !== provider) return;
+    engineCheck = { provider: '', ok: null, at: 0, sig: '' };
+    try { sessionStorage.removeItem(ENGINE_CHECK_KEY); } catch (e) { /* ignore */ }
+    updateEngineLabels();
+  }
+
+  function engineStatus() {
+    var s = state.settings;
+    var name = PROVIDER_NAME[s.provider] || s.provider;
+    if (s.provider === 'demo') return { key: 'demo', label: '내장 엔진', short: '내장', cls: '', dot: '', title: 'API 키 없이 동작하는 내장 엔진입니다.' };
+    if (!s.keys[s.provider]) return { key: 'nokey', label: '내장 엔진', short: '내장', cls: '', dot: '', title: name + ' 키를 저장하면 실시간 AI 면접으로 전환됩니다.' };
+    if (engineCheck.provider === s.provider && engineCheck.ok === true) {
+      return { key: 'ok', label: name + ' 연결됨', short: '연결됨', cls: 'is-ok', dot: 'is-live', title: name + ' ' + s.models[s.provider] + ' · 연결 테스트를 통과했습니다.' };
+    }
+    if (engineCheck.provider === s.provider && engineCheck.ok === false) {
+      return { key: 'fail', label: name + ' 연결 실패', short: '실패', cls: 'is-err', dot: 'is-err', title: '마지막 연결 테스트가 실패했습니다. 키·모델·네트워크를 확인하세요.' };
+    }
+    return { key: 'check', label: name + ' · 연결 확인 필요', short: '확인 필요', cls: 'is-warn', dot: 'is-warn', title: '키는 저장되어 있습니다. 설정에서 [연결 테스트]로 확인하세요.' };
+  }
+
+  /* core calls this after a successful LLM response */
+  PACE.noteEngine = function (ok) {
+    var p = PACE.ai.activeProvider();
+    if (p !== 'demo') noteEngine(p, ok !== false);
+  };
+
+  /* ---------------------------------------------------------
+     past session replay (store a snapshot per session)
+     --------------------------------------------------------- */
+  var pastSession = null;
+  var pastStash = { fit: { has: false, val: null }, drill: { has: false, val: null }, sens: { has: false, val: null }, quick: { has: false, val: null } };
+
+  function viewForType(t) {
+    return t === 'fit' ? 'fit' : t === 'drill' ? 'drill' : t === 'sens' ? 'sensitive' : t === 'quick' ? 'quick' : 'home';
+  }
+
+  function currentValue(type) {
+    return type === 'fit' ? state.fit : type === 'drill' ? state.drill : type === 'sens' ? state.sens : quick;
+  }
+
+  function stashLive(type) {
+    if (pastStash[type].has) return;
+    var cur = currentValue(type);
+    pastStash[type] = { has: cur != null, val: cur };
+  }
+
+  function clearLive(type) {
+    if (type === 'fit') { state.fit = null; renderFit(); }
+    else if (type === 'drill') { state.drill = null; drillDraft = ''; renderDrillSetup(); }
+    else if (type === 'sens') { state.sens = null; var b = $('#sensBody'); if (b) b.innerHTML = sensBodyEmpty(); }
+    else { var box = $('#quickSummary'); if (box) box.innerHTML = ''; }
+  }
+
+  function restoreLive(type) {
+    var st = pastStash[type];
+    pastStash[type] = { has: false, val: null };
+    if (!st || !st.has) { clearLive(type); return; }
+    if (type === 'fit') { state.fit = st.val; renderFit(); }
+    else if (type === 'drill') { state.drill = st.val; if (st.val) renderDrill(); else renderDrillSetup(); }
+    else if (type === 'sens') { state.sens = st.val; if (st.val) renderSensitive(st.val); else $('#sensBody').innerHTML = sensBodyEmpty(); }
+    else if (st.val && (st.val.summary || st.val.briefing)) renderQuickSummary(st.val.summary || st.val.briefing);
+    else { var box = $('#quickSummary'); if (box) box.innerHTML = ''; }
+  }
+
+  function updatePastBar() {
+    var bar = $('#pastBar');
+    if (!bar) return;
+    var show = !!(pastSession && state.view === viewForType(pastSession.type));
+    bar.hidden = !show;
+    if (!show) return;
+    var title = $('#pastBarTitle'), meta = $('#pastBarMeta'), live = $('#pastBarLive');
+    if (title) title.textContent = '지난 세션 · ' + pastSession.title;
+    if (meta) meta.textContent = fmtDate(pastSession.at) + ' · ' + (pastSession.meta || '기록') + ' · 다시 보는 기록입니다';
+    if (live) live.hidden = !pastStash[pastSession.type].has;
+  }
+
+  function exitPast(restore) {
+    if (!pastSession) return;
+    var type = pastSession.type;
+    pastSession = null;
+    if (restore !== false) restoreLive(type);
+    else pastStash[type] = { has: false, val: null };
+    updatePastBar();
+  }
+
+  function openPastSession(s) {
+    if (!s || !s.snap) return false;
+    var type = s.type, snap = s.snap, view = viewForType(type);
+    try {
+      if (type === 'fit') {
+        if (typeof snap.score !== 'number' || !snap.coverage || !snap.domain || !Array.isArray(snap.strengths) || !Array.isArray(snap.gaps) || !Array.isArray(snap.questions) || !Array.isArray(snap.script)) throw new Error('fit');
+      } else if (type === 'drill') {
+        if (!snap.report && !(Array.isArray(snap.questions) && snap.questions.length)) throw new Error('drill');
+      } else if (type === 'sens') {
+        if (!snap.category || !D.SENSITIVE[snap.category] || !Array.isArray(snap.script)) throw new Error('sens');
+      } else if (type === 'quick') {
+        if (!Array.isArray(snap.parts)) throw new Error('quick');
+      } else return false;
+    } catch (e) { return false; }
+    if (pastSession && pastSession.type !== type) exitPast(true);
+    stashLive(type);
+    pastSession = s;
+    if (type === 'fit') { state.fit = snap; renderFit(); }
+    else if (type === 'drill') { state.drill = snap; renderDrill(); }
+    else if (type === 'sens') { state.sens = snap; sensCat = snap.category; renderSensCats(); renderSensitive(snap); }
+    else { renderQuickSummary(snap); }
+    if (state.view !== view) go(view);
+    updatePastBar();
+    toast('지난 세션 결과를 열었습니다.');
+    return true;
+  }
+
+
+  /* ---------------------------------------------------------
      routing
      --------------------------------------------------------- */
   function currentHashView() {
@@ -3424,6 +3747,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     });
     if (view === 'drill' && !state.drill) renderDrillSetup();
     if (view === 'sheet') renderSheet();
+    updatePastBar();
     if (!opts || opts.scroll !== false) window.scrollTo(0, 0);
   }
 
@@ -3501,17 +3825,33 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   function updateEngineLabels() {
     var label = AI.engineLabel();
     var provider = PACE.ai.activeProvider();
+    var st = engineStatus();
     ['#heroEngine', '#railEngine', '#fitEngine', '#drillEngine', '#sensEngine', '#quickEngine'].forEach(function (sel) {
       var el = $(sel);
       if (el) el.textContent = label;
     });
+    var pill = $('#topEngine'), ptext = $('#topEngineText'), pdot = $('#topEngineDot'), pshort = $('#topEngineShort');
+    if (pill) {
+      pill.className = 'engine-pill ' + st.cls;
+      pill.title = st.title;
+    }
+    if (ptext) ptext.textContent = st.label;
+    if (pshort) pshort.textContent = st.short || st.label;
+    if (pdot) pdot.className = 'engine-dot ' + (st.dot || '');
     var dot = $('#railDot');
-    if (dot) dot.classList.toggle('is-live', provider !== 'demo');
+    if (dot) {
+      dot.className = 'engine-dot ' + (st.dot || '');
+      if (!st.dot && provider !== 'demo') dot.classList.add('is-live');
+    }
     var hint = $('#engineHint');
     if (hint) {
       hint.textContent = provider === 'demo'
-        ? 'API 키 없이 내장 엔진으로 바로 동작합니다. 설정에서 OpenAI · Gemini 키를 넣으면 실시간 LLM 면접으로 전환됩니다.'
-        : '실시간 ' + label + ' 엔진으로 동작합니다. 응답은 브라우저에서 해당 API로 직접 전송됩니다.';
+        ? 'API 키 없이 내장 엔진으로 바로 동작합니다. 설정에서 OpenAI · Gemini · Claude 키를 넣으면 실시간 LLM 면접으로 전환됩니다.'
+        : (st.key === 'check'
+          ? '키가 저장되어 있습니다. 상단 엔진 표시를 눌러 [연결 테스트]로 확인하세요.'
+          : (st.key === 'fail'
+            ? '마지막 연결 테스트가 실패했습니다. 설정에서 키·모델을 확인하거나 내장 엔진으로 계속 쓰세요.'
+            : '실시간 ' + label + ' 엔진으로 동작합니다. 응답은 브라우저에서 해당 API로 직접 전송됩니다.'));
     }
     var topName = $('#topPersonaName');
     if (topName) topName.textContent = window.matchMedia('(max-width: 620px)').matches ? D.PERSONAS[state.persona].short : D.PERSONAS[state.persona].name;
@@ -3542,7 +3882,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     renderPersonas();
     updateEngineLabels();
     // refresh visible outputs that depend on persona
-    if (state.fit && !$('#view-fit').hidden) {
+    if (state.fit && !$('#view-fit').hidden && !(pastSession && pastSession.type === 'fit')) {
       if (state.fit.mode === 'demo') state.fit = E.analyzeFit(state.resume, state.jd, state.persona, state.settings.intensity, state.role);
       renderFit();
     }
@@ -3583,11 +3923,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     }
     wrap.innerHTML = '<div class="session-list">' + state.sessions.map(function (s) {
       var icon = SESSION_ICON[s.type] || 'i-clock';
-      return '<button class="session" data-session="' + esc(s.id) + '">' +
+      return '<button class="session" data-session="' + esc(s.id) + '" title="' + (s.snap ? '이 세션의 결과를 다시 엽니다' : '이 세션의 화면으로 이동합니다') + '">' +
         '<span class="s-ico"><svg><use href="#' + icon + '"/></svg></span>' +
         '<span class="grow" style="min-width:0"><span class="s-title" style="display:block">' + esc(s.title) + '</span>' +
-        '<span class="s-meta" style="display:block">' + esc(s.meta || '') + ' · ' + fmtDate(s.at) + '</span></span>' +
+        '<span class="s-meta" style="display:block">' + esc(s.meta || '') + ' · ' + fmtDate(s.at) + (s.snap ? ' · 다시 보기' : '') + '</span></span>' +
         (typeof s.score === 'number' ? '<span class="s-score">' + s.score + '</span>' : '') +
+        (s.snap ? '<svg class="s-open"><use href="#i-chev-right"/></svg>' : '') +
         '</button>';
     }).join('') + '</div>';
   }
@@ -3640,7 +3981,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         state.role = id;
         PACE.store.save();
         renderRoleCard();
-        if (state.fit && state.fit.mode === 'demo') {
+        if (state.fit && state.fit.mode === 'demo' && !(pastSession && pastSession.type === 'fit')) {
           state.fit = E.analyzeFit(state.resume, state.jd, state.persona, state.settings.intensity, state.role);
           renderFit();
         }
@@ -3728,6 +4069,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     $('#btnAnalyze').addEventListener('click', function () { runFit(); });
     $('#fitRerun').addEventListener('click', function () { runFit(); });
     $('#btnDrillStart').addEventListener('click', function () { go('drill'); renderDrillSetup(); });
+    $('#drillReset').addEventListener('click', function () {
+      exitPast(false);
+      state.drill = null;
+      drillDraft = '';
+      renderDrillSetup();
+    });
     $('#btnQuickStart').addEventListener('click', function () { go('quick'); });
   }
 
@@ -4101,15 +4448,40 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     return null;
   }
 
+  /* Compact copies kept in the session history so a past session can be reopened. */
+  function fitSnapshot(f) {
+    return {
+      persona: f.persona, intensity: f.intensity, mode: f.mode, at: f.at,
+      score: f.score, verdict: f.verdict, coverage: f.coverage, metrics: f.metrics,
+      domain: f.domain, years: f.years, role: f.role, roleKpis: f.roleKpis,
+      strengths: f.strengths, gaps: f.gaps, questions: f.questions, rebuttals: f.rebuttals,
+      script: f.script, claims: f.claims, requirements: f.requirements || []
+    };
+  }
+  function drillSnapshot(d) {
+    return { claim: d.claim, stage: d.stage, answers: d.answers, evals: d.evals, questions: d.questions, report: d.report, loading: false };
+  }
+  function sensSnapshot(r) {
+    return { category: r.category, read: r.read, script: r.script, oneLine: r.oneLine, avoid: r.avoid, followups: r.followups, mode: r.mode };
+  }
+  function quickSnapshot(b) {
+    return {
+      at: b.at, duration: b.duration, score: b.score, answered: b.answered, total: b.total,
+      persona: b.persona, role: b.role, company: b.company, bestAxis: b.bestAxis, worstAxis: b.worstAxis,
+      weakest: b.weakest, parts: b.parts, script: b.script, transcript: b.transcript, mode: b.mode
+    };
+  }
+
   function addFitSession(f) {
     var title = f.domain.name + ' · 적합도 분석';
-    PACE.store.addSession({
+    var rec = PACE.store.addSession({
       type: 'fit',
       title: U.truncate(title, 46),
       meta: D.PERSONAS[f.persona].short + ' · ' + (f.mode === 'llm' ? 'AI' : '내장'),
-      score: f.score
+      score: f.score,
+      snap: fitSnapshot(f)
     });
-    addSheetCard(PACE.sheet.fromFit(f, { company: state.company, role: f.role, persona: state.persona }));
+    addSheetCard(PACE.sheet.fromFit(f, { company: state.company, role: f.role, persona: state.persona, sessionId: rec.id }));
     renderSessions();
     renderTrial();
     var todayCount = state.sessions.filter(function (s) { return new Date(s.at).toDateString() === new Date().toDateString(); }).length;
@@ -4117,6 +4489,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   }
 
   async function runFit() {
+    exitPast();
     var problem = inputProblem();
     if (problem) {
       toast(problem.msg, 'err');
@@ -4304,6 +4677,11 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   }
 
   function renderDrillSetup() {
+    if (pastSession && pastSession.type === 'drill') {
+      pastSession = null;
+      pastStash.drill = { has: false, val: null };
+      updatePastBar();
+    }
     var body = $('#drillBody');
     $('#drillSide').innerHTML = drillSideHtml();
     var claims = E.claimOptions(state.resume || '');
@@ -4349,6 +4727,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   }
 
   async function startDrill(claim) {
+    exitPast();
     state.drill = { claim: claim, stage: 1, answers: [], evals: [], questions: [], report: null, loading: false };
     PACE.store.countUsage('drill');
     go('drill');
@@ -4522,13 +4901,14 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     if (!report) report = E.demoDrillReport(d.claim, d.answers, d.evals);
     d.report = report;
     d.loading = false;
-    PACE.store.addSession({
+    var rec = PACE.store.addSession({
       type: 'drill',
       title: U.truncate(d.claim, 46),
       meta: '3단 꼬리질문 · ' + D.PERSONAS[state.persona].short,
-      score: report.total
+      score: report.total,
+      snap: drillSnapshot(d)
     });
-    addSheetCard(PACE.sheet.fromDrill(d, sheetMeta(d.role || roleState().role)));
+    addSheetCard(PACE.sheet.fromDrill(d, sheetMeta(d.role || roleState().role, rec.id)));
     renderSessions();
     renderDrill();
   }
@@ -4622,6 +5002,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   }
 
   async function runSensitive() {
+    exitPast();
     var raw = $('#sensRaw').value.trim();
     if (raw.length < 12) { toast('상황을 조금 더 구체적으로 적어 주세요.', 'err'); $('#sensRaw').focus(); return; }
     var cat = sensCat;
@@ -4641,8 +5022,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       }
       state.sens = result;
       PACE.store.countUsage('sens');
-      PACE.store.addSession({ type: 'sens', title: D.SENSITIVE[cat].label + ' 방어 스크립트', meta: D.PERSONAS[state.persona].short, score: null });
-      addSheetCard(PACE.sheet.fromSens(result, sheetMeta(), D.SENSITIVE[cat].label));
+      var srec = PACE.store.addSession({ type: 'sens', title: D.SENSITIVE[cat].label + ' 방어 스크립트', meta: D.PERSONAS[state.persona].short, score: null, snap: sensSnapshot(result) });
+      addSheetCard(PACE.sheet.fromSens(result, sheetMeta(null, srec.id, cat), D.SENSITIVE[cat].label));
       renderSessions();
       renderSensitive(result);
     } finally {
@@ -4882,7 +5263,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     lines.innerHTML = html;
   }
 
-  async function quickStart() {
+  async function quickStart(opts) {
+    exitPast();
     var q = quickEnsureState();
     if (q.active) return;
     var resume = state.resume.trim();
@@ -4908,6 +5290,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     q = quickEnsureState();
     q.questions = questions.slice(0, 4).map(function (x) { return { q: x.q, tag: x.tag || '' }; });
     q.active = true;
+    q.forceText = !!(opts && opts.text);
+    document.body.classList.add('is-calling');
     q.phase = 'asking';
     q.answers = [];
     q.evals = [];
@@ -4937,7 +5321,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     $('#quickMuteBtn').classList.remove('is-on');
     $('#quickMuteLabel').textContent = '음소거';
     $('#quickOrb').classList.remove('is-muted');
-    quickShowInput(!srCtor());
+    quickShowInput(!srCtor() || q.forceText);
     quickSetCount();
     quickSetTimer(300);
     callSetLive('통화 중', true);
@@ -4985,7 +5369,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       return;
     }
     quickShowInput(true);
-    if (!srCtor()) {
+    if (!srCtor() || q.forceText) {
       q.phase = 'listening';
       callPhase('듣는 중 · 텍스트로 답변');
       callWave('');
@@ -5169,6 +5553,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var silent = !!(opts && opts.silent);
     q.active = false;
     q.phase = 'done';
+    document.body.classList.remove('is-calling');
     quickStopListen();
     if (q.timerId) { clearInterval(q.timerId); q.timerId = null; }
     try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
@@ -5205,16 +5590,25 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     q.summary = brief;
     q.briefing = brief;
     if (answered > 0) {
-      PACE.store.addSession({
+      var qrec = PACE.store.addSession({
         type: 'quick',
         title: '5분 통화 · ' + answered + '문항',
         meta: D.PERSONAS[state.persona].short + (hasTTS() ? ' · 음성' : ' · 텍스트'),
-        score: brief.score
+        score: brief.score,
+        snap: quickSnapshot(brief)
       });
       renderSessions();
-      addSheetCard(PACE.sheet.fromQuick(brief, sheetMeta(q.role)));
+      addSheetCard(PACE.sheet.fromQuick(brief, sheetMeta(q.role, qrec.id)));
     }
     renderQuickSummary(brief);
+    if (!silent) {
+      setTimeout(function () {
+        if (!quick || quick.phase !== 'done' || state.view !== 'quick') return;
+        var box = $('#quickSummary');
+        if (!box) return;
+        try { box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { box.scrollIntoView(); }
+      }, 260);
+    }
     if (!silent && answered > 0) {
       setTimeout(function () {
         if (quick && quick.phase === 'done' && briefCtl.data === brief && !briefCtl.playing && !briefCtl.played) briefPlayFrom(0);
@@ -5224,6 +5618,19 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 
   function renderQuickSummary(b) {
     var names = D.AXIS_NAME;
+    if (!b.answered) {
+      $('#quickSummary').innerHTML = '<div class="card retry-card" id="quickRetryCard" style="margin-top:14px">' +
+        '<div class="card-head"><h3>답변이 기록되지 않았어요</h3><span class="spacer"></span><span class="badge badge-warn">0 / ' + b.total + '</span></div>' +
+        '<p class="small muted" style="margin-top:2px;line-height:1.7">통화는 끝났지만 저장된 답변이 없어 평가를 만들지 못했습니다. 대개는 마이크 권한, 주변 소음, 또는 5분이 먼저 끝난 경우입니다.</p>' +
+        '<ul class="rc-list"><li>주소창 옆 자물쇠에서 마이크가 허용되어 있는지 확인하세요.</li><li>말이 끝난 뒤 약 1.8초 뒤에 자동 전송됩니다. 짧아도 끝까지 말해 보세요.</li><li>말하기 어려우면 <b>텍스트로 연습</b>을 누르면 입력창이 먼저 열립니다.</li></ul>' +
+        '<div class="copy-row"><button class="btn btn-sm btn-primary" id="quickRetry"><svg><use href="#i-phone"/></svg>다시 통화하기</button>' +
+        '<button class="btn btn-sm btn-ghost" id="quickTextMode">텍스트로 연습</button>' +
+        '<button class="btn btn-sm btn-ghost" data-go="sheet">치트시트</button></div></div>';
+      $('#quickRetry').addEventListener('click', function () { quickStart(); });
+      $('#quickTextMode').addEventListener('click', function () { quickStart({ text: true }); });
+      bindRenderedActions();
+      return;
+    }
     var strongest = names[b.bestAxis] || '—';
     var weakest = names[b.worstAxis] || '—';
     var html = '<div class="card" style="margin-top:14px"><div class="card-head"><h3>통화 요약</h3><span class="spacer"></span><span class="badge badge-accent">' + fmtDate(b.at) + '</span></div>' +
@@ -5389,6 +5796,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
      --------------------------------------------------------- */
   var sheetFilter = 'all';
   var sheetIndex = 0;
+  var sheetQuery = '';
+  var sheetSearchTimer = null;
   var SHEET_FILTERS = [
     { id: 'all', label: '전체' },
     { id: 'pinned', label: '고정' },
@@ -5398,8 +5807,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     { id: 'fit', label: '적합도' }
   ];
 
-  function sheetMeta(roleObj) {
-    return { company: state.company, role: roleObj || roleState().role, persona: state.persona };
+  function sheetMeta(roleObj, sessionId, cat) {
+    return { company: state.company, role: roleObj || roleState().role, persona: state.persona, sessionId: sessionId || '', cat: cat || '' };
   }
 
   function addSheetCard(card) {
@@ -5415,11 +5824,24 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var list = state.cards.slice();
     if (sheetFilter === 'pinned') list = list.filter(function (c) { return c.pinned; });
     else if (sheetFilter !== 'all') list = list.filter(function (c) { return c.type === sheetFilter; });
+    var q = sheetQuery.trim().toLowerCase();
+    if (q) list = list.filter(function (c) { return sheetMatches(c, q); });
     list.sort(function (a, b) {
       if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;
       return (b.at || 0) - (a.at || 0);
     });
     return list;
+  }
+
+  /* 회사 · 직무 · 제목 · 스크립트 · 방어 논리 · 핵심 수치까지 한 번에 찾습니다. */
+  function sheetMatches(c, q) {
+    var hay = [c.title, c.company, c.roleLabel, c.typeLabel, c.cat, c.claim];
+    (c.metrics || []).forEach(function (m) { hay.push(m); });
+    (c.lines || []).forEach(function (l) { hay.push(l); });
+    (c.script || []).forEach(function (s) { hay.push(s.label, s.text); });
+    (c.defenses || []).forEach(function (d) { hay.push(d.q, d.a); });
+    (c.avoid || []).forEach(function (a) { hay.push(a); });
+    return hay.join(' ').toLowerCase().indexOf(q) !== -1;
   }
 
   function sheetCompanyLabel(c) { return c.company || state.company || '지원 회사'; }
@@ -5469,11 +5891,51 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     if (c.avoid && c.avoid.length) {
       html += '<div class="sc-sec"><h5>쓰지 말 표현</h5><div class="sc-avoid">' + c.avoid.map(function (a) { return '<span class="avoid">' + esc(a) + '</span>'; }).join('') + '</div></div>';
     }
-    var go = c.type === 'quick' ? 'quick' : c.type === 'drill' ? 'drill' : c.type === 'sens' ? 'sensitive' : 'fit';
     html += '<div class="sc-foot"><button class="btn btn-sm btn-ghost" id="sheetCopy"><svg><use href="#i-copy"/></svg>스크립트 복사</button>' +
-      '<button class="btn btn-sm btn-ghost" data-go="' + go + '">이어서 연습</button>' +
+      '<button class="btn btn-sm btn-ghost" id="sheetResume" data-resume="' + esc(c.id || '') + '" title="이 카드의 회사·질문 맥락으로 이어서 연습합니다">이어서 연습</button>' +
       '<span class="sc-updated">' + fmtDate(c.at) + ((c.updates || 1) > 1 ? ' · ' + c.updates + '회 업데이트' : '') + '</span></div></article>';
     return html;
+  }
+
+  /* 치트시트 카드에서 '이어서 연습'을 누를 때: 그 세션의 결과를 그대로 열고,
+     저장된 기록이 없으면 회사·직무·질문 맥락만이라도 화면에 복원합니다. */
+  function resumeCard(c) {
+    if (!c) return;
+    if (c.company) {
+      state.company = String(c.company).slice(0, 30);
+      ['#companyInput', '#sheetCompany'].forEach(function (sel) {
+        var el = $(sel);
+        if (el) el.value = state.company;
+      });
+    }
+    if (c.roleId && D.ROLES.some(function (r) { return r.id === c.roleId; })) {
+      state.role = c.roleId;
+      renderRoleCard();
+    }
+    if (c.persona && D.PERSONAS[c.persona] && c.persona !== state.persona) {
+      state.persona = c.persona;
+      renderPersonas();
+    }
+    PACE.store.save();
+    updateEngineLabels();
+    var s = c.sessionId ? state.sessions.filter(function (x) { return x.id === c.sessionId; })[0] : null;
+    if (s && s.snap && openPastSession(s)) return;
+    if (c.type === 'drill') {
+      state.drill = null;
+      drillDraft = c.claim || c.title || '';
+      if (state.view === 'drill') renderDrillSetup(); else go('drill');
+      toast('이 카드의 성과 문장을 채워 두었습니다. 3단 검증을 시작하세요.');
+    } else if (c.type === 'sens') {
+      if (c.cat && D.SENSITIVE[c.cat]) { sensCat = c.cat; renderSensCats(); }
+      go('sensitive');
+      toast('같은 카테고리로 방어 스크립트를 다시 만들어 보세요.');
+    } else if (c.type === 'quick') {
+      go('quick');
+      toast('5분 통화 화면입니다. 이 질문을 예상하고 다시 말해 보세요.');
+    } else {
+      go('fit');
+      toast('적합도 화면입니다. 같은 입력으로 다시 분석하면 이 카드와 같은 기준으로 볼 수 있습니다.');
+    }
   }
 
   function sheetCopyText(c) {
@@ -5494,12 +5956,20 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var stage = $('#sheetStack');
     if (!stage) return;
     renderSheetFilters();
+    var wrap = $('#sheetSearchWrap');
+    if (wrap) wrap.classList.toggle('has-value', !!sheetQuery.trim());
     var cards = sheetCards();
     var countEl = $('#sheetCount');
-    if (countEl) countEl.textContent = cards.length + '장';
+    if (countEl) countEl.textContent = sheetQuery.trim() ? cards.length + ' / ' + state.cards.length + '장' : cards.length + '장';
     var nav = $('#sheetNav');
     if (!cards.length) {
-      stage.innerHTML = '<div class="sheet-empty"><b>아직 카드가 없습니다</b>3단 꼬리질문 · 민감질문 방어 · 5분 통화를 마치면 합격 스크립트 카드가 자동으로 쌓입니다.<div><button class="btn btn-primary btn-sm" data-go="quick" style="margin-top:14px">5분 통화 시작</button> <button class="btn btn-ghost btn-sm" data-go="drill" style="margin-top:14px">꼬리질문 시작</button></div></div>';
+      if (sheetQuery.trim()) {
+        stage.innerHTML = '<div class="sheet-empty"><b>검색 결과가 없습니다</b>“' + esc(sheetQuery.trim()) + '”와 맞는 카드를 찾지 못했습니다. 회사명·직무·스크립트 단어로 다시 찾아보세요.<div><button class="btn btn-ghost btn-sm" id="sheetSearchEmptyClear" style="margin-top:14px">검색어 지우기</button></div></div>';
+        var clr = $('#sheetSearchEmptyClear');
+        if (clr) clr.addEventListener('click', function () { setSheetQuery(''); });
+      } else {
+        stage.innerHTML = '<div class="sheet-empty"><b>아직 카드가 없습니다</b>3단 꼬리질문 · 민감질문 방어 · 5분 통화를 마치면 합격 스크립트 카드가 자동으로 쌓입니다.<div><button class="btn btn-primary btn-sm" data-go="quick" style="margin-top:14px">5분 통화 시작</button> <button class="btn btn-ghost btn-sm" data-go="drill" style="margin-top:14px">꼬리질문 시작</button></div></div>';
+      }
       if (nav) nav.hidden = true;
       bindRenderedActions();
       return;
@@ -5528,6 +5998,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     });
     var copy = $('#sheetCopy');
     if (copy) copy.addEventListener('click', function () { copyWithToast(sheetCopyText(current), '치트시트 카드를 복사했습니다.'); });
+    var resume = $('#sheetResume');
+    if (resume) resume.addEventListener('click', function () { resumeCard(current); });
     $$('[data-sheet-dot]').forEach(function (b) {
       b.addEventListener('click', function () { sheetIndex = parseInt(b.getAttribute('data-sheet-dot'), 10) || 0; renderSheet(); });
     });
@@ -5576,10 +6048,37 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     }, { passive: true });
   }
 
+  function setSheetQuery(q) {
+    sheetQuery = q || '';
+    var input = $('#sheetSearch');
+    if (input) input.value = sheetQuery;
+    var wrap = $('#sheetSearchWrap');
+    if (wrap) wrap.classList.toggle('has-value', !!sheetQuery.trim());
+    sheetIndex = 0;
+    renderSheet();
+  }
+
   function bindSheet() {
     var prev = $('#sheetPrev'), next = $('#sheetNext');
     if (prev) prev.addEventListener('click', function () { sheetGo(-1); });
     if (next) next.addEventListener('click', function () { sheetGo(1); });
+    var search = $('#sheetSearch');
+    if (search) {
+      search.value = sheetQuery;
+      search.addEventListener('input', function () {
+        sheetQuery = search.value.slice(0, 40);
+        sheetIndex = 0;
+        var wrap = $('#sheetSearchWrap');
+        if (wrap) wrap.classList.toggle('has-value', !!sheetQuery.trim());
+        clearTimeout(sheetSearchTimer);
+        sheetSearchTimer = setTimeout(function () { if (state.view === 'sheet') renderSheet(); }, 130);
+      });
+      search.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { setSheetQuery(''); }
+      });
+    }
+    var clear = $('#sheetSearchClear');
+    if (clear) clear.addEventListener('click', function () { setSheetQuery(''); });
     document.addEventListener('keydown', function (e) {
       if (state.view !== 'sheet' || openedModal()) return;
       var tag = (e.target && e.target.tagName) || '';
@@ -5701,6 +6200,21 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       $('#keyToggle').textContent = '표시';
       $('#apiKey').placeholder = s.provider === 'openai' ? 'sk-...' : (s.provider === 'claude' ? 'sk-ant-...' : 'AIza...');
     }
+    var km = s.keyMode === 'session' ? 'session' : 'device';
+    $$('#keyModeSeg button').forEach(function (b) { b.classList.toggle('is-on', b.getAttribute('data-keymode') === km); });
+    var kl = $('#keyStoreLabel');
+    if (kl) kl.textContent = km === 'session' ? '· 이번 세션만 사용' : '· 이 기기에 저장';
+    var saved = (s.keys[s.provider] || '');
+    var savedBox = $('#keySaved'), maskEl = $('#keySavedMask'), modeEl = $('#keySavedMode');
+    if (savedBox) savedBox.hidden = !showKey || !saved;
+    if (maskEl) maskEl.textContent = saved ? maskKey(saved) : '';
+    if (modeEl) modeEl.textContent = km === 'session' ? '이번 탭을 닫으면 삭제됨' : '이 브라우저에 저장됨';
+    var note = $('#keyStoreNoteText');
+    if (note) {
+      note.textContent = km === 'session'
+        ? '이번 탭에서만 쓰는 키입니다. sessionStorage에 보관되고 탭을 닫으면 자동으로 사라집니다. 외부 서버로는 전송되지 않고 브라우저에서 OpenAI·Google·Anthropic API로 직접 호출합니다. 공용 PC에서는 이 방식을 쓰세요.'
+        : '키는 이 브라우저의 localStorage에 남아 다음 방문에도 이어집니다. 외부 서버로는 전송되지 않고 브라우저에서 OpenAI·Google·Anthropic API로 직접 호출합니다. 공용 PC에서는 “이번 세션만”을 선택하세요.';
+    }
     $('#providerNote').textContent = s.provider === 'demo'
       ? '키 없이 동작하는 규칙 기반 엔진입니다. 입력한 수치·키워드를 실제로 추출해 질문을 만들기 때문에, 데모라도 고정 문구가 아닙니다.'
       : (s.provider === 'openai'
@@ -5708,7 +6222,20 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         : (s.provider === 'claude'
           ? 'Anthropic API 키로 Claude Messages API를 호출합니다. 브라우저 직접 호출용 헤더(anthropic-dangerous-direct-browser-access)를 함께 보냅니다.'
           : 'Google AI Studio 키로 Gemini를 호출합니다. 브라우저에서 직접 요청합니다.'));
-    setEngineState('', '키를 입력하면 연결을 확인할 수 있습니다.');
+    if (showKey && saved) {
+      var st = engineStatus();
+      if (st.key === 'ok') setEngineState('ok', PROVIDER_NAME[s.provider] + ' 연결됨 · 저장된 키가 유효합니다.');
+      else if (st.key === 'fail') setEngineState('err', '마지막 연결 테스트가 실패했습니다. 키·모델·네트워크를 확인하세요.');
+      else setEngineState('', '저장된 키가 있습니다. [연결 테스트]로 확인하세요.');
+    } else {
+      setEngineState('', '키를 입력하면 연결을 확인할 수 있습니다.');
+    }
+  }
+
+  function maskKey(k) {
+    k = String(k || '');
+    if (k.length <= 10) return '••••••';
+    return k.slice(0, 3) + '••••••' + k.slice(-4);
   }
 
   function setEngineState(kind, text) {
@@ -5732,6 +6259,16 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         b.classList.add('is-on');
       });
     });
+    $$('#keyModeSeg button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var mode = b.getAttribute('data-keymode') === 'session' ? 'session' : 'device';
+        if (state.settings.keyMode === mode) return;
+        state.settings.keyMode = mode;
+        PACE.store.save();
+        fillSettings();
+        toast(mode === 'session' ? '키를 이번 탭에서만 보관합니다. 탭을 닫으면 삭제됩니다.' : '키를 이 기기에 저장합니다. 다음 방문에도 이어집니다.');
+      });
+    });
     $('#keyToggle').addEventListener('click', function () {
       var inp = $('#apiKey');
       var showing = inp.type === 'text';
@@ -5747,6 +6284,10 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       if (p !== 'demo') {
         var key = $('#apiKey').value.trim();
         if (key.length < 12) { toast('API 키를 확인해 주세요.', 'err'); $('#apiKey').focus(); return; }
+        if (state.settings.keys[p] !== key) {
+          var wasOk = engineCheck.provider === p && engineCheck.ok === true && engineCheck.sig === keySig(key);
+          if (!wasOk) resetEngineCheck(p);
+        }
         state.settings.keys[p] = key;
         state.settings.models[p] = $('#modelSelect').value;
       }
@@ -5759,11 +6300,13 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     $('#resetData').addEventListener('click', function () {
       if (!window.confirm('저장된 경력기술서·공고·세션·API 키를 모두 삭제할까요? 이 동작은 되돌릴 수 없습니다.')) return;
       try { localStorage.removeItem('pace.state.v1'); } catch (e) { /* ignore */ }
+      try { sessionStorage.removeItem('pace.keys.session'); sessionStorage.removeItem('pace.engine.check'); } catch (e) { /* ignore */ }
+      engineCheck = { provider: '', ok: null, at: 0, sig: '' };
       state.resume = '';
       state.jd = '';
       state.sessions = [];
       state.usage = { fit: 0, drill: 0, sens: 0, quick: 0 };
-      state.settings = { provider: 'demo', models: { openai: 'gpt-4o-mini', gemini: 'gemini-2.5-flash', claude: 'claude-sonnet-4-6' }, keys: { openai: '', gemini: '', claude: '' }, intensity: 'standard', voiceURI: '', voiceRate: 0.98 };
+      state.settings = { provider: 'demo', models: { openai: 'gpt-4o-mini', gemini: 'gemini-2.5-flash', claude: 'claude-sonnet-4-6' }, keys: { openai: '', gemini: '', claude: '' }, keyMode: 'device', intensity: 'standard', voiceURI: '', voiceRate: 0.98 };
       state.fit = null; state.drill = null; state.sens = null;
       state.persona = 'lead';
       state.cards = [];
@@ -5797,11 +6340,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     try {
       var raw = await AI.callLLM('JSON으로만 답하세요. 설명 없이 {"ok":true}만 출력합니다.', '연결 테스트', 60);
       var parsed = AI.parseJSON(raw);
-      if (parsed && parsed.ok) setEngineState('ok', '연결되었습니다. ' + ({ openai: 'OpenAI', gemini: 'Gemini', claude: 'Claude' }[p] || p) + ' 키가 유효합니다.');
-      else setEngineState('ok', '응답을 받았습니다. 저장하면 이 엔진으로 동작합니다.');
+      if (parsed && parsed.ok) { setEngineState('ok', '연결되었습니다. ' + ({ openai: 'OpenAI', gemini: 'Gemini', claude: 'Claude' }[p] || p) + ' 키가 유효합니다.'); noteEngine(p, true, key); }
+      else { setEngineState('ok', '응답을 받았습니다. 저장하면 이 엔진으로 동작합니다.'); noteEngine(p, true, key); }
     } catch (err) {
       setEngineState('err', AI.errorText(err) || '연결에 실패했습니다.');
       state.settings.keys[p] = prevKey;
+      noteEngine(p, false);
     }
   }
 
@@ -5862,10 +6406,15 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       b.addEventListener('click', function () {
         var s = state.sessions.filter(function (x) { return x.id === b.getAttribute('data-session'); })[0];
         if (!s) return;
-        if (s.type === 'fit') go('fit');
+        if (s.snap) {
+          if (openPastSession(s)) return;
+          toast('이 세션의 저장된 기록을 열지 못했습니다.', 'err');
+        }
+        if (s.type === 'fit') { go('fit'); if (!state.fit) renderFit(); }
         else if (s.type === 'drill') { go('drill'); if (!state.drill) renderDrillSetup(); }
         else if (s.type === 'sens') go('sensitive');
         else go('quick');
+        if (!s.snap) toast('예전 기록은 제목·점수만 저장되어 있습니다. 다시 연습하면 결과 전체를 다시 볼 수 있습니다.');
       });
     });
   }
@@ -5922,8 +6471,17 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     });
   }
 
+  function registerPWA() {
+    if (!('serviceWorker' in navigator)) return;
+    if (location.protocol !== 'https:' && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname || '')) return;
+    try {
+      navigator.serviceWorker.register('sw.js').catch(function () { /* offline cache is optional */ });
+    } catch (e) { /* ignore */ }
+  }
+
   function boot() {
     PACE.store.load();
+    loadEngineCheck();
     var hv = currentHashView();
     var initialModal = MODALS.indexOf(hv) !== -1 ? hv : null;
     var initialView = VIEWS.indexOf(hv) !== -1 ? hv : 'home';
@@ -5940,6 +6498,10 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     bindSettings();
     bindRoleCard();
     bindSheet();
+    var pastLive = $('#pastBarLive'), pastClose = $('#pastBarClose');
+    if (pastLive) pastLive.addEventListener('click', function () { exitPast(); });
+    if (pastClose) pastClose.addEventListener('click', function () { exitPast(); });
+    registerPWA();
     renderHome();
     renderSensCats();
     $('#sensBody').innerHTML = sensBodyEmpty();

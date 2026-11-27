@@ -1,0 +1,50 @@
+{
+  "id": "./",
+  "name": "PACE — 경력직 이직 페이스메이커",
+  "short_name": "PACE 면접",
+  "description": "경력기술서와 채용공고(JD)만으로 실무 팀장급 압박 면접을 시뮬레이션하는 경력직 이직 페이스메이커.",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#0B0F14",
+  "theme_color": "#0B0F14",
+  "categories": ["education", "productivity", "business"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "5분 통화 면접",
+      "short_name": "5분 통화",
+      "url": "./#quick",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "치트시트",
+      "short_name": "치트시트",
+      "url": "./#sheet",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
