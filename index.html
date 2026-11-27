@@ -472,6 +472,8 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 .q-timer{font-family:var(--mono);font-size:44px;font-weight:500;letter-spacing:-.02em;color:var(--text);line-height:1}
 .q-timer.warn{color:var(--warn)}
 .q-timer.danger{color:var(--danger)}
+.q-timer.done{color:var(--text-2)}
+.q-timer-lab{font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:.02em;color:var(--faint);margin-right:6px;vertical-align:middle}
 .q-phase{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:8px;font-weight:700}
 .orb{position:relative;width:120px;height:120px;border-radius:50%;display:grid;place-items:center;margin:22px 0 18px;background:radial-gradient(circle at 35% 30%,#22344d,#131c27);border:1px solid #2b3d54}
 .orb::before,.orb::after{content:"";position:absolute;inset:-1px;border-radius:50%;border:1px solid var(--accent-line);opacity:0}
@@ -1699,6 +1701,44 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     return out;
   }
 
+  /* 수치 문맥: "92.0%"만 말하면 무엇의 수치인지 사라지므로
+     앞 단어(수율·매출 등)와 화살표 관계(92.0% → 96.5%)를 붙입니다. */
+  var METRIC_LABEL_STOP = /^(수치|결과|기준선|기준|목표|약|총|평균|당시|현재|이후|대비|그때|각|및|그리고|에서|으로|까지|부터|달성|개선|증가|감소|절감|단축|확보|규모|정도)$/;
+  function metricLabel(m) {
+    var ctx = String((m && m.ctx) || '');
+    var i = ctx.indexOf(m.raw);
+    if (i <= 0) return '';
+    var before = ctx.slice(0, i).replace(/[,;·•\-–—:()\[\]]+\s*$/, '').trim();
+    var words = before.split(/\s+/);
+    var w = String(words[words.length - 1] || '').replace(/[^가-힣A-Za-z0-9]/g, '');
+    if (!w || w.length > 10) return '';
+    if (METRIC_LABEL_STOP.test(w)) return '';
+    if (!/[가-힣A-Za-z]/.test(w)) return '';
+    return w;
+  }
+  function metricPhrase(ms, n) {
+    var list = (ms || []).slice(0, n || 2);
+    if (!list.length) return '';
+    var first = list[0];
+    var label = metricLabel(first);
+    if (list[1]) {
+      var ctx = String(first.ctx || '');
+      var i1 = ctx.indexOf(first.raw), i2 = ctx.indexOf(list[1].raw);
+      if (i1 >= 0 && i2 > i1) {
+        var between = ctx.slice(i1 + first.raw.length, i2);
+        if (/^\s*(→|->|~|∼|에서)\s*$/.test(between)) {
+          return (label ? label + ' ' : '') + first.raw + ' → ' + list[1].raw;
+        }
+      }
+    }
+    var parts = [(label ? label + ' ' : '') + first.raw];
+    if (list[1]) {
+      var l2 = metricLabel(list[1]);
+      parts.push((l2 ? l2 + ' ' : '') + list[1].raw);
+    }
+    return parts.join(', ');
+  }
+
   function tokenList(text) {
     var raw = String(text || '').match(/[가-힣]{2,}|[A-Za-z][A-Za-z0-9+#.]{1,}/g) || [];
     return raw.map(function (t) { return t.replace(/[.,/]+$/, ''); }).filter(function (t) {
@@ -2319,9 +2359,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       return 4;
     };
     var mSorted = rMetrics.slice().sort(function (a, b) { return rankMetric(a) - rankMetric(b); });
-    var metricTxt = mSorted.length
-      ? mSorted.slice(0, 2).map(function (m) { return m.raw; }).join(', ')
-      : '[핵심 성과 수치]';
+    var metricTxt = mSorted.length ? metricPhrase(mSorted, 2) : '[핵심 성과 수치]';
     lines.push({
       label: '오프닝',
       text: '“' + domR.top.label + '에서 ' + (years ? fmtYears(years, tenureMonths(resume)) : '[경력 연차]') + ' 일했습니다. 이번 직무와 겹치는 지점은 ' + (topStrength ? topStrength.key : '[핵심 역량]') + '이고, 핵심 수치는 ' + metricTxt + '입니다.”'
@@ -2506,15 +2544,48 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   /* ---------------------------------------------------------
      sensitive engine
      --------------------------------------------------------- */
-  function reasonSentence(raw) {
+  /* 사유 문장은 고른 민감질문 카테고리에 맞는 것만 씁니다.
+     예: 공백기 답변에 "역할과 업무 범위가 달랐습니다"나 보상 불만이 섞이면 사실과 다른 말이 됩니다. */
+  function reasonSentence(raw, catId) {
     var t = clean(raw);
+    var cat = catId || 'frequent';
+    var hasFamily = /(아이|아기|육아|출산|자녀|양육|키웠|키우|가족|부모|간병|돌봄)/.test(t);
+    var hasHealth = /(건강|치료|수술|병원|재활|질환|아팠|아프|휴직|몸이)/.test(t);
+    var hasStudy = /(자격증|공부|학업|교육|강의|대학원|스터디|어학|시험|자격|전공)/.test(t);
+    var hasRest = /(휴식|재충전|번아웃|회복|정비)/.test(t);
+    if (cat === 'gap') {
+      if (hasFamily && hasStudy) return '아이와 가족을 돌보는 일이 먼저였고, 그 틈에 자격증 공부로 다음 역할을 준비했습니다.';
+      if (hasFamily) return '아이와 가족을 돌보는 일이 먼저였던 기간이 있었습니다.';
+      if (hasHealth && hasStudy) return '건강을 회복하면서 자격증 공부로 다음 역할을 준비했습니다.';
+      if (hasHealth) return '건강을 회복하는 데 시간이 필요했습니다.';
+      if (hasStudy) return '그 기간에는 자격증과 공부로 다음 역할을 준비했습니다.';
+      if (hasRest) return '긴 근무 뒤 정비가 필요한 기간이었습니다.';
+      return '그 기간은 다음 역할을 준비하는 시간으로 썼습니다.';
+    }
+    if (cat === 'salary') return '당시 보상이 맡은 역할의 범위와 시장 기준에 맞지 않았습니다.';
+    if (cat === 'short') {
+      if (hasFamily) return '그 시기에는 가족 일정을 우선해야 했습니다.';
+      if (hasHealth) return '그 시기에는 건강을 먼저 챙겨야 했습니다.';
+      if (/(상사|팀장|리더|사람|정치|갈등|분위기|문화|꼬)/.test(t)) return '의사결정 구조와 업무 방식이 제 방식과 맞지 않았습니다.';
+      if (/(연봉|처우|보상|급여)/.test(t)) return '맡은 역할의 범위가 처음 안내받은 것과 달랐습니다.';
+      if (/(성장|배우|배움|도전|새로운)/.test(t)) return '더 큰 문제를 다룰 환경이 필요했습니다.';
+      return '맡은 역할이 처음 안내받은 범위와 달랐습니다.';
+    }
+    if (cat === 'exit') {
+      if (/(구조조정|정리해고|권고사직|폐업|합병|M&A|인수)/.test(t)) return '조직 개편으로 제 역할이 없어졌습니다.';
+      if (hasFamily) return '가족 일정으로 온전히 일할 수 없는 기간이 있었습니다.';
+      if (hasHealth) return '건강상 이유로 지속하기 어려웠습니다.';
+      if (/(상사|팀장|리더|사람|정치|꼬|갈등)/.test(t)) return '의사결정 구조가 제 방식과 맞지 않아 같은 문제가 반복됐습니다.';
+      if (/(야근|워라밸|과로|체력)/.test(t)) return '지속 가능한 업무 리듬이 필요했습니다.';
+      return '회사의 역할 구조가 제가 책임질 수 있는 범위와 맞지 않았습니다.';
+    }
     if (/(연봉|처우|보상|돈|급여|페이)/.test(t)) return '당시 보상 수준이 맡은 역할과 시장 기준에 맞지 않았습니다.';
     if (/(상사|팀장|리더|사람|정치|꼬|갈등)/.test(t)) return '의사결정 구조가 제 방식과 맞지 않아 같은 문제가 반복됐습니다.';
     if (/(야근|워라밸|과로|번아웃|체력|건강)/.test(t)) return '지속 가능한 업무 리듬이 필요했습니다.';
     if (/(스타트업|초기|방향|우선순위|바뀌)/.test(t)) return '조직의 우선순위가 자주 바뀌어 책임질 범위를 찾고 싶었습니다.';
     if (/(성장|배우|배움|도전|새로운)/.test(t)) return '더 큰 문제를 다룰 환경이 필요했습니다.';
     if (/(구조조정|정리해고|권고사직|폐업|합병|M&A)/.test(t)) return '조직 개편으로 제 역할이 없어졌습니다.';
-    if (/(가족|육아|출산|부모|간병)/.test(t)) return '가족 일정으로 온전히 일할 수 없는 기간이 있었습니다.';
+    if (hasFamily) return '가족 일정으로 온전히 일할 수 없는 기간이 있었습니다.';
     return '당시 원한 역할과 실제 업무 범위가 달랐습니다.';
   }
 
@@ -2560,7 +2631,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   function sensitiveDemo(catId, raw, personaId, fit) {
     var cat = SENSITIVE[catId] || SENSITIVE.frequent;
     var persona = PERSONAS[personaId] || PERSONAS.lead;
-    var reason = reasonSentence(raw);
+    var reason = reasonSentence(raw, cat.id);
     var fact = factSentence(raw, cat.id);
     var ms = metricsOf(raw);
     var DUR_UNITS = { '년': 1, '개월': 1, '일': 1, '주': 1, '시간': 1, '분': 1 };
@@ -2583,7 +2654,9 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       script.push({ label: '사실', text: fact });
       script.push({ label: '기준', text: '기간이 짧았던 이유는 분명합니다. ' + reason + ' 다만 짧은 기간에 끝낸 일은 분명히 있습니다.' });
       script.push({ label: '증거', text: '입사 후 첫 3개월 안에 ' + metricTxt + '라는 결과를 만들고, 인수인계 문서까지 남겼습니다. 기간보다 완결성으로 평가받고 싶습니다.' });
-      script.push({ label: '이번 선택', text: '이번 직무는 ' + jdKey + '가 중심이라, 제가 짧게 끝낸 프로젝트들의 방식이 그대로 필요하다고 봤습니다.' });
+      script.push({ label: '이번 선택', text: jdKey === '이 직무'
+        ? '이번 직무는 제가 짧게 끝낸 프로젝트들의 방식이 그대로 필요한 자리라고 봤습니다.'
+        : '이번 직무는 ' + josa(jdKey, '이', '가') + ' 중심이라, 제가 짧게 끝낸 프로젝트들의 방식이 그대로 필요하다고 봤습니다.' });
     } else if (cat.id === 'exit') {
       script.push({ label: '사실', text: fact });
       script.push({ label: '기준', text: '퇴사는 사람 문제가 아니라 구조 문제였습니다. ' + reason });
@@ -2598,7 +2671,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       script.push({ label: '태도', text: '숫자 자체보다 산정 기준을 먼저 봐 주시면 좋겠습니다. 제시해 주신 범위와 제 기준이 다르면, 그 차이를 성과 목표로 조정하겠습니다.' });
     } else {
       script.push({ label: '사실', text: fact });
-      script.push({ label: '사용', text: '그 기간의 배경은 이렇습니다. ' + reason + ' 동시에 [준비한 것]을 했고, 아무것도 하지 않은 기간으로 보이지 않게 말씀드리겠습니다.' });
+      script.push({ label: '사용', text: '그 기간의 배경은 이렇습니다. ' + reason + ' 아무것도 하지 않은 기간으로 보이지 않도록 [준비한 것]을 함께 말씀드리겠습니다.' });
       var returned = /(복귀|재취업|다시 일|현 직장|현재)/.test(raw);
       script.push({
         label: '회복',
@@ -2635,12 +2708,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       followups.push({ q: '예산보다 높으면 어떻게 하시겠습니까?', a: '“차액을 성과 목표나 변동 보상으로 조정할 수 있습니다. 대신 목표와 평가 기준을 문서로 합의하고 싶습니다.”' });
       followups.push({ q: '지금 연봉을 왜 그렇게 받으셨나요?', a: '“' + metricTxt + '를 만든 결과입니다. 다만 연봉보다 맡은 범위가 먼저였고, 이번에도 같습니다.”' });
     } else {
-      followups.push({ q: '공백 동안 무엇을 하셨나요?', a: '“' + reason + ' 그 기간에 [준비한 것]을 했습니다. 결과는 [수치]로 말씀드릴 수 있습니다.”' });
+      followups.push({ q: '공백 동안 무엇을 하셨나요?', a: '“' + reason + ' 그 밖에 [준비한 것]도 했습니다. 결과는 [수치]로 말씀드릴 수 있습니다.”' });
       followups.push({ q: '공백이 역량에 영향을 주지 않았나요?', a: '“복귀 후 ' + metricTxt + '를 만들었습니다. 실무 감각은 결과로 확인해 주시면 됩니다.”' });
       followups.push({ q: '왜 지금 복귀하나요?', a: '“' + jdKey + ' 경험이 제 공백 이전 경력과 바로 이어지고, 지금이 그 역할을 맡을 준비가 된 시점이기 때문입니다.”' });
     }
 
-    var read = '면접관은 ' + cat.place + ' 자체가 아니라 ' + cat.signal + '을 확인합니다. 이 질문의 실제 리스크는 “' + cat.risk + '”로 정리됩니다. 따라서 변명보다 기준과 증거를 먼저 제시해야 합니다.';
+    var read = '면접관은 ' + cat.place + ' 자체가 아니라 ' + josa(cat.signal, '을', '를') + ' 확인합니다. 이 질문의 실제 리스크는 “' + cat.risk + '”로 정리됩니다. 따라서 변명보다 기준과 증거를 먼저 제시해야 합니다.';
     if (persona.id === 'cfo') read += ' C-Level 앞에서는 감정적 설명의 비중을 줄이고, 비용·매출·회수 기간 언어로 바꿔야 합니다.';
     if (persona.id === 'hr') read += ' HR 앞에서는 조직에서 어떻게 행동했는지, 갈등을 어떻게 다뤘는지가 함께 평가됩니다.';
 
@@ -2711,6 +2784,26 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     return e;
   }
 
+  /* 브라우저가 던지는 "Failed to fetch" 같은 영어 메시지를 한국어 안내로 바꿉니다. */
+  function networkErrorText(e) {
+    var m = String((e && (e.message || e)) || '');
+    if (/mixed content|insecure/i.test(m)) return '보안 연결(HTTPS) 문제로 요청이 차단되었습니다. 주소가 https로 시작하는지 확인해 주세요.';
+    if (/failed to fetch|networkerror|load failed|fetch failed|network request failed|cors|err_|net::/i.test(m)) {
+      return '네트워크에 연결하지 못했습니다. 인터넷·VPN·방화벽(CORS)과 API 키를 확인해 주세요.';
+    }
+    return 'AI 서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+  }
+
+  function errorText(err) {
+    var m = err && err.message ? String(err.message) : (err == null ? '' : String(err));
+    m = m.trim();
+    if (!m) return '알 수 없는 오류가 발생했습니다.';
+    if (/[가-힣]/.test(m)) return m;
+    if (/failed to fetch|networkerror|load failed|fetch failed|network request failed|cors|mixed content|err_|net::/i.test(m)) return networkErrorText(err);
+    if (/unexpected token|json/i.test(m)) return 'AI 응답을 해석하지 못했습니다. API 키·모델·네트워크 상태를 확인해 주세요.';
+    return 'AI 서버와 통신하지 못했습니다. (' + truncate(m, 80) + ')';
+  }
+
   function activeProvider() {
     var s = state.settings;
     if (s.provider === 'demo') return 'demo';
@@ -2747,9 +2840,18 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       return await fetch(url, o);
     } catch (e) {
       if (e && e.name === 'AbortError') throw ApiError('응답 시간이 초과되었습니다. 네트워크를 확인하세요.', 0);
-      throw e;
+      if (e && e.name === 'ApiError') throw e;
+      throw ApiError(networkErrorText(e), 0);
     } finally {
       if (timer) clearTimeout(timer);
+    }
+  }
+
+  async function readJson(res, name) {
+    try {
+      return await res.json();
+    } catch (e) {
+      throw ApiError(name + ' 응답을 읽지 못했습니다. API 키와 네트워크(CORS) 상태를 확인해 주세요.', 0);
     }
   }
 
@@ -2777,7 +2879,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         else if (res.status === 404) msg = '선택한 OpenAI 모델을 사용할 수 없습니다.';
         throw ApiError(msg, res.status);
       }
-      var data = await res.json();
+      var data = await readJson(res, 'OpenAI');
       var content = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
       return content || '';
     }
@@ -2799,7 +2901,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         else if (res2.status === 404) m2 = '선택한 Gemini 모델을 사용할 수 없습니다.';
         throw ApiError(m2, res2.status);
       }
-      var d2 = await res2.json();
+      var d2 = await readJson(res2, 'Gemini');
       var cand = d2 && d2.candidates && d2.candidates[0];
       var parts = cand && cand.content && cand.content.parts;
       if (!parts) throw ApiError('Gemini 응답이 비어 있습니다.', 0);
@@ -2832,7 +2934,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         else if (res3.status === 400) m3 = 'Claude 요청이 거부되었습니다. 모델과 키를 확인하세요.';
         throw ApiError(m3, res3.status);
       }
-      var d3 = await res3.json();
+      var d3 = await readJson(res3, 'Claude');
       var blocks = (d3 && d3.content) || [];
       var text3 = blocks.filter(function (b) { return b && b.type === 'text' && typeof b.text === 'string'; })
         .map(function (b) { return b.text; }).join('');
@@ -3048,13 +3150,13 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var part1 = !answered
       ? '통화를 마치겠습니다. 오늘은 ' + n + '개 질문이 있었지만 기록된 답변이 없습니다. ' + tone
       : '통화를 마치겠습니다. 오늘은 ' + n + '개 질문 중 ' + answered + '개에 답하셨고, 평균 ' + avg + '점입니다. ' +
-        persona.short + ' 관점에서는 ' + AXIS_NAME[ax.best] + '이 가장 안정적이었고, ' + AXIS_NAME[ax.worst] + '이 가장 약했습니다. ' + tone;
+        persona.short + ' 관점에서는 ' + josa(AXIS_NAME[ax.best], '이', '가') + ' 가장 안정적이었고, ' + josa(AXIS_NAME[ax.worst], '이', '가') + ' 가장 약했습니다. ' + tone;
 
     var part2 = weakest
-      ? '가장 아쉬웠던 답변은 ' + (weakest.index + 1) + '번 질문이었습니다. 질문은 “' + truncate(weakest.question, 90) + '”였습니다. ' + weakest.axisNote + ' 이렇게 다시 말해 보세요. ' + weakest.script.spoken
+      ? '가장 아쉬웠던 답변은 ' + (weakest.index + 1) + '번 질문이었습니다. 질문은 “' + truncate(weakest.question, 90) + '”이었습니다. ' + weakest.axisNote + ' 이렇게 다시 말해 보세요. ' + weakest.script.spoken
       : '이번 통화에서는 평가할 답변이 없었습니다. 다음에는 한 문장이라도 좋으니 소리 내어 답해 보세요.';
 
-    var practice1 = hasAxes ? AXIS_NAME[ax.worst] + '을 보강하세요.' : '결론, 근거 수치, 기여 범위를 한 문장씩 나눠 말하는 연습을 하세요.';
+    var practice1 = hasAxes ? josa(AXIS_NAME[ax.worst], '을', '를') + ' 보강하세요.' : '결론, 근거 수치, 기여 범위를 한 문장씩 나눠 말하는 연습을 하세요.';
     var kpi = role.kpis && role.kpis[0];
     var practice2 = kpi ? '이 직무에서 반드시 나오는 KPI는 ' + kpi.k + '입니다. 기준선, 결과, 기여 범위를 준비하세요.' : '';
     var pressure = role.pressures && role.pressures[0];
@@ -3211,6 +3313,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
   };
   PACE.ai = {
     activeProvider: activeProvider, engineLabel: engineLabel, callLLM: callLLM, parseJSON: parseJSON,
+    errorText: errorText, networkErrorText: networkErrorText,
     aiFit: aiFit, aiSensitive: aiSensitive, aiDrillQuestion: aiDrillQuestion, aiDrillReport: aiDrillReport,
     aiQuickQuestions: aiQuickQuestions, personaPrompt: personaPrompt
   };
@@ -3900,7 +4003,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       toast('경력기술서를 불러왔습니다.');
     } catch (err) {
       nameEl.textContent = 'PDF · TXT 파일을 끌어다 놓거나 클릭';
-      toast(err && err.message ? err.message : '파일을 읽지 못했습니다.', 'err');
+      toast(err && (err.message || err) ? AI.errorText(err) : '파일을 읽지 못했습니다.', 'err');
     }
   }
 
@@ -4035,7 +4138,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
         try {
           result = await AI.aiFit(state.resume, state.jd, persona, state.settings.intensity, roleRes.role);
         } catch (err) {
-          toast('AI 응답을 받지 못해 내장 엔진으로 전환했습니다. (' + (err.message || '오류') + ')', 'err');
+          toast('AI 응답을 받지 못해 내장 엔진으로 전환했습니다. (' + AI.errorText(err) + ')', 'err');
           result = E.analyzeFit(state.resume, state.jd, persona, state.settings.intensity, state.role);
         }
       } else {
@@ -4051,7 +4154,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     } catch (err) {
       if (token !== fitToken) return;
       setBusy(btn, false);
-      toast('분석 중 문제가 발생했습니다: ' + (err.message || err), 'err');
+      toast('분석 중 문제가 발생했습니다: ' + AI.errorText(err), 'err');
       $('#fitBody').innerHTML = '<div class="empty"><b>분석을 완료하지 못했습니다</b>입력을 확인하고 다시 시도해 주세요.</div>';
     }
   }
@@ -4264,7 +4367,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       try {
         q = await AI.aiDrillQuestion(stage, d.claim, d.answers, state.persona, state.settings.intensity, roleState().role);
       } catch (err) {
-        toast('AI 질문을 받지 못해 내장 엔진 질문으로 진행합니다. (' + (err.message || '오류') + ')', 'err');
+        toast('AI 질문을 받지 못해 내장 엔진 질문으로 진행합니다. (' + AI.errorText(err) + ')', 'err');
         q = null;
       }
     }
@@ -4413,7 +4516,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var report;
     if (AI.activeProvider() !== 'demo') {
       try { report = await AI.aiDrillReport(d.claim, d.answers, d.evals, state.persona, roleState().role); }
-      catch (err) { toast('AI 리포트를 받지 못해 내장 엔진으로 만들었습니다. (' + (err.message || '오류') + ')', 'err'); report = null; }
+      catch (err) { toast('AI 리포트를 받지 못해 내장 엔진으로 만들었습니다. (' + AI.errorText(err) + ')', 'err'); report = null; }
     }
     if (!state.drill || state.drill !== d) return;
     if (!report) report = E.demoDrillReport(d.claim, d.answers, d.evals);
@@ -4530,7 +4633,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       if (AI.activeProvider() !== 'demo') {
         try { result = await AI.aiSensitive(raw, cat, state.persona); }
         catch (err) {
-          toast('AI 응답을 받지 못해 내장 엔진으로 만들었습니다. (' + (err.message || '오류') + ')', 'err');
+          toast('AI 응답을 받지 못해 내장 엔진으로 만들었습니다. (' + AI.errorText(err) + ')', 'err');
           result = E.sensitiveDemo(cat, raw, state.persona, state.fit);
         }
       } else {
@@ -4719,9 +4822,30 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var el = $('#quickTimer');
     if (!el) return;
     var m = Math.floor(sec / 60), s = sec % 60;
+    el.classList.remove('done');
+    el.removeAttribute('title');
     el.textContent = m + ':' + String(s).padStart(2, '0');
     el.classList.toggle('warn', sec <= 60 && sec > 20);
     el.classList.toggle('danger', sec <= 20);
+  }
+
+  /* 통화가 끝난 뒤에는 남은 시간이 아니라 총 통화 시간을 보여 줍니다. */
+  function quickSetTimerElapsed(sec) {
+    sec = Math.max(0, Math.round(sec));
+    var el = $('#quickTimer');
+    if (!el) return;
+    var m = Math.floor(sec / 60), s = sec % 60;
+    el.classList.remove('warn', 'danger');
+    el.classList.add('done');
+    el.setAttribute('title', '이번 통화에 사용한 총 시간');
+    el.innerHTML = '<span class="q-timer-lab">통화 시간</span> ' + m + ':' + String(s).padStart(2, '0');
+  }
+
+  /* textContent로 갈아 끼우면 버튼 안의 전화 아이콘(SVG)이 사라집니다. */
+  function quickSetStartLabel(text) {
+    var btn = $('#quickStartBtn');
+    if (!btn) return;
+    btn.innerHTML = '<svg><use href="#i-phone"/></svg>' + esc(text);
   }
 
   function quickSetCount() {
@@ -4774,7 +4898,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     var questions = null;
     if (AI.activeProvider() !== 'demo' && (resume || jd)) {
       try { questions = await AI.aiQuickQuestions(resume, jd, state.persona, state.fit, roleRes.role); }
-      catch (err) { toast('AI 질문을 받지 못해 내장 질문으로 진행합니다. (' + (err.message || '오류') + ')', 'err'); }
+      catch (err) { toast('AI 질문을 받지 못해 내장 질문으로 진행합니다. (' + AI.errorText(err) + ')', 'err'); }
     }
     if (!state.resume.trim() && !state.fit) {
       try { state.fit = E.analyzeFit(state.resume, state.jd, state.persona, state.settings.intensity, state.role); } catch (e) { state.fit = null; }
@@ -5049,7 +5173,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     if (q.timerId) { clearInterval(q.timerId); q.timerId = null; }
     try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ }
     $('#quickStartBtn').hidden = false;
-    $('#quickStartBtn').textContent = '다시 통화';
+    quickSetStartLabel('다시 통화');
     $('#quickEndBtn').hidden = true;
     $('#quickEndBtn').disabled = true;
     $('#quickNextBtn').hidden = true;
@@ -5062,11 +5186,12 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
     callWave('');
     callSpeaker(null);
     callSetLive('통화 종료', false);
-    if (q.endAt) quickSetTimer(Math.max(0, (q.endAt - Date.now()) / 1000));
-    $('#quickTimer').classList.remove('warn', 'danger');
+    /* 종료된 뒤에 남은 시간을 계속 보여 주면 아직 통하고 있는 것처럼 보입니다.
+       종료 상태에서는 실제 통화 시간(경과)을 보여 줍니다. */
+    var duration = Math.max(0, Math.round((Date.now() - (q.startedAt || Date.now())) / 1000));
+    quickSetTimerElapsed(duration);
     callPhase('통화 종료 · 브리핑 준비');
     var answered = q.answers.length;
-    var duration = Math.max(0, Math.round((Date.now() - q.startedAt) / 1000));
     var brief = PACE.briefing.build({
       questions: q.questions,
       answers: q.answers,
@@ -5675,7 +5800,7 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
       if (parsed && parsed.ok) setEngineState('ok', '연결되었습니다. ' + ({ openai: 'OpenAI', gemini: 'Gemini', claude: 'Claude' }[p] || p) + ' 키가 유효합니다.');
       else setEngineState('ok', '응답을 받았습니다. 저장하면 이 엔진으로 동작합니다.');
     } catch (err) {
-      setEngineState('err', err.message || '연결에 실패했습니다.');
+      setEngineState('err', AI.errorText(err) || '연결에 실패했습니다.');
       state.settings.keys[p] = prevKey;
     }
   }
