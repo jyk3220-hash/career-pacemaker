@@ -876,8 +876,8 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
 /* ---------- retry card (0 answers call) ---------- */
 .retry-card{border:1px solid rgba(228,180,94,.28);background:linear-gradient(180deg,rgba(228,180,94,.08),#0F161C)}
 .retry-card .rc-list{margin:10px 0 0;display:flex;flex-direction:column;gap:6px}
-.retry-card .rc-list li{font-size:12.5px;color:var(--text-2);line-height:1.6;display:flex;gap:7px}
-.retry-card .rc-list li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--warn);flex:0 0 4px;margin-top:7px}
+.retry-card .rc-list li{font-size:12.5px;color:var(--text-2);line-height:1.65;position:relative;padding-left:12px}
+.retry-card .rc-list li::before{content:"";position:absolute;left:0;top:8px;width:4px;height:4px;border-radius:50%;background:var(--warn)}
 .retry-card .copy-row{margin-top:14px}
 
 </style>
