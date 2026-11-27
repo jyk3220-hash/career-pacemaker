@@ -4395,7 +4395,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
       sawUsable = Math.max(sawUsable, res.usable);
       sawHidden = Math.max(sawHidden, res.hidden);
       if (pdfCompact(res.text).length > pdfCompact(best).length) { best = res.text; broken = res.broken; }
-      if (pdfCompact(best).length >= 50) break;
+      if (String(best || '').trim().length >= 50) break;
       if (!res.raw && !res.hidden) break;   /* no text layer at all: another mirror cannot help */
     }
 
@@ -4406,7 +4406,8 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
       throw new Error('PDF를 열지 못했습니다. 파일이 손상되었는지 확인하거나 텍스트를 붙여넣어 주세요.');
     }
     var compact = pdfCompact(best);
-    if (compact.length < 50) {
+    /* 스캔 이미지 PDF처럼 읽을 글이 거의 없으면 50자 가드에서 막습니다. */
+    if (String(best || '').trim().length < 50) {
       if (sawHidden || (sawRaw && !sawUsable)) {
         throw new Error('PDF 글꼴 정보(CMap)를 해석하지 못해 글자를 읽지 못했습니다(50자 미만). 다른 뷰어에서 PDF로 다시 저장하거나 텍스트를 붙여넣어 주세요.');
       }
@@ -4447,7 +4448,8 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
     nameEl.textContent = label + ' · 읽는 중…';
     try {
       var text = '';
-      if (/\.pdf$/i.test(label) || file.type === 'application/pdf') {
+      var isPdf = /\.pdf$/i.test(label) || file.type === 'application/pdf';
+      if (isPdf) {
         text = await extractPdf(file);
       } else if (/\.(txt|md|csv)$/i.test(label) || /^text\//.test(file.type)) {
         text = await file.text();
@@ -4455,7 +4457,8 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
         throw new Error('PDF 또는 TXT 파일만 지원합니다.');
       }
       text = text.trim();
-      if (text.length < 50) throw new Error('읽은 텍스트가 50자 미만입니다. 스캔 이미지 PDF는 글자가 추출되지 않으니 OCR 후 텍스트를 붙여넣거나 다른 파일을 사용해 주세요.');
+      if (isPdf && text.length < 50) throw new Error('PDF에서 읽은 텍스트가 50자 미만입니다(스캔 이미지 PDF일 수 있습니다). OCR 후 텍스트를 붙여넣거나 다른 파일을 사용해 주세요.');
+      if (text.length < 30) throw new Error('읽은 텍스트가 너무 짧습니다. 다른 파일을 사용해 주세요.');
       state.resume = text.slice(0, 20000);
       updateCounts();
       PACE.store.save();
