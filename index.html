@@ -715,6 +715,16 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 }
 @media(min-width:720px){.modal{border-radius:16px;max-height:86vh}}
 @keyframes slideUp{from{transform:translateY(18px);opacity:.6}to{transform:none;opacity:1}}
+/* 설정 모달: 탭(내장/OpenAI/Gemini/Claude)을 바꿔도 높이가 변하지 않게 고정합니다.
+   머리·발은 고정, 본문만 스크롤되므로 탭 바가 위아래로 튀지 않습니다. */
+#modal-settings .modal{display:flex;flex-direction:column;height:min(690px,92vh);overflow:hidden}
+#modal-settings .modal-head,#modal-settings .modal-foot{position:static;flex:0 0 auto}
+#modal-settings .modal-body{flex:1 1 auto;min-height:0;max-height:none;overflow:auto}
+@media(min-width:720px){#modal-settings .modal{height:min(690px,86vh)}}
+/* 요금제 모달: 뒤 치트시트가 비치지 않게 배경을 더 짙게 덮고,
+   마지막 카드가 하단 버튼에 가리지 않도록 본문 아래 여백을 넉넉히 둡니다. */
+#modal-pricing{background:rgba(4,7,10,.86);backdrop-filter:blur(11px) saturate(.85);-webkit-backdrop-filter:blur(11px) saturate(.85)}
+#modal-pricing .modal-body{padding-bottom:92px}
 .modal-head{display:flex;align-items:center;gap:10px;padding:18px 20px 12px;position:sticky;top:0;background:var(--surface);z-index:2;border-bottom:1px solid transparent}
 .modal-head h2{font-size:16px;font-weight:720;letter-spacing:-.02em;flex:1}
 .modal-body{padding:4px 20px 20px}
@@ -786,7 +796,9 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 /* 통화 중에는 하단 탭바를 숨겨 텍스트 답변 입력창과 키보드가 가리지 않게 합니다 */
 body.is-calling .tabbar{display:none}
 body.is-calling .main{padding-bottom:0}
-body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
+/* 통화 중에는 하단 종료 버튼을 가리지 않도록 토스트를 위쪽으로 올립니다 */
+body.is-calling .toast-stack{bottom:auto;top:calc(64px + env(safe-area-inset-top,0px));z-index:260}
+@media(min-width:900px){body.is-calling .toast-stack{top:76px;right:24px;left:auto;transform:none}}
 @media(min-width:900px){
   .rail{display:flex}
   .topbar .brand{display:none}
@@ -1138,7 +1150,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
         <div class="view-head">
           <button class="icon-btn" data-back aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
           <div class="head-text">
-            <div class="eyebrow">01 · Cross Validation</div>
+            <div class="eyebrow">02 · Cross Validation</div>
             <h2 class="view-title">적합도 · 교차 검증</h2>
             <p class="view-sub">공고의 요구를 하나씩 분해해, 경력기술서의 근거와 대조합니다. 근거가 없는 요구는 그대로 Gap이 됩니다.</p>
           </div>
@@ -1155,7 +1167,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
         <div class="view-head">
           <button class="icon-btn" data-back aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
           <div class="head-text">
-            <div class="eyebrow">02 · Evidence Drill</div>
+            <div class="eyebrow">03 · Evidence Drill</div>
             <h2 class="view-title">성과 진위 3단 꼬리질문</h2>
             <p class="view-sub">“매출 30% 성장”에서 멈추지 않습니다. 기여도 → 실패 가설 → 재현 가능성 순으로 파고듭니다.</p>
           </div>
@@ -1175,7 +1187,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
         <div class="view-head">
           <button class="icon-btn" data-back aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
           <div class="head-text">
-            <div class="eyebrow">03 · Difficult Questions</div>
+            <div class="eyebrow">04 · Difficult Questions</div>
             <h2 class="view-title">민감 질문 방어</h2>
             <p class="view-sub">변명은 신호를 흐립니다. 사실은 그대로 두고, 판단 기준과 미래 기여로 재구성합니다.</p>
           </div>
@@ -1204,7 +1216,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
         <div class="view-head">
           <button class="icon-btn" data-back aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
           <div class="head-text">
-            <div class="eyebrow">04 · Five Minute Call</div>
+            <div class="eyebrow">05 · Five Minute Call</div>
             <h2 class="view-title">출퇴근길 5분 통화 면접</h2>
             <p class="view-sub">전화를 받듯 질문을 듣고 말로 답하세요. 말이 끝나면 약 1.8초 뒤 자동으로 넘어가고, 통화가 끝나면 3단 오디오 브리핑이 이어집니다.</p>
           </div>
@@ -1286,7 +1298,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
         <div class="view-head">
           <button class="icon-btn" data-back aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
           <div class="head-text">
-            <div class="eyebrow">05 · Cheat Sheet</div>
+            <div class="eyebrow">06 · Cheat Sheet</div>
             <h2 class="view-title">면접장 직전 치트시트</h2>
             <p class="view-sub">완료한 세션이 합격 스크립트 카드로 자동 정리됩니다. 회사·직무 태그, 핵심 수치, 방어 논리까지 한 장에.</p>
           </div>
@@ -1344,6 +1356,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
           <button data-provider="claude">Claude</button>
         </div>
         <div class="note-box" id="providerNote">키 없이 동작하는 규칙 기반 엔진입니다. 입력한 수치·키워드를 실제로 추출해 질문을 만들기 때문에, 데모라도 고정 문구가 아닙니다.</div>
+        <div class="engine-state" id="engineState"><span class="dot"></span><span id="engineStateText">내장 엔진은 키 없이 동작합니다. [연결 테스트]로 상태를 확인할 수 있습니다.</span></div>
       </div>
 
       <div class="field-group" id="modelGroup" hidden>
@@ -1366,7 +1379,6 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
           <button type="button" data-keymode="device">이 기기에 저장</button>
           <button type="button" data-keymode="session">이번 세션만</button>
         </div>
-        <div class="engine-state" id="engineState"><span class="dot"></span><span id="engineStateText">키를 입력하면 연결을 확인할 수 있습니다.</span></div>
       </div>
 
       <div class="field-group">
@@ -2825,6 +2837,24 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
     var jdKey = fit && fit.keywords && fit.keywords.jd.length ? fit.keywords.jd[0] : '이 직무';
     var focus = fit && fit.domain ? fit.domain.name : '이 직무';
 
+    /* 연봉 답변의 금액은 문장 순서가 아니라 ”현재/희망” 키워드로 구분합니다.
+       "희망 연봉 7,000만원, 현재는 6,200만원"처럼 순서가 바뀌어도 라벨이 뒤집히지 않게. */
+    function salaryFigures() {
+      var t2 = clean(raw);
+      var re = /(\d[\d,]*)\s*(만\s*원|원)/g, mm, all = [], cur = '', ask = '';
+      while ((mm = re.exec(t2)) !== null) {
+        var val = mm[0].replace(/\s+/g, '');
+        var before = t2.slice(Math.max(0, mm.index - 16), mm.index);
+        if (/희망|원하|기대|바라|제시/.test(before)) { if (!ask) ask = val; }
+        else if (/현재|받고|받는|기존|총\s*보상/.test(before)) { if (!cur) cur = val; }
+        all.push(val);
+      }
+      if (!cur && !ask && all.length) { cur = all[0]; ask = all[1] || ''; }
+      if (!cur && all.length > 1) cur = all.filter(function (v) { return v !== ask; })[0] || '';
+      if (!ask && all.length > 1) ask = all.filter(function (v) { return v !== cur; })[0] || '';
+      return { cur: cur, ask: ask };
+    }
+
     var script = [];
     if (cat.id === 'frequent') {
       script.push({ label: '사실', text: fact });
@@ -2845,10 +2875,8 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
       script.push({ label: '이번 선택', text: '이번에는 제가 통제할 수 있는 범위가 명확한 직무를 보고 있습니다. ' + focus + '에서 그 범위를 먼저 확인했습니다.' });
     } else if (cat.id === 'salary') {
       script.push({ label: '기준', text: '희망 수준은 감이 아니라 세 가지 기준으로 말씀드리겠습니다. 현재 총 보상, 이 직무의 시장 상위 구간, 그리고 제가 첫해에 만들 수 있는 성과입니다.' });
-      var wonList = [];
-      var wonRe = /(\d[\d,]*)\s*(만\s*원|원)/g, wm;
-      while ((wm = wonRe.exec(raw)) !== null) wonList.push(wm[0].replace(/\s+/g, ''));
-      script.push({ label: '숫자', text: '현재 총 보상은 ' + (wonList[0] || '[기본급 + 변동급]') + ' 수준이고, 희망 수준은 ' + (wonList[1] || '[희망 금액]') + '입니다. 이 직무에서 ' + jdKey + ' 과제를 맡아 [첫해 목표]를 만들 수 있다면 협상 여지는 있습니다.' });
+      var figs = salaryFigures();
+      script.push({ label: '숫자', text: '현재 총 보상은 ' + (figs.cur || '[기본급 + 변동급]') + ' 수준이고, 희망 수준은 ' + (figs.ask || '[희망 금액]') + '입니다. 이 직무에서 ' + (jdKey === '이 직무' ? '핵심 과제' : jdKey + ' 과제') + '를 맡아 [첫해 목표]를 만들 수 있다면 협상 여지는 있습니다.' });
       script.push({ label: '태도', text: '숫자 자체보다 산정 기준을 먼저 봐 주시면 좋겠습니다. 제시해 주신 범위와 제 기준이 다르면, 그 차이를 성과 목표로 조정하겠습니다.' });
     } else {
       script.push({ label: '사실', text: fact });
@@ -2898,6 +2926,15 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
     if (persona.id === 'cfo') read += ' C-Level 앞에서는 감정적 설명의 비중을 줄이고, 비용·매출·회수 기간 언어로 바꿔야 합니다.';
     if (persona.id === 'hr') read += ' HR 앞에서는 조직에서 어떻게 행동했는지, 갈등을 어떻게 다뤘는지가 함께 평가됩니다.';
 
+    var oneLine;
+    if (cat.id === 'salary') {
+      /* 이직 사유 문장("보상이 맞지 않았습니다") 대신 협상·시장가 포션으로만 씁니다. */
+      var sfigs = salaryFigures();
+      oneLine = '“현재 총 보상은 ' + (sfigs.cur || '[기본급 + 변동급]') + '이고, 희망 수준은 ' + (sfigs.ask || '[희망 금액]') + '입니다. 다만 숫자보다 이 직무의 시장 상위 구간과 첫해에 만들 성과라는 산정 근거를 먼저 봐 주시면 좋겠습니다.”';
+    } else {
+      oneLine = '“' + fact.replace(/\.$/, '') + '. ' + reason + ' 이번 선택의 기준은 ' + focus + '에서 맡을 문제입니다.”';
+    }
+
     return {
       category: cat.id,
       mode: 'demo',
@@ -2906,7 +2943,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
       script: script,
       avoid: avoidMap[cat.id] || [],
       followups: followups,
-      oneLine: '“' + fact.replace(/\.$/, '') + '. ' + reason + ' 이번 선택의 기준은 ' + focus + '에서 맡을 문제입니다.”',
+      oneLine: oneLine,
       factsUsed: ms.map(function (m) { return m.raw; })
     };
   }
@@ -4833,9 +4870,19 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
     if (ta2) ta2.addEventListener('focus', function () { drillDraft = drillDraft; });
   }
 
-  async function startDrill(claim) {
+  async function startDrill(claim, opts) {
     exitPast();
-    state.drill = { claim: claim, stage: 1, answers: [], evals: [], questions: [], report: null, loading: false };
+    opts = opts || {};
+    var seed = null;
+    if (opts.question && opts.question.q) {
+      seed = {
+        q: opts.question.q,
+        intent: opts.question.intent || '',
+        tag: opts.question.tag || '',
+        fromFit: !!opts.fromFit
+      };
+    }
+    state.drill = { claim: claim, stage: 1, answers: [], evals: [], questions: [], report: null, loading: false, seed: seed };
     PACE.store.countUsage('drill');
     go('drill');
     renderDrill();
@@ -4845,6 +4892,18 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
   async function loadDrillQuestion() {
     var d = state.drill;
     if (!d) return;
+    var stage = d.stage;
+    /* 적합도 페이지에서 넘어온 교차검증 질문은 1차 질문으로 그대로 씁니다. */
+    if (stage === 1 && d.seed && !d.questions[0]) {
+      d.questions[0] = {
+        q: d.seed.q,
+        intent: d.seed.intent || '적합도 교차검증에서 지적된 지점입니다. 같은 기준으로 기여 범위와 근거를 확인합니다.',
+        tag: d.seed.tag || ''
+      };
+      d.loading = false;
+      renderDrill();
+      return;
+    }
     if (!aiBegin(null)) return;
     var stage = d.stage;
     d.loading = true;
@@ -4901,8 +4960,10 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
     var lastEval = d.evals[stage - 1];
     var answered = !!lastEval;
 
-    var html = '<div class="card"><div class="card-head"><h3>검증 중인 성과</h3><span class="spacer"></span><span class="badge badge-neutral">' + stage + ' / 3</span></div>' +
-      '<div class="quote" style="margin-top:0">' + esc(d.claim) + '</div>' + drillStepsHtml(stage) + '</div>';
+    var html = '<div class="card"><div class="card-head"><h3>' + (d.seed ? '검증 중인 지점' : '검증 중인 성과') + '</h3><span class="spacer"></span><span class="badge badge-neutral">' + stage + ' / 3</span></div>' +
+      '<div class="quote" style="margin-top:0">' + esc(d.claim) + '</div>' +
+      (d.seed ? '<div class="tiny faint" style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><svg style="width:12px;height:12px;color:var(--accent)"><use href="#i-target"/></svg>적합도 교차검증 질문에서 시작' + (d.seed.tag ? ' <span class="tag on">' + esc(d.seed.tag) + '</span>' : '') + '</div>' : '') +
+      drillStepsHtml(stage) + '</div>';
 
     if (d.loading || !q) {
       var loadingText = d.evals.length >= 3 ? '답변을 종합해 최종 리포트를 작성하고 있습니다…' : '면접관이 질문을 구성하고 있습니다…';
@@ -4912,7 +4973,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
       return;
     }
 
-    html += '<div class="q-card" style="margin-top:14px"><div class="q-tag"><svg style="width:13px;height:13px"><use href="#i-quote"/></svg>' + esc(D.PERSONAS[state.persona].short) + ' · ' + stage + '차 질문</div>' +
+    html += '<div class="q-card" style="margin-top:14px"><div class="q-tag"><svg style="width:13px;height:13px"><use href="#i-quote"/></svg>' + esc(D.PERSONAS[state.persona].short) + ' · ' + stage + '차 질문' + (q.tag ? ' · ' + esc(q.tag) : '') + '</div>' +
       '<div class="q-big">' + esc(q.q) + '</div>' +
       (q.intent ? '<div class="q-why">' + esc(q.intent) + '</div>' : '') + '</div>';
 
@@ -5439,6 +5500,7 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
     q.briefing = null;
     q.muted = false;
     q.listenFail = false;
+    q.micToastShown = false;
     q.feedback = '';
     q.startedAt = Date.now();
     q.endAt = Date.now() + 5 * 60 * 1000;
@@ -5540,7 +5602,11 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
         if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
           q.listenFail = true;
           quickShowInput(true);
-          toast('마이크 권한이 없습니다. 텍스트로 답변할 수 있습니다.', 'err');
+          /* 권한 안내는 통화 세션당 한 번만. 매 질문마다 띄우면 답변을 가립니다. */
+          if (!q.micToastShown) {
+            q.micToastShown = true;
+            toast('마이크 권한이 없습니다. 텍스트로 답변할 수 있습니다.', 'err');
+          }
           callPhase('듣는 중 · 텍스트로 답변');
           callWave('');
         } else if (e.error === 'network') {
@@ -6365,8 +6431,10 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
       if (st.key === 'ok') setEngineState('ok', PROVIDER_NAME[s.provider] + ' 연결됨 · 저장된 키가 유효합니다.');
       else if (st.key === 'fail') setEngineState('err', '마지막 연결 테스트가 실패했습니다. 키·모델·네트워크를 확인하세요.');
       else setEngineState('', '저장된 키가 있습니다. [연결 테스트]로 확인하세요.');
-    } else {
+    } else if (showKey) {
       setEngineState('', '키를 입력하면 연결을 확인할 수 있습니다.');
+    } else {
+      setEngineState('', '내장 엔진은 키 없이 동작합니다. [연결 테스트]로 상태를 확인할 수 있습니다.');
     }
     syncTrialBar();
   }
@@ -6472,7 +6540,13 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
 
   async function testKey() {
     var p = state.settings.provider;
-    if (p === 'demo') { setEngineState('ok', '내장 엔진은 항상 사용 가능합니다.'); return; }
+    if (p === 'demo') {
+      /* 내장 엔진은 네트워크가 필요 없습니다. 버튼이 먹통처럼 보이지 않도록
+         인라인 상태와 토스트로 동시에 결과를 알립니다. */
+      setEngineState('ok', '내장 엔진이 정상 작동 중입니다. 키 없이 질문 생성·평가가 동작합니다.');
+      toast('내장 엔진이 정상 작동 중입니다.');
+      return;
+    }
     var key = $('#apiKey').value.trim();
     if (key.length < 12) { setEngineState('err', '키를 먼저 입력해 주세요.'); return; }
     var prevKey = state.settings.keys[p];
@@ -6541,9 +6615,24 @@ body.is-calling .toast-stack{bottom:calc(16px + var(--safe-b))}
       b.dataset.bound = '1';
       b.addEventListener('click', function () {
         var f = state.fit; if (!f) return;
-        var claim = f.claims && f.claims.length ? f.claims[0].text : (state.resume.split(/\n/).filter(Boolean)[0] || '');
+        var idx = parseInt(b.getAttribute('data-drill-q'), 10) || 0;
+        var q = f.questions && f.questions[idx] ? f.questions[idx] : null;
+        /* 클릭한 교차검증 질문의 맥락(요구 항목·근거 문장)을 함께 넘깁니다. */
+        var claim = '';
+        var key = q && q.tag ? q.tag : '';
+        if (key && f.strengths) {
+          var s = f.strengths.filter(function (x) { return x.key === key && x.evidence; })[0];
+          if (s) claim = s.evidence;
+        }
+        if (!claim && key && f.gaps) {
+          /* Gap 질문은 연결된 성과가 없으므로, 공고 요구를 검증 대상으로 삼습니다. */
+          var g = f.gaps.filter(function (x) { return x.key === key; })[0];
+          if (g && g.req) claim = '공고 요구 · ' + g.req;
+        }
+        if (!claim) claim = f.claims && f.claims.length ? f.claims[0].text : '';
+        if (!claim) claim = state.resume.split(/\n/).filter(Boolean)[0] || '';
         if (!claim) { toast('경력기술서에 성과 문장이 필요합니다.', 'err'); return; }
-        startDrill(claim);
+        startDrill(claim, { fromFit: true, question: q });
       });
     });
     $$('[data-session]').forEach(function (b) {
