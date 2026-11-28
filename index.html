@@ -55,7 +55,11 @@
   --safe-b:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
+/* 가로 넘침 차단(모바일 320/360/390/412): .preset-row의 음수 마진(-13px)이나
+   긴 영문 단어·내부 그리드가 1px이라도 넘쳐도 페이지 전체가 좌우로 흔들리지 않게 합니다.
+   overflow-x:hidden과 달리 clip은 스크롤 컨테이너를 만들지 않아
+   position:sticky(상단바·레일·모달 머리/발)와 fixed(하단 탭·토스트)가 그대로 동작합니다. */
+html,body{margin:0;padding:0;overflow-x:clip}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{
   background:var(--bg);
@@ -709,25 +713,31 @@ label.lab{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:6
 }
 @media(min-width:720px){.modal-backdrop{align-items:center;padding:24px}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* 모달 높이는 dvh를 우선 사용합니다. 모바일 Chrome·Safari에서 주소창이 보이는 동안
+   vh는 실제 보이는 화면보다 커서 모달 하단(저장·닫기 버튼)이 주소창 뒤로 내려갑니다.
+   dvh를 모르는 브라우저는 앞의 vh 값을 그대로 씁니다. */
 .modal{
-  width:100%;max-width:560px;max-height:92vh;overflow:auto;background:var(--surface);border:1px solid var(--line);
+  width:100%;max-width:560px;max-height:92vh;max-height:92dvh;overflow:auto;background:var(--surface);border:1px solid var(--line);
   border-radius:20px 20px 0 0;box-shadow:var(--shadow);animation:slideUp .22s cubic-bezier(.2,.8,.2,1) both;
 }
-@media(min-width:720px){.modal{border-radius:16px;max-height:86vh}}
+@media(min-width:720px){.modal{border-radius:16px;max-height:86vh;max-height:86dvh}}
 @keyframes slideUp{from{transform:translateY(18px);opacity:.6}to{transform:none;opacity:1}}
 /* 설정 모달: 탭(내장/OpenAI/Gemini/Claude)을 바꿔도 높이가 변하지 않게 고정합니다.
    머리·발은 고정, 본문만 스크롤되므로 탭 바가 위아래로 튀지 않습니다. */
-#modal-settings .modal{display:flex;flex-direction:column;height:min(690px,92vh);overflow:hidden}
+#modal-settings .modal{display:flex;flex-direction:column;height:min(690px,92vh);height:min(690px,92dvh);overflow:hidden}
 #modal-settings .modal-head,#modal-settings .modal-foot{position:static;flex:0 0 auto}
 #modal-settings .modal-body{flex:1 1 auto;min-height:0;max-height:none;overflow:auto}
-@media(min-width:720px){#modal-settings .modal{height:min(690px,86vh)}}
+@media(min-width:720px){#modal-settings .modal{height:min(690px,86vh);height:min(690px,86dvh)}}
 /* 요금제 모달: 뒤 치트시트가 비치지 않게 배경을 더 짙게 덮고,
    마지막 카드가 하단 버튼에 가리지 않도록 본문 아래 여백을 넉넉히 둡니다. */
 #modal-pricing{background:rgba(4,7,10,.86);backdrop-filter:blur(11px) saturate(.85);-webkit-backdrop-filter:blur(11px) saturate(.85)}
-#modal-pricing .modal-body{padding-bottom:92px}
+/* 요금제처럼 하단 버튼(.modal-foot)이 본문 위에 sticky로 겹치는 모달은
+   본문 마지막 카드·안내문이 버튼 뒤로 숨지 않도록 버튼 높이만큼 여백을 더 둡니다.
+   (safe-area는 버튼 쪽에서도 잡지만, 홈 인디케이터가 있는 기기에서 이중으로 겹치지 않게 함께 더합니다.) */
+#modal-pricing .modal-body{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
 .modal-head{display:flex;align-items:center;gap:10px;padding:18px 20px 12px;position:sticky;top:0;background:var(--surface);z-index:2;border-bottom:1px solid transparent}
 .modal-head h2{font-size:16px;font-weight:720;letter-spacing:-.02em;flex:1}
-.modal-body{padding:4px 20px 20px}
+.modal-body{padding:4px 20px calc(24px + env(safe-area-inset-bottom,0px))}
 .modal-foot{display:flex;gap:8px;padding:12px 20px calc(20px + env(safe-area-inset-bottom,0px));flex-wrap:wrap;position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line-soft)}
 .modal-foot .btn{flex:1;min-width:120px}
 .modal-close{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--muted);border:1px solid transparent}
